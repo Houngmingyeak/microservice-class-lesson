@@ -1,14 +1,14 @@
 package kh.edu.istad.platform.business;
 
-import kh.edu.istad.common.domain.valueobject.Money;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.math.BigDecimal;
-
+@SpringBootApplication
 public class BusinessApplicationService {
-    static void main(String[] args) {
-        Money money = new Money(BigDecimal.valueOf(100));
-        money.isGreaterThanZero();
-        System.out.println(money.amount());
+
+    public static void main(String[] args) {
+        SpringApplication.run(BusinessApplicationService.class, args);
     }
 
 }
+

@@ -6,14 +6,31 @@
         <compositeConfiguration>
           <compositeBuild compositeDefinitionSource="SCRIPT">
             <builds>
-              <build path="$PROJECT_DIR$/istad-common" name="istad-common">
+              <build path="$PROJECT_DIR$/build-logic" name="build-logic">
+                <projects>
+                  <project path="$PROJECT_DIR$/build-logic" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/istad-common" name="common">
                 <projects>
                   <project path="$PROJECT_DIR$/istad-common" />
+                  <project path="$PROJECT_DIR$/istad-common/istad-common-domain" />
+                  <project path="$PROJECT_DIR$/istad-common/istad-common-restapi" />
                 </projects>
               </build>
               <build path="$PROJECT_DIR$/microservice" name="microservice">
                 <projects>
                   <project path="$PROJECT_DIR$/microservice" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/microservice/business-service" name="business-service">
+                <projects>
+                  <project path="$PROJECT_DIR$/microservice/business-service" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/microservice/customer-service" name="customer-service">
+                <projects>
+                  <project path="$PROJECT_DIR$/microservice/customer-service" />
                 </projects>
               </build>
             </builds>
@@ -26,7 +43,11 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/build-logic" />
             <option value="$PROJECT_DIR$/istad-common" />
+            <option value="$PROJECT_DIR$/istad-common/istad-common-domain" />
+            <option value="$PROJECT_DIR$/istad-common/istad-common-restapi" />
             <option value="$PROJECT_DIR$/microservice" />
+            <option value="$PROJECT_DIR$/microservice/business-service" />
+            <option value="$PROJECT_DIR$/microservice/customer-service" />
           </set>
         </option>
       </GradleProjectSettings>
