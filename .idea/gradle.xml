@@ -3,17 +3,30 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <compositeConfiguration>
+          <compositeBuild compositeDefinitionSource="SCRIPT">
+            <builds>
+              <build path="$PROJECT_DIR$/istad-common" name="istad-common">
+                <projects>
+                  <project path="$PROJECT_DIR$/istad-common" />
+                </projects>
+              </build>
+              <build path="$PROJECT_DIR$/microservice" name="microservice">
+                <projects>
+                  <project path="$PROJECT_DIR$/microservice" />
+                </projects>
+              </build>
+            </builds>
+          </compositeBuild>
+        </compositeConfiguration>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="gradleHome" value="" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/build-logic" />
             <option value="$PROJECT_DIR$/istad-common" />
-            <option value="$PROJECT_DIR$/istad-common/istad-common-domain" />
-            <option value="$PROJECT_DIR$/istad-common/istad-common-restapi" />
             <option value="$PROJECT_DIR$/microservice" />
-            <option value="$PROJECT_DIR$/microservice/business-service" />
-            <option value="$PROJECT_DIR$/microservice/customer-service" />
           </set>
         </option>
       </GradleProjectSettings>
