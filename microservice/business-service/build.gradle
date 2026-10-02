@@ -1,0 +1,18 @@
+plugins {
+    id 'java'
+}
+
+group = 'co.istad'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation(project(":istad-common:istad-common-domain"))
+}
+
+test {
+    useJUnitPlatform()
+}
