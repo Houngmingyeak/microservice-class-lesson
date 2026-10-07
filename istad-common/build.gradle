@@ -1,14 +1,8 @@
-plugins {
-    id 'java-common-conventions'
-}
-dependencies {
-
-}
-
-
-
+//plugins {
+//    id 'java'
+//}
 //
-//group = 'co.istad'
+//group = 'kh.edu.istad.common'
 //version = '1.0-SNAPSHOT'
 //
 //repositories {
@@ -24,3 +18,12 @@ dependencies {
 //test {
 //    useJUnitPlatform()
 //}
+
+
+plugins {
+    id 'java-common-conventions'
+}
+
+dependencies {
+    api 'kh.edu.istad.common:istad-common-domain'
+}
