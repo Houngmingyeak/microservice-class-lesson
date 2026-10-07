@@ -32,13 +32,16 @@
               <build path="$PROJECT_DIR$/microservice/customer-service" name="customer-service">
                 <projects>
                   <project path="$PROJECT_DIR$/microservice/customer-service" />
+                  <project path="$PROJECT_DIR$/microservice/customer-service/customer-service-domain" />
+                  <project path="$PROJECT_DIR$/microservice/customer-service/customer-service-domain/customer-application-service" />
+                  <project path="$PROJECT_DIR$/microservice/customer-service/customer-service-domain/customer-domain-core" />
+                  <project path="$PROJECT_DIR$/microservice/customer-service/customer-service-restapi" />
                 </projects>
               </build>
             </builds>
           </compositeBuild>
         </compositeConfiguration>
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
@@ -49,6 +52,10 @@
             <option value="$PROJECT_DIR$/microservice" />
             <option value="$PROJECT_DIR$/microservice/business-service" />
             <option value="$PROJECT_DIR$/microservice/customer-service" />
+            <option value="$PROJECT_DIR$/microservice/customer-service/customer-service-domain" />
+            <option value="$PROJECT_DIR$/microservice/customer-service/customer-service-domain/customer-application-service" />
+            <option value="$PROJECT_DIR$/microservice/customer-service/customer-service-domain/customer-domain-core" />
+            <option value="$PROJECT_DIR$/microservice/customer-service/customer-service-restapi" />
           </set>
         </option>
       </GradleProjectSettings>
