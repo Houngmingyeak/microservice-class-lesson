@@ -13,3 +13,6 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = 'customer-service'
+
+include 'customer-service-domain:customer-domain-core'
+include 'customer-service-domain:customer-application-service'
