@@ -1,6 +1,7 @@
 package kh.edu.istad.platform.customer.restapi.mapper;
 
 import kh.edu.istad.platform.customer.domain.dto.InitiateCustomerCommand;
+import kh.edu.istad.platform.customer.domain.dto.InitiateCustomerResult;
 import kh.edu.istad.platform.customer.restapi.dto.CustomerInitiateRequest;
 import kh.edu.istad.platform.customer.restapi.dto.CustomerInitiateResponse;
 import org.mapstruct.Mapper;
