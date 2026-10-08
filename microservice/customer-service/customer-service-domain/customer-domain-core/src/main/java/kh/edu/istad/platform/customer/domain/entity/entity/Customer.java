@@ -9,6 +9,7 @@ import kh.edu.istad.platform.customer.domain.entity.valueobject.Email;
 import kh.edu.istad.platform.customer.domain.entity.valueobject.PhoneNumber;
 
 import java.util.Objects;
+import java.util.UUID;
 
 public class Customer extends AggregateRoot<Customerid> {
     private final Customerid customerid;
@@ -17,11 +18,13 @@ public class Customer extends AggregateRoot<Customerid> {
     private String givenName;
     private final Email email;
     private final PhoneNumber phoneNumber;
-    private final CustomerStatus customerStatus;
+    private CustomerStatus customerStatus;
 
     //domain critical logic
     public void iniciateCustomer(){
         validateCustomer();
+        super.setId(new Customerid(UUID.randomUUID()));
+        customerStatus = CustomerStatus.ACTIVE;
     }
 
     private void validateCustomer() {
