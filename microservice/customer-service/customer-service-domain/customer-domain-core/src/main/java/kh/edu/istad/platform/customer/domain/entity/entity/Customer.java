@@ -30,7 +30,11 @@ public class Customer extends AggregateRoot<Customerid> {
         this.givenName = givenName;
     }
 
-
+    public void  deactivateCustomer(){
+        if (customerStatus != CustomerStatus.ACTIVE){
+            throw new CustomerDomainException(" Could not deactivateCustomer because customer is not Active");
+        }
+    }
 
 
 
