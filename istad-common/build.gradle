@@ -1,29 +1,20 @@
-//plugins {
-//    id 'java'
-//}
-//
-//group = 'kh.edu.istad.common'
-//version = '1.0-SNAPSHOT'
-//
-//repositories {
-//    mavenCentral()
-//}
-//
-//dependencies {
-//    testImplementation platform('org.junit:junit-bom:5.10.0')
-//    testImplementation 'org.junit.jupiter:junit-jupiter'
-//    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-//}
-//
-//test {
-//    useJUnitPlatform()
-//}
-
-
 plugins {
-    id 'java-common-conventions'
+    id 'java'
+}
+
+group = 'kh.edu.istad.common'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
 }
 
 dependencies {
-    api 'kh.edu.istad.common:istad-common-domain'
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
 }
