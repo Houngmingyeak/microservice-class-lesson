@@ -1,0 +1,15 @@
+package kh.edu.istad.platform.customer.domain.entity.exception;
+
+import kh.edu.istad.common.domain.valueobject.exception.DomainException;
+
+public class CustomerDomainException extends DomainException {
+
+
+    public CustomerDomainException(String message) {
+        super(message);
+    }
+
+    public CustomerDomainException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}

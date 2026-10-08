@@ -18,6 +18,45 @@ public class Customer extends AggregateRoot<Customerid> {
     private final PhoneNumber phoneNumber;
     private final CustomerStatus customerStatus;
 
+    //domain critical logic
+    public void iniciateCustomer(){
+        validateCustomer();
+    }
+
+    private void validateCustomer() {
+        if (super.getId() !=null){
+            throw
+        }
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public Customerid getCustomerid() {
+        return customerid;
+    }
+
+    public String getFamilyName() {
+        return familyName;
+    }
+
+    public String getGivenName() {
+        return givenName;
+    }
+
+    public Email getEmail() {
+        return email;
+    }
+
+    public PhoneNumber getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public CustomerStatus getCustomerStatus() {
+        return customerStatus;
+    }
+
     private Customer(Builder builder) {
         customerid = builder.customerid;
         username = builder.username;
