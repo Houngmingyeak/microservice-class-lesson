@@ -1,11 +1,15 @@
-package kh.edu.istad.common.domain.valueobject.entity;
+package kh.edu.istad.platform.customer.domain.entity.entity;
 
-import kh.edu.istad.common.domain.valueobject.valueobject.CustomerStatus;
+import kh.edu.istad.common.domain.valueobject.entity.AggregateRoot;
+
 import kh.edu.istad.common.domain.valueobject.valueobject.Customerid;
-import kh.edu.istad.common.domain.valueobject.valueobject.Email;
-import kh.edu.istad.common.domain.valueobject.valueobject.PhoneNumber;
+import kh.edu.istad.platform.customer.domain.entity.valueobject.CustomerStatus;
+import kh.edu.istad.platform.customer.domain.entity.valueobject.Email;
+import kh.edu.istad.platform.customer.domain.entity.valueobject.PhoneNumber;
 
-public class Customer {
+import java.util.Objects;
+
+public class Customer extends AggregateRoot<Customerid> {
     private final Customerid customerid;
     private final String username;
     private String familyName;
@@ -82,6 +86,15 @@ public class Customer {
 
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Customer customer = (Customer) o;
+        return Objects.equals(customerid, customer.customerid) && Objects.equals(username, customer.username) && Objects.equals(familyName, customer.familyName) && Objects.equals(givenName, customer.givenName) && Objects.equals(email, customer.email) && Objects.equals(phoneNumber, customer.phoneNumber) && customerStatus == customer.customerStatus;
+    }
 
-
+    @Override
+    public int hashCode() {
+        return Objects.hash(customerid, username, familyName, givenName, email, phoneNumber, customerStatus);
+    }
 }
