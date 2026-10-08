@@ -1,7 +1,5 @@
 package kh.edu.istad.common.domain.valueobject.event;
 
-public interface DomainEvent {
-
-
+public interface DomainEvent<T> {
 
 }
