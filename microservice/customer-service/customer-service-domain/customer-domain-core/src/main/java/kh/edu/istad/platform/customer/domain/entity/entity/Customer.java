@@ -3,6 +3,7 @@ package kh.edu.istad.platform.customer.domain.entity.entity;
 import kh.edu.istad.common.domain.valueobject.entity.AggregateRoot;
 
 import kh.edu.istad.common.domain.valueobject.valueobject.Customerid;
+import kh.edu.istad.platform.customer.domain.entity.exception.CustomerDomainException;
 import kh.edu.istad.platform.customer.domain.entity.valueobject.CustomerStatus;
 import kh.edu.istad.platform.customer.domain.entity.valueobject.Email;
 import kh.edu.istad.platform.customer.domain.entity.valueobject.PhoneNumber;
@@ -25,8 +26,13 @@ public class Customer extends AggregateRoot<Customerid> {
 
     private void validateCustomer() {
         if (super.getId() !=null){
-            throw
+            throw new CustomerDomainException("Customer ID must be null");
+
         }
+        if (customerStatus != null){
+            throw new CustomerDomainException("Customer Status must be null");
+        }
+
     }
 
     public String getUsername() {
