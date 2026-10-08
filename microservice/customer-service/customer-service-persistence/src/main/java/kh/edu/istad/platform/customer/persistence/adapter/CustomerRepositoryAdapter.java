@@ -9,11 +9,24 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class CustomerRepositoryAdapter implements CustomerRepository {
 
-    private CustomerJpaRepository customerJpaRepository;
+    private final CustomerJpaRepository customerJpaRepository;
+
+    public CustomerRepositoryAdapter(CustomerJpaRepository customerJpaRepository) {
+        this.customerJpaRepository = customerJpaRepository;
+    }
 
     @Override
     public Customer save(Customer customer) {
-        customerJpaRepository.save(new CustomerEntity());
-        return null;
+        CustomerEntity customerEntity = new CustomerEntity();
+        customerEntity.setCustomerId(customer.getId().uuid());
+        customerEntity.setUsername(customer.getUsername());
+        customerEntity.setFamilyName(customer.getFamilyName());
+        customerEntity.setGivenName(customer.getGivenName());
+        customerEntity.setEmail(customer.getEmail().value());
+        customerEntity.setPhoneNumber(customer.getPhoneNumber().value());
+
+        customerJpaRepository.save(customerEntity);
+
+        return customer;
     }
 }
