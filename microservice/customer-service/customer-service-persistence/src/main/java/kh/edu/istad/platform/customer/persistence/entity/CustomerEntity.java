@@ -1,4 +1,18 @@
 package kh.edu.istad.platform.customer.persistence.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.*;
+
+import java.util.UUID;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@Entity
+@Table(name = "customers")
 public class CustomerEntity {
+    @Id
+    private UUID customerId;
 }
