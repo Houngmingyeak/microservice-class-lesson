@@ -8,18 +8,18 @@ import java.time.ZonedDateTime;
 public class CustomerUpdatedEvent implements DomainEvent<Customer> {
 
     private final Customer customer;
-    private final ZonedDateTime initiatedAt;
+    private final ZonedDateTime updatedAt;
 
-    public CustomerUpdatedEvent(Customer customer, ZonedDateTime initiatedAt) {
+    public CustomerUpdatedEvent(Customer customer, ZonedDateTime updatedAt) {
         this.customer = customer;
-        this.initiatedAt = initiatedAt;
+        this.updatedAt = updatedAt;
     }
 
     public Customer getCustomer() {
         return customer;
     }
 
-    public ZonedDateTime getInitiatedAt() {
-        return initiatedAt;
+    public ZonedDateTime getUpdatedAt() {
+        return updatedAt;
     }
 }

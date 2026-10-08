@@ -6,20 +6,20 @@ import kh.edu.istad.platform.customer.domain.entity.entity.Customer;
 import java.time.ZonedDateTime;
 
 public class CustomerDeactivatedEvent implements DomainEvent<Customer> {
-    private final Customer customer;
-    private final ZonedDateTime initiatedAt;
 
-    public CustomerDeactivatedEvent(Customer customer, ZonedDateTime initiatedAt) {
+    private final Customer customer;
+    private final ZonedDateTime deactivatedAt;
+
+    public CustomerDeactivatedEvent(Customer customer, ZonedDateTime deactivatedAt) {
         this.customer = customer;
-        this.initiatedAt = initiatedAt;
+        this.deactivatedAt = deactivatedAt;
     }
 
     public Customer getCustomer() {
         return customer;
     }
 
-    public ZonedDateTime getInitiatedAt() {
-        return initiatedAt;
+    public ZonedDateTime getDeactivatedAt() {
+        return deactivatedAt;
     }
-
 }

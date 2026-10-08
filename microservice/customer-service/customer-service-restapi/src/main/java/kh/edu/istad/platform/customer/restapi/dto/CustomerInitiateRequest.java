@@ -1,17 +1,23 @@
 package kh.edu.istad.platform.customer.restapi.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 public record CustomerInitiateRequest(
-        @NotBlank
+        @NotBlank(message = "Username is required")
         String username,
-        @NotBlank
+
+        @NotBlank(message = "Family name is required")
         String familyName,
-        @NotBlank
+
+        @NotBlank(message = "Given name is required")
         String givenName,
-        @NotBlank
+
+        @NotBlank(message = "Email is required")
+        @Email(message = "Email format is invalid")
         String email,
-        @NotBlank
+
+        @NotBlank(message = "Phone number is required")
         String phoneNumber
 ) {
 }
