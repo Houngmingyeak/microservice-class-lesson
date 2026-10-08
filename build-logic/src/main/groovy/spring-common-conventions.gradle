@@ -15,15 +15,13 @@ dependencyManagement {
     }
 }
 dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter'
+    annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+    compileOnly 'org.mapstruct:mapstruct:1.6.3'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-    // Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-logging
-    implementation("org.springframework.boot:spring-boot-starter-logging:4.1.1")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-
-
-
+    implementation 'org.springframework.boot:spring-boot-starter-logging'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 }
 tasks.withType(Test).configureEach {
     useJUnitPlatform()

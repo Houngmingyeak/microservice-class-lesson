@@ -1,11 +1,12 @@
 package kh.edu.istad.platform.customer.restapi.controller;
 
 
+import kh.edu.istad.platform.customer.domain.usecase.InitiateCustomerUseCase;
+import kh.edu.istad.platform.customer.restapi.dto.CustomerInitiateRequest;
+import kh.edu.istad.platform.customer.restapi.dto.CustomerInitiateResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
