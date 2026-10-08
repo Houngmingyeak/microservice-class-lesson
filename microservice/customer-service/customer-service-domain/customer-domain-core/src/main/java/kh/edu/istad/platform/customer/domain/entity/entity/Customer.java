@@ -21,6 +21,19 @@ public class Customer extends AggregateRoot<Customerid> {
     private CustomerStatus customerStatus;
 
     //domain critical logic
+
+    public void updateCustomer( String familyName, String givenName  ){
+        if (familyName == null || givenName == null){
+            throw new CustomerDomainException(" familyName and givenName must be null");
+        }
+        this.familyName = familyName;
+        this.givenName = givenName;
+    }
+
+
+
+
+
     public void iniciateCustomer(){
         validateCustomer();
         super.setId(new Customerid(UUID.randomUUID()));
