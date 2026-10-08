@@ -8,7 +8,7 @@ import kh.edu.istad.platform.customer.domain.entity.event.CustomerUpdatedEvent;
 public interface CustomerDomainService {
 
     CustomerInitiatedEvent initiateCustomer(Customer customer);
-    CustomerUpdatedEvent updateCustomer(String familyName, String givenName);
-    CustomerDeactivatedEvent deactivateCustomer();
+    CustomerUpdatedEvent updateCustomer(Customer customer);
+    CustomerDeactivatedEvent deactivateCustomer(Customer customer);
 
 }
