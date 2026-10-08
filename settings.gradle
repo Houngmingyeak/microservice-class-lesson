@@ -3,8 +3,3 @@ includeBuild 'istad-common'
 includeBuild 'microservice'
 
 
-include 'microservice:business-service:business-service-domain'
-include 'microservice:business-service:business-service-domain:business-domain-core'
-include 'microservice:business-service:business-service-main'
-include 'microservice:business-service:business-service-message'
-include 'microservice:business-service:business-service-persistence'
