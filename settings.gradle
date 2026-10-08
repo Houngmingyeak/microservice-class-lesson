@@ -5,3 +5,5 @@ includeBuild 'microservice'
 
 
 
+
+include 'microservice:business-service:business-service-domain'
