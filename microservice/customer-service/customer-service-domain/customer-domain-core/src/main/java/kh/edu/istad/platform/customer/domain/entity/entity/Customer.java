@@ -37,7 +37,7 @@ public class Customer extends AggregateRoot<Customerid> {
         customerStatus = CustomerStatus.INACTIVE;
     }
 
-    public void iniciateCustomer(){
+    public void initiateCustomer(){
         validateCustomer();
         super.setId(new Customerid(UUID.randomUUID()));
         customerStatus = CustomerStatus.ACTIVE;
