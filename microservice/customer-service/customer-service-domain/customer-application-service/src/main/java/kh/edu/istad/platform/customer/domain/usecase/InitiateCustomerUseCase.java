@@ -11,10 +11,10 @@ import java.util.UUID;
 
 @Component
 @Slf4j
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 public class InitiateCustomerUseCase {
 
-//    private final CustomerDomainService customerDomainService;
+    private final CustomerDomainService customerDomainService;
 
     public InitiateCustomerResult execute(InitiateCustomerCommand command) {
         log.info("initiate customer usecase: {}", command);
