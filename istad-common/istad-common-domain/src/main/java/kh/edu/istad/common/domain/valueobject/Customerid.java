@@ -1,4 +1,4 @@
-package kh.edu.istad.common.domain.valueobject.valueobject;
+package kh.edu.istad.common.domain.valueobject;
 
 import java.util.UUID;
 

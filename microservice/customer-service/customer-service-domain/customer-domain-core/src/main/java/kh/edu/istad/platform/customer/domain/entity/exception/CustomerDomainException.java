@@ -1,6 +1,6 @@
 package kh.edu.istad.platform.customer.domain.entity.exception;
 
-import kh.edu.istad.common.domain.valueobject.exception.DomainException;
+import kh.edu.istad.common.domain.exception.DomainException;
 
 public class CustomerDomainException extends DomainException {
 

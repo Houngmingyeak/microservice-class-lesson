@@ -1,4 +1,4 @@
-package kh.edu.istad.common.domain.valueobject.entity;
+package kh.edu.istad.common.domain.entity;
 
 import java.util.Objects;
 

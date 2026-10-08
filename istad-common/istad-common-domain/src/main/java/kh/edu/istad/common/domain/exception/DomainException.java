@@ -1,4 +1,4 @@
-package kh.edu.istad.common.domain.valueobject.exception;
+package kh.edu.istad.common.domain.exception;
 
 public class DomainException extends RuntimeException{
 

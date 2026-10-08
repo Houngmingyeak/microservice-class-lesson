@@ -1,4 +1,4 @@
-package kh.edu.istad.common.domain.valueobject;
+package kh.edu.istad.common.domain;
 
 import java.math.BigDecimal;
 

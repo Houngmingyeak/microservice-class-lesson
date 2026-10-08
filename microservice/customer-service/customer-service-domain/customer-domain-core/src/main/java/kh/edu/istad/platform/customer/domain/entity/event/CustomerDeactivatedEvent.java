@@ -1,6 +1,6 @@
 package kh.edu.istad.platform.customer.domain.entity.event;
 
-import kh.edu.istad.common.domain.valueobject.event.DomainEvent;
+import kh.edu.istad.common.domain.event.DomainEvent;
 import kh.edu.istad.platform.customer.domain.entity.entity.Customer;
 
 import java.time.ZonedDateTime;
