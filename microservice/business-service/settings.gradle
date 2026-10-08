@@ -11,3 +11,11 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+
+include 'business-service-domain:business-domain-core'
+include 'business-service-domain:business-application-service'
+include 'business-service-restapi'
+include 'business-service-persistence'
+include 'business-service-message'
+include 'business-service-domain'
+include 'business-service-main'
