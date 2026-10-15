@@ -29,6 +29,7 @@ public class CustomerRepositoryAdapter implements CustomerRepository {
         customerEntity.setGivenName(customer.getGivenName());
         customerEntity.setEmail(customer.getEmail().value());
         customerEntity.setPhoneNumber(customer.getPhoneNumber().value());
+        customerEntity.setStatus(customer.getCustomerStatus());
 
         customerJpaRepository.save(customerEntity);
 
@@ -37,14 +38,22 @@ public class CustomerRepositoryAdapter implements CustomerRepository {
 
     @Override
     public Optional<Customer> findById(Customerid customerId) {
-        return customerJpaRepository.findById(customerId.uuid())
-                .map(entity -> Customer.Builder.builder()
-                        .customerid(new Customerid(entity.getCustomerId()))
-                        .username(entity.getUsername())
-                        .familyName(entity.getFamilyName())
-                        .givenName(entity.getGivenName())
-                        .email(new Email(entity.getEmail()))
-                        .phoneNumber(new PhoneNumber(entity.getPhoneNumber()))
-                        .build());
+        Optional<CustomerEntity> optionalEntity = customerJpaRepository.findById(customerId.uuid());
+        if (optionalEntity.isEmpty()) {
+            return Optional.empty();
+        }
+        CustomerEntity entity = optionalEntity.get();
+
+        Customer customer = Customer.Builder.builder()
+                .customerid(new Customerid(entity.getCustomerId()))
+                .username(entity.getUsername())
+                .familyName(entity.getFamilyName())
+                .givenName(entity.getGivenName())
+                .email(new Email(entity.getEmail()))
+                .phoneNumber(new PhoneNumber(entity.getPhoneNumber()))
+                .customerStatus(entity.getStatus())
+                .build();
+
+        return Optional.of(customer);
     }
 }

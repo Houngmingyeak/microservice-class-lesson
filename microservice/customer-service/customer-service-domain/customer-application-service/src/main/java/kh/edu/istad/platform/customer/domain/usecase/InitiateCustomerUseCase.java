@@ -22,7 +22,6 @@ public class InitiateCustomerUseCase {
     public InitiateCustomerResult execute(InitiateCustomerCommand command) {
         log.info("initiate customer usecase: {}", command);
 
-        // build the domain object from the command (id and status stay null on purpose)
         Customer customer = Customer.Builder.builder()
                 .username(command.username())
                 .familyName(command.familyName())
@@ -31,10 +30,8 @@ public class InitiateCustomerUseCase {
                 .phoneNumber(new PhoneNumber(command.phoneNumber()))
                 .build();
 
-        // invoke domain logic: generates the id and sets status ACTIVE
         customerDomainService.initiateCustomer(customer);
 
-        // save data into database (output port)
         Customer savedCustomer = customerRepository.save(customer);
 
         return new InitiateCustomerResult(

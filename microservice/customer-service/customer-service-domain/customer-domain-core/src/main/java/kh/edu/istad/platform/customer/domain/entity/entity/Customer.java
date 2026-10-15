@@ -24,7 +24,7 @@ public class Customer extends AggregateRoot<Customerid> {
 
     public void updateCustomer( String familyName, String givenName  ){
         if (familyName == null || givenName == null){
-            throw new CustomerDomainException(" familyName and givenName must be null");
+            throw new CustomerDomainException(" familyName and givenName must not be null");
         }
         this.familyName = familyName;
         this.givenName = givenName;
@@ -90,6 +90,9 @@ public class Customer extends AggregateRoot<Customerid> {
         email = builder.email;
         phoneNumber = builder.phoneNumber;
         customerStatus = builder.customerStatus;
+        if (builder.customerid != null) {
+            super.setId(builder.customerid);
+        }
     }
 
 

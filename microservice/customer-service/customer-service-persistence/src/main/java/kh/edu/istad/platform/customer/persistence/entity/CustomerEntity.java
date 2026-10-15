@@ -2,8 +2,11 @@ package kh.edu.istad.platform.customer.persistence.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import kh.edu.istad.platform.customer.domain.entity.valueobject.CustomerStatus;
 import lombok.*;
 
 import java.util.UUID;
@@ -32,4 +35,8 @@ public class CustomerEntity {
 
     @Column(name = "phone_number")
     private String phoneNumber;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private CustomerStatus status;
 }

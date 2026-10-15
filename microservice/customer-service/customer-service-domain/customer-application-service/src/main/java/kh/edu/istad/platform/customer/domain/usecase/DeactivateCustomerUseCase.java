@@ -23,8 +23,9 @@ public class DeactivateCustomerUseCase {
         log.info("deactivate customer usecase: {}", command);
 
         Customer customer = customerRepository.findById(new Customerid(command.customerId()))
-                .orElseThrow(() -> new CustomerDomainException("Customer not found with id: " + command.customerId()));
+                .orElseThrow(() -> new CustomerDomainException("Customer not found"));
 
+        // throws if the status is not ACTIVE, then sets INACTIVE
         customerDomainService.deactivateCustomer(customer);
 
         Customer savedCustomer = customerRepository.save(customer);
@@ -34,4 +35,5 @@ public class DeactivateCustomerUseCase {
                 savedCustomer.getCustomerStatus().name()
         );
     }
+
 }
