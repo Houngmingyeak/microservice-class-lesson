@@ -1,2 +1,14 @@
 server:
   port: 9092
+
+spring:
+  application:
+    name: business-service
+  mongodb:
+    uri: mongodb://mongod:mongod@localhost:2026/business_db?authSource=admin
+    representation:
+      uuid: standard
+  data:
+    mongodb:
+      representation:
+        big-decimal: decimal128
