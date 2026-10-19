@@ -2,14 +2,16 @@ package kh.edu.istad.platform.customer.domain.usecase;
 
 import kh.edu.istad.platform.customer.domain.dto.InitiateCustomerCommand;
 import kh.edu.istad.platform.customer.domain.dto.InitiateCustomerResult;
-import kh.edu.istad.platform.customer.domain.entity.entity.Customer;
-import kh.edu.istad.platform.customer.domain.entity.service.CustomerDomainService;
-import kh.edu.istad.platform.customer.domain.entity.valueobject.Email;
-import kh.edu.istad.platform.customer.domain.entity.valueobject.PhoneNumber;
+
+import kh.edu.istad.platform.customer.domain.entity.Customer;
+import kh.edu.istad.platform.customer.domain.service.CustomerDomainService;
+import kh.edu.istad.platform.customer.domain.valueobject.Email;
+import kh.edu.istad.platform.customer.domain.valueobject.PhoneNumber;
 import kh.edu.istad.platform.customer.domain.port.out.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 @Component
 @Slf4j
@@ -19,10 +21,12 @@ public class InitiateCustomerUseCase {
     private final CustomerDomainService customerDomainService;
     private final CustomerRepository customerRepository;
 
-    public InitiateCustomerResult execute(InitiateCustomerCommand command) {
+    public Mono<InitiateCustomerResult> execute(
+            InitiateCustomerCommand command
+    ) {
         log.info("initiate customer usecase: {}", command);
 
-        Customer customer = Customer.Builder.builder()
+        Customer customer = Customer.builder()
                 .username(command.username())
                 .familyName(command.familyName())
                 .givenName(command.givenName())
@@ -32,16 +36,10 @@ public class InitiateCustomerUseCase {
 
         customerDomainService.initiateCustomer(customer);
 
-        Customer savedCustomer = customerRepository.save(customer);
-
-        return new InitiateCustomerResult(
-                savedCustomer.getId().uuid(),
-                savedCustomer.getUsername(),
-                savedCustomer.getFamilyName(),
-                savedCustomer.getGivenName(),
-                savedCustomer.getEmail().value(),
-                savedCustomer.getPhoneNumber().value()
-        );
+        return customerRepository.save(customer)
+                .map(savedCustomer ->
+                        new InitiateCustomerResult(savedCustomer.getId().value())
+                );
     }
 
 }

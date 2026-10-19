@@ -1,11 +1,6 @@
 package kh.edu.istad.platform.customer.domain.usecase;
 
-import kh.edu.istad.common.domain.valueobject.Customerid;
-import kh.edu.istad.platform.customer.domain.dto.DeactivateCustomerCommand;
-import kh.edu.istad.platform.customer.domain.dto.DeactivateCustomerResult;
-import kh.edu.istad.platform.customer.domain.entity.entity.Customer;
-import kh.edu.istad.platform.customer.domain.entity.exception.CustomerDomainException;
-import kh.edu.istad.platform.customer.domain.entity.service.CustomerDomainService;
+import kh.edu.istad.platform.customer.domain.service.CustomerDomainService;
 import kh.edu.istad.platform.customer.domain.port.out.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,21 +14,15 @@ public class DeactivateCustomerUseCase {
     private final CustomerDomainService customerDomainService;
     private final CustomerRepository customerRepository;
 
-    public DeactivateCustomerResult execute(DeactivateCustomerCommand command) {
-        log.info("deactivate customer usecase: {}", command);
-
-        Customer customer = customerRepository.findById(new Customerid(command.customerId()))
-                .orElseThrow(() -> new CustomerDomainException("Customer not found"));
-
-        // throws if the status is not ACTIVE, then sets INACTIVE
-        customerDomainService.deactivateCustomer(customer);
-
-        Customer savedCustomer = customerRepository.save(customer);
-
-        return new DeactivateCustomerResult(
-                savedCustomer.getId().uuid(),
-                savedCustomer.getCustomerStatus().name()
-        );
-    }
-
+//    public void execute(UUID customerId) {
+//        log.info("deactivate customer usecase: {}", customerId);
+//
+//        Customer customer = customerRepository.findById(new CustomerId(customerId))
+//                .orElseThrow(() -> new CustomerDomainException(
+//                        "Customer not found: " + customerId));
+//
+//        customerDomainService.deactivateCustomer(customer);
+//
+//        customerRepository.save(customer);
+//    }
 }

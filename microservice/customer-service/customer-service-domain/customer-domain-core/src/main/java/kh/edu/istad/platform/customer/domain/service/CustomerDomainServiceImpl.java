@@ -1,14 +1,14 @@
-package kh.edu.istad.platform.customer.domain.entity.service;
+package kh.edu.istad.platform.customer.domain.service;
 
-import kh.edu.istad.platform.customer.domain.entity.entity.Customer;
-import kh.edu.istad.platform.customer.domain.entity.event.CustomerDeactivatedEvent;
-import kh.edu.istad.platform.customer.domain.entity.event.CustomerInitiatedEvent;
-import kh.edu.istad.platform.customer.domain.entity.event.CustomerUpdatedEvent;
+import kh.edu.istad.platform.customer.domain.entity.Customer;
+import kh.edu.istad.platform.customer.domain.event.CustomerDeactivatedEvent;
+import kh.edu.istad.platform.customer.domain.event.CustomerInitiatedEvent;
+import kh.edu.istad.platform.customer.domain.event.CustomerUpdatedEvent;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-public class CustomerDomainServiceImpl implements CustomerDomainService{
+public class CustomerDomainServiceImpl implements CustomerDomainService {
     @Override
     public CustomerInitiatedEvent initiateCustomer(Customer customer) {
         customer.initiateCustomer();
@@ -16,8 +16,8 @@ public class CustomerDomainServiceImpl implements CustomerDomainService{
     }
 
     @Override
-    public CustomerUpdatedEvent updateCustomer(Customer customer) {
-        customer.updateCustomer(customer.getFamilyName(), customer.getGivenName());
+    public CustomerUpdatedEvent updateCustomer(Customer customer, String familyName, String givenName) {
+        customer.updateCustomer(familyName, givenName);
         return new CustomerUpdatedEvent(customer, ZonedDateTime.now(ZoneId.of("UTC")));
     }
 
@@ -26,5 +26,4 @@ public class CustomerDomainServiceImpl implements CustomerDomainService{
         customer.deactivateCustomer();
         return new CustomerDeactivatedEvent(customer, ZonedDateTime.now(ZoneId.of("UTC")));
     }
-
 }
