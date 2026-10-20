@@ -1,0 +1,6 @@
+package kh.edu.istad.platform.customer.domain.exception;
+
+public enum SegmentErrorCode {
+    SEGMENT_NOT_FOUND, SEGMENT_DUPLICATE, SEGMENT_INVALID_INPUT, SEGMENT_INVALID_STATE,
+    SEGMENT_NOT_EMPTY, CUSTOMER_NOT_FOUND, MEMBERSHIP_CONFLICT, MEMBERSHIP_NOT_FOUND
+}
