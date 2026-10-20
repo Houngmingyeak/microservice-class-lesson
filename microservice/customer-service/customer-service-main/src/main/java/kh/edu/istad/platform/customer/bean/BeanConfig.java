@@ -2,6 +2,7 @@ package kh.edu.istad.platform.customer.bean;
 
 import kh.edu.istad.platform.customer.domain.port.out.CustomerExistencePort;
 import kh.edu.istad.platform.customer.domain.port.out.CustomerSegmentRepository;
+import kh.edu.istad.platform.customer.domain.port.out.CustomerStatisticsPort;
 import kh.edu.istad.platform.customer.domain.port.out.SegmentMembershipRepository;
 import kh.edu.istad.platform.customer.domain.service.CustomerDomainService;
 import kh.edu.istad.platform.customer.domain.service.CustomerDomainServiceImpl;
@@ -9,6 +10,8 @@ import kh.edu.istad.platform.customer.domain.service.CustomerSegmentDomainServic
 import kh.edu.istad.platform.customer.domain.service.CustomerSegmentDomainServiceImpl;
 import kh.edu.istad.platform.customer.domain.usecase.CustomerSegmentUseCase;
 import kh.edu.istad.platform.customer.domain.usecase.CustomerSegmentUseCaseImpl;
+import kh.edu.istad.platform.customer.domain.usecase.GetCustomerStatisticsUseCase;
+import kh.edu.istad.platform.customer.domain.usecase.GetCustomerStatisticsUseCaseImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -31,5 +34,10 @@ public class BeanConfig {
             SegmentMembershipRepository memberships,
             CustomerExistencePort customers) {
         return new CustomerSegmentUseCaseImpl(segments, memberships, customers);
+    }
+
+    @Bean
+    public GetCustomerStatisticsUseCase getCustomerStatisticsUseCase(CustomerStatisticsPort port) {
+        return new GetCustomerStatisticsUseCaseImpl(port);
     }
 }

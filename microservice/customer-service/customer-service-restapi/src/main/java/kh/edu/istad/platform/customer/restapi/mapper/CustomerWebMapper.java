@@ -1,16 +1,13 @@
 package kh.edu.istad.platform.customer.restapi.mapper;
 
+import kh.edu.istad.platform.customer.domain.dto.CustomerStatistics;
 import kh.edu.istad.platform.customer.domain.dto.InitiateCustomerCommand;
 import kh.edu.istad.platform.customer.domain.dto.InitiateCustomerResult;
 import kh.edu.istad.platform.customer.domain.dto.UpdateCustomerCommand;
 import kh.edu.istad.platform.customer.domain.entity.Customer;
 import kh.edu.istad.platform.customer.domain.valueobject.Email;
 import kh.edu.istad.platform.customer.domain.valueobject.PhoneNumber;
-import kh.edu.istad.platform.customer.restapi.dto.CustomerDeactivateResponse;
-import kh.edu.istad.platform.customer.restapi.dto.CustomerInitiateRequest;
-import kh.edu.istad.platform.customer.restapi.dto.CustomerInitiateResponse;
-import kh.edu.istad.platform.customer.restapi.dto.CustomerUpdateRequest;
-import kh.edu.istad.platform.customer.restapi.dto.CustomerUpdateResponse;
+import kh.edu.istad.platform.customer.restapi.dto.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -51,4 +48,6 @@ public interface CustomerWebMapper {
 
     @Mapping(target = "customerId", expression = "java(customer.getId().value())")
     CustomerDeactivateResponse toDeactivateResponse(Customer customer);
+
+    CustomerStatisticsResponse toStatisticsResponse(CustomerStatistics statistics);
 }

@@ -2,10 +2,7 @@ package kh.edu.istad.platform.customer.restapi.controller;
 
 import jakarta.validation.Valid;
 import kh.edu.istad.common.domain.valueobject.Customerid;
-import kh.edu.istad.platform.customer.domain.usecase.DeactivateCustomerUseCase;
-import kh.edu.istad.platform.customer.domain.usecase.InitiateCustomerUseCase;
-import kh.edu.istad.platform.customer.domain.usecase.QueryRepositoryUseCase;
-import kh.edu.istad.platform.customer.domain.usecase.UpdateCustomerUseCase;
+import kh.edu.istad.platform.customer.domain.usecase.*;
 import kh.edu.istad.platform.customer.restapi.dto.*;
 import kh.edu.istad.platform.customer.restapi.mapper.CustomerWebMapper;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +27,7 @@ public class CustomerController {
     private final DeactivateCustomerUseCase deactivateCustomerUseCase;
     private final QueryRepositoryUseCase queryRepositoryUseCase;
     private final CustomerWebMapper customerWebMapper;
+    private final GetCustomerStatisticsUseCase getCustomerStatisticsUseCase;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
@@ -99,5 +97,11 @@ public class CustomerController {
 
         return queryRepositoryUseCase.search(filter)
                 .map(result -> PageResponse.from(result, c -> customerWebMapper.customerToResponse(c)));
+    }
+
+    @GetMapping("/statistics")
+    public Mono<CustomerStatisticsResponse> statistics() {
+        return getCustomerStatisticsUseCase.execute()
+                .map(customerWebMapper::toStatisticsResponse);
     }
 }
