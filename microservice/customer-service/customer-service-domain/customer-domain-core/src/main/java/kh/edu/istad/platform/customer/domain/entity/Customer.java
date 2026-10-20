@@ -1,7 +1,6 @@
 package kh.edu.istad.platform.customer.domain.entity;
 
 import kh.edu.istad.common.domain.entity.AggregateRoot;
-
 import kh.edu.istad.common.domain.valueobject.Customerid;
 import kh.edu.istad.platform.customer.domain.exception.CustomerDomainException;
 import kh.edu.istad.platform.customer.domain.valueobject.CustomerStatus;
@@ -18,9 +17,6 @@ public class Customer extends AggregateRoot<Customerid> {
     private final PhoneNumber phoneNumber;
     private CustomerStatus status;
 
-    //domain critical logic
-
-    // Domain Critical Logic
     public void initiateCustomer() {
         validateCustomer();
         super.setId(new Customerid(UUID.randomUUID()));
@@ -45,12 +41,15 @@ public class Customer extends AggregateRoot<Customerid> {
     }
 
     public void deactivateCustomer() {
-        if (status != CustomerStatus.ACTIVE) {
-            throw new CustomerDomainException("Could not deactivate because customer status is not active");
+        if (this.status == CustomerStatus.INACTIVE) {
+            throw new CustomerDomainException("Customer is already deactivated");
         }
-        status = CustomerStatus.INACTIVE;
+        this.status = CustomerStatus.INACTIVE;
     }
 
+    public void deactivate() {
+        deactivateCustomer();
+    }
 
     public String getUsername() {
         return username;
@@ -89,7 +88,6 @@ public class Customer extends AggregateRoot<Customerid> {
     public static Builder builder() {
         return new Builder();
     }
-
 
     public static final class Builder {
         private Customerid id;

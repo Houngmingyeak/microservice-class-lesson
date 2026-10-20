@@ -6,5 +6,4 @@ public record UpdateCustomerCommand(
         UUID customerId,
         String familyName,
         String givenName
-) {
-}
+) {}
