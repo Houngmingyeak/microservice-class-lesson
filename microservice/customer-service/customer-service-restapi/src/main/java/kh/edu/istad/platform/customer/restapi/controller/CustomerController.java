@@ -13,6 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import kh.edu.istad.platform.customer.domain.dto.CustomerFilter;
+import kh.edu.istad.platform.customer.domain.valueobject.CustomerStatus;
+import kh.edu.istad.platform.customer.restapi.dto.PageResponse;
+import java.time.Instant;
 
 import java.util.UUID;
 
@@ -70,5 +74,30 @@ public class CustomerController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Mono<Void> deleteCustomer(@PathVariable("id") UUID id) {
         return queryRepositoryUseCase.deleteById(new Customerid(id));
+    }
+
+    // SEARCH (dynamic filter + paging + sort)
+    @GetMapping("/search")
+    public Mono<PageResponse<CustomerInitiateResponse>> search(
+            @RequestParam(name = "keyword", required = false) String keyword,
+            @RequestParam(name = "username", required = false) String username,
+            @RequestParam(name = "familyName", required = false) String familyName,
+            @RequestParam(name = "givenName", required = false) String givenName,
+            @RequestParam(name = "email", required = false) String email,
+            @RequestParam(name = "phoneNumber", required = false) String phoneNumber,
+            @RequestParam(name = "status", required = false) CustomerStatus status,
+            @RequestParam(name = "createdFrom", required = false) Instant createdFrom,
+            @RequestParam(name = "createdTo", required = false) Instant createdTo,
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "sortBy", defaultValue = "createdAt") String sortBy,
+            @RequestParam(name = "sortDir", defaultValue = "desc") String sortDir
+    ) {
+        CustomerFilter filter = new CustomerFilter(
+                keyword, username, familyName, givenName, email, phoneNumber,
+                status, createdFrom, createdTo, page, size, sortBy, sortDir);
+
+        return queryRepositoryUseCase.search(filter)
+                .map(result -> PageResponse.from(result, c -> customerWebMapper.customerToResponse(c)));
     }
 }

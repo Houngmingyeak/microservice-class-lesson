@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import kh.edu.istad.platform.customer.domain.dto.CustomerFilter;
+import kh.edu.istad.platform.customer.domain.dto.PageResult;
 
 @Service
 @RequiredArgsConstructor
@@ -28,5 +30,9 @@ public class QueryRepositoryUseCase {
 
     public Mono<Void> deleteById(Customerid id) {
         return customerRepository.deleteById(id);
+    }
+
+    public Mono<PageResult<Customer>> search(CustomerFilter filter) {
+        return customerRepository.search(filter);
     }
 }
