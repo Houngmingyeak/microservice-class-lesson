@@ -1,6 +1,7 @@
 package kh.edu.istad.common.domain;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 public record Money(
         BigDecimal amount
@@ -20,9 +21,17 @@ public record Money(
 
     public Money add(Money other){
         BigDecimal newAmount = this.amount.add(other.amount);
-        return new Money(newAmount);
+        return new Money(setScale(newAmount));
     }
 
+    private BigDecimal setScale(BigDecimal inputAmount) {
+        return inputAmount.setScale(2, RoundingMode.HALF_EVEN);
+    }
+
+    public Money subtract(Money other){
+        BigDecimal newAmount = this.amount.subtract(other.amount);
+        return new Money(setScale(newAmount));
+    }
 
 
 
