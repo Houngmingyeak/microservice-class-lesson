@@ -33,6 +33,10 @@ public record Money(
         return new Money(setScale(newAmount));
     }
 
+    public Money multiply(BigDecimal multiplier){
+        BigDecimal newAmount = this.amount.multiply(multiplier);
+        return new Money(setScale(newAmount));
+    }
 
 
 //    public void isGreaterThanZero(){
