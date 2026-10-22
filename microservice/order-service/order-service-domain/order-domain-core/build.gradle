@@ -4,4 +4,6 @@ plugins {
 
 dependencies {
     api 'kh.edu.istad:istad-common-domain'
+    compileOnly 'org.projectlombok:lombok:1.18.48'
+    annotationProcessor 'org.projectlombok:lombok:1.18.48'
 }

@@ -38,7 +38,6 @@ public record Money(
         return new Money(setScale(newAmount));
     }
 
-
 //    public void isGreaterThanZero(){
 //        if (!(amount.compareTo(BigDecimal.ZERO) > 0)){
 //            System.out.println("Amount is not greater than zero");
