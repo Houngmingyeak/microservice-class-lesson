@@ -4,7 +4,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.UUID;
 
@@ -18,4 +20,13 @@ public class CustomerEntity {
     @Id
     @Column(name = "customer_id")
     private UUID customerId;
+
+    @Column(name = "username")
+    private String username;
+
+    @Column(name = "family_name")
+    private String familyName;
+
+    @Column(name = "given_name")
+    private String givenName;
 }

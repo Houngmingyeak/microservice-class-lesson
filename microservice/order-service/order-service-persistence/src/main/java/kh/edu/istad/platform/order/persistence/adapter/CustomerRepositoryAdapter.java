@@ -15,6 +15,7 @@ public class CustomerRepositoryAdapter implements CustomerRepository {
 
     private final CustomerJpaRepository customerJpaRepository;
 
+
     public CustomerRepositoryAdapter(CustomerJpaRepository customerJpaRepository) {
         this.customerJpaRepository = customerJpaRepository;
     }

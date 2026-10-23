@@ -26,6 +26,9 @@ public class Order extends AggregateRoot<OrderId> {
     private TrackingId trackingId;
     private OrderStatus orderStatus;
     private List<String> failureMessages;
+    private Long version;
+
+
 
     // domain critical logic
 
@@ -164,6 +167,9 @@ public class Order extends AggregateRoot<OrderId> {
     }
 
     private Order(Builder builder) {
+        // orderId is used when rehydrating an order from persistence; id remains
+        // as a compatibility alias for callers that build new orders directly.
+        super.setId(builder.orderId != null ? builder.orderId : builder.id);
         customerId = builder.customerId;
         businessId = builder.businessId;
         deliveryAddress = builder.deliveryAddress;
@@ -171,10 +177,8 @@ public class Order extends AggregateRoot<OrderId> {
         items = builder.items;
         trackingId = builder.trackingId;
         orderStatus = builder.orderStatus;
-        failureMessages = builder.failureMessages != null ? builder.failureMessages : new ArrayList<>();
-        if (builder.orderId != null) {
-            super.setId(builder.orderId);
-        }
+        failureMessages = builder.failureMessages;
+        version = builder.version;
     }
 
     public static final class Builder {
@@ -187,6 +191,8 @@ public class Order extends AggregateRoot<OrderId> {
         private TrackingId trackingId;
         private OrderStatus orderStatus;
         private List<String> failureMessages;
+        private Long version;
+        private OrderId id;
 
         private Builder() {
         }
@@ -240,8 +246,19 @@ public class Order extends AggregateRoot<OrderId> {
             return this;
         }
 
+        public Builder version(Long val) {
+            version = val;
+            return this;
+        }
+
         public Order build() {
             return new Order(this);
         }
+
+        public Builder id(OrderId val) {
+            id = val;
+            return this;
+        }
     }
+
 }
