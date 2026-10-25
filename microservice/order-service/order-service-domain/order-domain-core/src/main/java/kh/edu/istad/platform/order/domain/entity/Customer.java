@@ -9,6 +9,10 @@ public class Customer extends AggregateRoot<CustomerId> {
     private final String familyName;
     private final String givenName;
 
+    // NEW: used when only the customer id is known (CustomerEntity has only customerId)
+    public Customer(CustomerId customerId) {
+        this(customerId, null, null, null);
+    }
 
     public Customer(CustomerId customerId, String username, String familyName, String givenName) {
         this.username = username;
@@ -22,6 +26,18 @@ public class Customer extends AggregateRoot<CustomerId> {
         username = builder.username;
         familyName = builder.familyName;
         givenName = builder.givenName;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getFamilyName() {
+        return familyName;
+    }
+
+    public String getGivenName() {
+        return givenName;
     }
 
     public static final class Builder {

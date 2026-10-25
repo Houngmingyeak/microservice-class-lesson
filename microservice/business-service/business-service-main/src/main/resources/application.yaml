@@ -5,10 +5,17 @@ spring:
   application:
     name: business-service
   mongodb:
-    uri: mongodb://mongod:mongod@localhost:2026/business_db?authSource=admin
-    representation:
-      uuid: standard
-  data:
-    mongodb:
-      representation:
-        big-decimal: decimal128
+    host: localhost
+    port: 2026
+    username: mongod
+    password: mongod
+    database: business_db
+    authentication-database: admin
+    uuid-representation: standard
+  eureka:
+    client:
+      service-url:
+        defaultZone: http://localhost:8761/eureka/
+    instance:
+      prefer-ip-address: true
+      instance-id: ${spring.application.name}:${server.port}
