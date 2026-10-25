@@ -2,11 +2,11 @@ plugins {
     id 'springboot-common-conventions'
 }
 dependencies {
-    implementation 'kh.edu.istad:payment-domain-core'
-    implementation 'kh.edu.istad:payment-application-service'
-    implementation 'kh.edu.istad:payment-service-message'
-    implementation 'kh.edu.istad:payment-service-persistence'
-    implementation 'kh.edu.istad:payment-service-restapi'
+    implementation project(':payment-service-domain:payment-domain-core')
+    implementation project(':payment-service-domain:payment-application-service')
+    implementation project(':payment-service-message')
+    implementation project(':payment-service-persistence')
+    implementation project(':payment-service-restapi')
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     runtimeOnly 'org.postgresql:postgresql'
 }

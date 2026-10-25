@@ -3,5 +3,6 @@ plugins {
 }
 
 dependencies {
-    api 'kh.edu.istad:payment-domain-core'
+    api project(':payment-service-domain:payment-domain-core')
+    implementation 'org.springframework:spring-tx'
 }

@@ -1,14 +1,15 @@
 server:
   port: 9094
 
-#spring:
-#  application:
-#    name: payment-service
-#  datasource:
-#    url: jdbc:postgresql://localhost:5432/payment_db
-#    username: postgres
-#    password: your_password
-#  jpa:
-#    hibernate:
-#      ddl-auto: update
-#    show-sql: true
+spring:
+  application:
+    name: payment-service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/payment_db
+    username: postgres
+    password: postgre
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false

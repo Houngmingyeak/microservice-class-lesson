@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    api 'kh.edu.istad:payment-application-service'
+    api project(':payment-service-domain:payment-application-service')
 }

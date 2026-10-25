@@ -12,3 +12,6 @@ public class PaymentDomainException extends DomainException {
         super(message, cause);
     }
 }
+
+
+
