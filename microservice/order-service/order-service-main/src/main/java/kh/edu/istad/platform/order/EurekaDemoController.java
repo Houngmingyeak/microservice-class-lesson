@@ -1,32 +1,28 @@
 package kh.edu.istad.platform.order;
 
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClient;
 
 import java.util.Map;
-
 @RestController
-@RequestMapping("/api/v1/demo")
+@RequestMapping("/api/demo")
 public class EurekaDemoController {
 
-    private final RestClient.Builder builder;
+    private final RestClient restClient;
 
-    public EurekaDemoController(RestClient.Builder builder) {
-        this.builder = builder;
+    public EurekaDemoController(@LoadBalanced RestClient.Builder builder) {
+        this.restClient = builder.build();
     }
 
-    @GetMapping("/eureka")
-    public Map<String, Object> call() {
-        return Map.of(
-                "customer", get("http://customer-service"),
-                "business", get("http://business-service"),
-                "payment",  get("http://payment-service"));
-    }
-
-    private Map<?, ?> get(String baseUrl) {
-        return builder.baseUrl(baseUrl).build().get()
-                .uri("/api/v1/instance-info").retrieve().body(Map.class);
+    @GetMapping("/customers")
+    public String callCustomerService() {
+        // "customer-service" ត្រូវត្រូវនឹង spring.application.name របស់ Customer service
+        return restClient.get()
+                .uri("http://customer-service/api/customers")
+                .retrieve()
+                .body(String.class);
     }
 }
