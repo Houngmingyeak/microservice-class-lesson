@@ -7,4 +7,6 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     compileOnly 'org.projectlombok:lombok:1.18.48'
     annotationProcessor 'org.projectlombok:lombok:1.18.48'
+    implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
+
 }

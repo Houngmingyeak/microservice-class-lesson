@@ -1,35 +1,48 @@
-server:
-  port: 9093
-
 spring:
   application:
     name: order-service
-  datasource:
-    url: jdbc:postgresql://localhost:5432/order_db
-    username: postgres
+  profiles:
+    active: dev
+  config:
+    import: "optional:consul:"
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        service-name: order-service
+        prefer-ip-address: true
+        ip-address: host.docker.internal
+        health-check-path: /actuator/health
+        health-check-interval: 10s
+        instance-id: ${spring.application.name}:${random.value}
+      config:
+        format: YAML
+        # true = អាន config ពី Consul KV (global.version, service.*, server.port)
+        enabled: true
+        watch:
+          enabled: true
+
+  r2dbc:
+    url: r2dbc:postgresql://localhost:9543/db_order
+    username: iteuser
+    password: postgre
+
+  liquibase:
+    enabled: true
+    change-log: classpath:/db.changelog/db.changelog-master.yaml
+    url: jdbc:postgresql://localhost:9543/db_order
+    user: iteuser
     password: postgre
     driver-class-name: org.postgresql.Driver
-  jpa:
-    open-in-view: false
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+
+# global.version, service.* និង server.port មកពី Consul KV ទាំងអស់ ដូច្នេះមិនដាក់ក្នុងនេះទេ
 
 management:
   endpoints:
     web:
       exposure:
         include: health,info
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-    healthcheck:
-      enabled: true
-    registry-fetch-interval-seconds: 5
-  instance:
-    prefer-ip-address: true
-    instance-id: ${spring.application.name}:${server.port}
-    lease-renewal-interval-in-seconds: 5
-    lease-expiration-duration-in-seconds: 15
+  endpoint:
+    health:
+      show-details: always

@@ -15,7 +15,6 @@ public class CustomerRepositoryAdapter implements CustomerRepository {
 
     private final CustomerJpaRepository customerJpaRepository;
 
-
     public CustomerRepositoryAdapter(CustomerJpaRepository customerJpaRepository) {
         this.customerJpaRepository = customerJpaRepository;
     }
@@ -23,12 +22,26 @@ public class CustomerRepositoryAdapter implements CustomerRepository {
     @Override
     @Transactional(readOnly = true)
     public Optional<Customer> findCustomer(CustomerId customerId) {
-        Optional<CustomerEntity> optionalEntity = customerJpaRepository.findById(customerId.id());
+        /*
+         * មូលហេតុនៃ Error:
+         * នៅក្នុង Spring Data R2DBC (Reactive), method findById() ផ្តល់តម្លៃត្រឡប់មកវិញជា `Mono<CustomerEntity>`
+         * មិនមែនជា `Optional<CustomerEntity>` ដូចកាលប្រើ Spring Data JPA ទៀតឡើយ។
+         *
+         * ដំណោះស្រាយ:
+         * ហៅ `.blockOptional()` នៅលើ Mono ដើម្បីទាញយកទិន្នន័យពី Reactive Stream
+         * មកជា `java.util.Optional<CustomerEntity>` វិញ។
+         */
+        Optional<CustomerEntity> optionalEntity = customerJpaRepository
+                .findById(customerId.id())
+                .blockOptional(); // បម្លែងពី Mono<CustomerEntity> ទៅជា Optional<CustomerEntity>
+
+        // ត្រួតពិនិត្យប្រសិនបើគ្មានទិន្នន័យក្នុង Database
         if (optionalEntity.isEmpty()) {
             return Optional.empty();
         }
-        CustomerEntity customerEntity = optionalEntity.get();
 
+        // ទាញយក Entity រួច map ទៅកាន់ Domain Object
+        CustomerEntity customerEntity = optionalEntity.get();
         Customer customer = new Customer(new CustomerId(customerEntity.getCustomerId()));
 
         return Optional.of(customer);

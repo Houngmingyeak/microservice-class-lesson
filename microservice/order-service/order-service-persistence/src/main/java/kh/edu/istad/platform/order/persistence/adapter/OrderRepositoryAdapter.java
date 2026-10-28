@@ -14,6 +14,7 @@ import kh.edu.istad.platform.order.domain.valueobject.StreetAddress;
 import kh.edu.istad.platform.order.domain.valueobject.TrackingId;
 import kh.edu.istad.platform.order.persistence.entity.OrderEntity;
 import kh.edu.istad.platform.order.persistence.entity.OrderItemEntity;
+import kh.edu.istad.platform.order.persistence.repository.OrderItemJpaRepository;
 import kh.edu.istad.platform.order.persistence.repository.OrderJpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,9 +27,14 @@ import java.util.Optional;
 public class OrderRepositoryAdapter implements OrderRepository {
 
     private final OrderJpaRepository orderJpaRepository;
+    // R2DBC មិនមាន Cascade ដូច JPA ទេ ដូច្នេះយើងត្រូវការ OrderItemJpaRepository
+    // ដើម្បី save និង query Order Items ដាច់ដោយឡែក
+    private final OrderItemJpaRepository orderItemJpaRepository;
 
-    public OrderRepositoryAdapter(OrderJpaRepository orderJpaRepository) {
+    public OrderRepositoryAdapter(OrderJpaRepository orderJpaRepository,
+                                  OrderItemJpaRepository orderItemJpaRepository) {
         this.orderJpaRepository = orderJpaRepository;
+        this.orderItemJpaRepository = orderItemJpaRepository;
     }
 
     @Override
@@ -42,7 +48,7 @@ public class OrderRepositoryAdapter implements OrderRepository {
         orderEntity.setPrice(order.getPrice().amount());
         orderEntity.setOrderStatus(order.getOrderStatus());
 
-        // failure messages are stored as one text column separated by ";"
+        // Failure messages រក្សាទុកជា String ផ្តាច់គ្នាដោយ ";"
         String failureMessages = null;
         if (order.getFailureMessages() != null && !order.getFailureMessages().isEmpty()) {
             failureMessages = String.join(";", order.getFailureMessages());
@@ -55,21 +61,36 @@ public class OrderRepositoryAdapter implements OrderRepository {
         orderEntity.setPostalCode(address.postalCode());
         orderEntity.setCity(address.city());
 
-        List<OrderItemEntity> itemEntities = new ArrayList<>();
-        for (OrderItem item : order.getItems()) {
-            OrderItemEntity itemEntity = new OrderItemEntity();
-            itemEntity.setOrderItemId(item.getId().id());
-            itemEntity.setOrder(orderEntity);
-            itemEntity.setProductId(item.getProduct().getId().id());
-            itemEntity.setProductName(item.getProduct().getName());
-            itemEntity.setQuantity(item.getQuantity());
-            itemEntity.setPrice(item.getPrice().amount());
-            itemEntity.setSubTotal(item.getSubTotal().amount());
-            itemEntities.add(itemEntity);
-        }
-        orderEntity.setItems(itemEntities);
+        /*
+         * ចំណុចសំខាន់ទី ១ (Save Order):
+         * នៅក្នុង R2DBC, method save() ផ្តល់តម្លៃជា Mono<OrderEntity>។
+         * ប្រសិនបើយើងមិនហៅ .block() ទេ Stream នឹងមិន subscribe ហើយទិន្នន័យនឹងមិនត្រូវបាន insert ចូល Database ឡើយ។
+         */
+        orderJpaRepository.save(orderEntity).block();
 
-        orderJpaRepository.save(orderEntity);
+        /*
+         * ចំណុចសំខាន់ទី ២ (Save Order Items):
+         * ដោយសារ R2DBC គ្មាន CascadeType.ALL ដូច JPA ទេ យើងត្រូវ Map Order Items
+         * ហើយ save ពួកវាចូល Database ដោយផ្ទាល់តាមរយៈ orderItemJpaRepository។
+         */
+        if (order.getItems() != null && !order.getItems().isEmpty()) {
+            List<OrderItemEntity> itemEntities = new ArrayList<>();
+            for (OrderItem item : order.getItems()) {
+                OrderItemEntity itemEntity = new OrderItemEntity();
+                itemEntity.setOrderItemId(item.getId().id());
+                // នៅក្នុង R2DBC យើងរក្សាទុកត្រឹម orderId (Foreign Key) មិនមែន object OrderEntity ទាំងមូលទេ
+                itemEntity.setOrderId(orderEntity.getOrderId());
+                itemEntity.setProductId(item.getProduct().getId().id());
+                itemEntity.setProductName(item.getProduct().getName());
+                itemEntity.setQuantity(item.getQuantity());
+                itemEntity.setPrice(item.getPrice().amount());
+                itemEntity.setSubTotal(item.getSubTotal().amount());
+                itemEntities.add(itemEntity);
+            }
+
+            // saveAll() ត្រឡប់ជា Flux<OrderItemEntity> ដូច្នេះយើងប្រើ .collectList().block() ដើម្បីរង់ចាំដំណើរការ save បញ្ចប់
+            orderItemJpaRepository.saveAll(itemEntities).collectList().block();
+        }
 
         return order;
     }
@@ -77,7 +98,12 @@ public class OrderRepositoryAdapter implements OrderRepository {
     @Override
     @Transactional(readOnly = true)
     public Optional<Order> findById(OrderId orderId) {
-        Optional<OrderEntity> optionalEntity = orderJpaRepository.findById(orderId.id());
+        /*
+         * ចំណុចសំខាន់ទី ៣ (Find Order):
+         * findById() របស់ R2DBC ផ្តល់ជា Mono<OrderEntity>។
+         * យើងប្រើ .blockOptional() ដើម្បីបម្លែងពី Mono មកជា java.util.Optional<OrderEntity>។
+         */
+        Optional<OrderEntity> optionalEntity = orderJpaRepository.findById(orderId.id()).blockOptional();
         if (optionalEntity.isEmpty()) {
             return Optional.empty();
         }
@@ -90,22 +116,33 @@ public class OrderRepositoryAdapter implements OrderRepository {
                 orderEntity.getCity()
         );
 
+        /*
+         * ចំណុចសំខាន់ទី ៤ (Fetch Items ដោយដៃ):
+         * ក្នុង JPA យើងគ្រាន់តែហៅ orderEntity.getItems()។
+         * ប៉ុន្តែក្នុង R2DBC យើងត្រូវ query រក item entities តាមរយៈ orderId ផ្ទាល់ពី orderItemJpaRepository។
+         */
+        List<OrderItemEntity> itemEntities = orderItemJpaRepository.findAllByOrderId(orderEntity.getOrderId())
+                .collectList()
+                .block();
+
         List<OrderItem> items = new ArrayList<>();
-        for (OrderItemEntity itemEntity : orderEntity.getItems()) {
-            Product product = new Product(
-                    new ProductId(itemEntity.getProductId()),
-                    itemEntity.getProductName(),
-                    new Money(itemEntity.getPrice())
-            );
-            OrderItem item = new OrderItem(
-                    new OrderItemId(itemEntity.getOrderItemId()),
-                    new OrderId(orderEntity.getOrderId()),
-                    product,
-                    itemEntity.getQuantity(),
-                    new Money(itemEntity.getPrice()),
-                    new Money(itemEntity.getSubTotal())
-            );
-            items.add(item);
+        if (itemEntities != null) {
+            for (OrderItemEntity itemEntity : itemEntities) {
+                Product product = new Product(
+                        new ProductId(itemEntity.getProductId()),
+                        itemEntity.getProductName(),
+                        new Money(itemEntity.getPrice())
+                );
+                OrderItem item = new OrderItem(
+                        new OrderItemId(itemEntity.getOrderItemId()),
+                        new OrderId(orderEntity.getOrderId()),
+                        product,
+                        itemEntity.getQuantity(),
+                        new Money(itemEntity.getPrice()),
+                        new Money(itemEntity.getSubTotal())
+                );
+                items.add(item);
+            }
         }
 
         List<String> failureMessages = new ArrayList<>();

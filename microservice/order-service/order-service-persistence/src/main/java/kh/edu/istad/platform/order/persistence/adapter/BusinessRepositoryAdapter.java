@@ -28,20 +28,24 @@ public class BusinessRepositoryAdapter implements BusinessRepository {
     @Override
     @Transactional(readOnly = true)
     public Optional<Business> findBusinessInformation(BusinessId businessId) {
-        Optional<BusinessEntity> optionalEntity = businessJpaRepository.findById(businessId.id());
+        // ប្តូរមកប្រើ .blockOptional() ដើម្បីទាញយកទិន្នន័យពី Mono
+        Optional<BusinessEntity> optionalEntity = businessJpaRepository.findById(businessId.id()).blockOptional();
+
         if (optionalEntity.isEmpty()) {
             return Optional.empty();
         }
         BusinessEntity businessEntity = optionalEntity.get();
 
         List<Product> products = new ArrayList<>();
-        for (BusinessProductEntity productEntity : businessEntity.getProducts()) {
-            Product product = new Product(
-                    new ProductId(productEntity.getProductId()),
-                    productEntity.getName(),
-                    new Money(productEntity.getPrice())
-            );
-            products.add(product);
+        if (businessEntity.getProducts() != null) {
+            for (BusinessProductEntity productEntity : businessEntity.getProducts()) {
+                Product product = new Product(
+                        new ProductId(productEntity.getProductId()),
+                        productEntity.getName(),
+                        new Money(productEntity.getPrice())
+                );
+                products.add(product);
+            }
         }
 
         Business business = new Business(
