@@ -1,4 +1,7 @@
 package kh.edu.istad.platform.order.persistence.entity;
 
-public class BusinessEntityId {
+import java.util.UUID;
+
+public record
+BusinessEntityId(Integer businessId, UUID productId) {
 }

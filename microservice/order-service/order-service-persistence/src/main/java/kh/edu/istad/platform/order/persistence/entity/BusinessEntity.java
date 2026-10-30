@@ -1,30 +1,29 @@
 package kh.edu.istad.platform.order.persistence.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Embedded;
+import org.springframework.data.relational.core.mapping.Table;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
-@Entity
-@Table(name = "businesses")
+@Table("businesses")
 public class BusinessEntity {
 
     @Id
-    @Column(name = "business_id")
-    private UUID businessId;
+    @Embedded.Nullable
+    private BusinessEntityId businessId;
 
-    @Column(name = "active", nullable = false)
-    private boolean active;
+    @Column("business_active")
+    private boolean businessActive;
+    @Column("product_name")
+    private String productName;
+    @Column("product_price")
+    private BigDecimal productPrice;
 
-    @OneToMany(mappedBy = "business")
-    private List<BusinessProductEntity> products = new ArrayList<>();
 }

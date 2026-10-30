@@ -1,15 +1,10 @@
 package kh.edu.istad.platform.order.persistence.entity;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import kh.edu.istad.platform.order.domain.valueobject.OrderStatus;
+
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -19,45 +14,27 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@Entity
-@Table(name = "orders")
+@Table("orders")
 public class OrderEntity {
-
     @Id
-    @Column(name = "order_id")
-    private UUID orderId;
+    private UUID id;
 
-    @Column(name = "customer_id", nullable = false)
+    @Column("customer_id")
     private UUID customerId;
 
-    @Column(name = "business_id", nullable = false)
+    @Column("business_id")
     private UUID businessId;
 
-    @Column(name = "tracking_id")
-    private UUID trackingId;
+    private String failureMessage;
+    private UUID orderAddressId;
 
-    @Column(name = "price", nullable = false, precision = 19, scale = 2)
+    @Column("price")
     private BigDecimal price;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "order_status", nullable = false)
-    private OrderStatus orderStatus;
+    @Column("tracking_id")
+    private UUID trackingId;
 
-    @Column(name = "failure_messages", length = 2000)
-    private String failureMessages;
+    @Column("order_status")
+    private String orderStatus;
 
-    @Column(name = "address_id")
-    private UUID addressId;
-
-    @Column(name = "street", nullable = false)
-    private String street;
-
-    @Column(name = "postal_code", nullable = false)
-    private String postalCode;
-
-    @Column(name = "city", nullable = false)
-    private String city;
-
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderItemEntity> items = new ArrayList<>();
 }
