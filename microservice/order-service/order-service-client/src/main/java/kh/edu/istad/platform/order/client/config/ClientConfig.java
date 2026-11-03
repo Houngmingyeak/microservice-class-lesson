@@ -8,6 +8,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.security.oauth2.client.AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientProvider;
+import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientProviderBuilder;
+import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.reactive.function.client.support.WebClientHttpServiceGroupConfigurer;
@@ -56,6 +62,33 @@ public class ClientConfig {
                                             )
                     );
         };
+    }
+
+    // ===== ថ្មី ===== Manager សម្រាប់យក access token (client_credentials) ដោយស្វ័យប្រវត្តិ
+    @Bean
+    public ReactiveOAuth2AuthorizedClientManager authorizedClientManager(
+            ReactiveClientRegistrationRepository clientRegistrationRepository,
+            ReactiveOAuth2AuthorizedClientService authorizedClientService) {
+
+        ReactiveOAuth2AuthorizedClientProvider authorizedClientProvider =
+                ReactiveOAuth2AuthorizedClientProviderBuilder.builder()
+                        .clientCredentials()
+                        .build();
+
+        AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager manager =
+                new AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager(
+                        clientRegistrationRepository,
+                        authorizedClientService
+                );
+        manager.setAuthorizedClientProvider(authorizedClientProvider);
+        return manager;
+    }
+
+    // ===== ថ្មី ===== ធ្វើឱ្យ HTTP Service Group អាន @ClientRegistrationId ហើយភ្ជាប់ Bearer token
+    @Bean
+    public OAuth2WebClientHttpServiceGroupConfigurer oauth2WebClientHttpServiceGroupConfigurer(
+            ReactiveOAuth2AuthorizedClientManager authorizedClientManager) {
+        return OAuth2WebClientHttpServiceGroupConfigurer.from(authorizedClientManager);
     }
 
 //    private final WebClient.Builder webClient;
@@ -111,7 +144,5 @@ public class ClientConfig {
 //
 //        return factory.createClient(type);
 //    }
-
-
 
 }
