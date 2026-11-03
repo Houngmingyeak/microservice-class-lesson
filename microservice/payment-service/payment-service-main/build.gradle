@@ -15,7 +15,8 @@ dependencies {
     implementation project(':payment-service-restapi')
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     runtimeOnly 'org.postgresql:postgresql'
-    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+//    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.cloud:spring-cloud-starter-consul-discovery'
 
 }

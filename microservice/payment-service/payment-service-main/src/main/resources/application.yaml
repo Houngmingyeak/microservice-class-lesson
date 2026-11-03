@@ -4,6 +4,22 @@ server:
 spring:
   application:
     name: payment-service
+    profiles:
+      active: dev
+  cloud:
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+    consul:
+      discovery:
+        health-check-url: http://host.docker.internal:${server.port}/actuator/health
+        prefer-ip-address: true
+        service-name: ${spring.application.name}
+        instance-id: ${spring.application.name}-${random.value}
   datasource:
     url: jdbc:postgresql://localhost:5432/payment_db
     username: postgres
@@ -18,17 +34,20 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: "health, gateway"
+  endpoint:
+    gateway:
+      access: read_only
 
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-    healthcheck:
-      enabled: true
-    registry-fetch-interval-seconds: 5
-  instance:
-    prefer-ip-address: true
-    instance-id: ${spring.application.name}:${server.port}
-    lease-renewal-interval-in-seconds: 5
-    lease-expiration-duration-in-seconds: 15
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://localhost:8761/eureka/
+#    healthcheck:
+#      enabled: true
+#    registry-fetch-interval-seconds: 5
+#  instance:
+#    prefer-ip-address: true
+#    instance-id: ${spring.application.name}:${server.port}
+#    lease-renewal-interval-in-seconds: 5
+#    lease-expiration-duration-in-seconds: 15

@@ -1,27 +1,118 @@
+#spring:
+#  application:
+#    name: order-service
+#  profiles:
+#    active: dev
+#  cloud:
+#    gateway:
+#      server:
+#        webflux:
+#          discovery:
+#            locator:
+#              enabled: true
+#              lower-case-service-id: true
+#    consul:
+#      discovery:
+#        health-check-url: http://host.docker.internal:${server.port}/actuator/health
+#        prefer-ip-address: true
+#        service-name: ${spring.application.name}
+#        instance-id: ${spring.application.name}-${random.value}
+##  cloud:
+##    consul:
+##      host: localhost
+##      port: 8500
+##      discovery:
+##        service-name: order-service
+##        prefer-ip-address: true
+##        ip-address: host.docker.internal
+##        health-check-path: /actuator/health
+##        health-check-interval: 10s
+##        instance-id: ${spring.application.name}:${random.value}
+##      config:
+##        format: YAML
+##        # true = អាន config ពី Consul KV (global.version, service.*, server.port)
+##        enabled: true
+##        watch:
+##          enabled: true
+#
+#  r2dbc:
+#    url: r2dbc:postgresql://localhost:9543/db_order
+#    username: iteuser
+#    password: postgre
+#
+#  liquibase:
+#    enabled: true
+#    change-log: classpath:/db.changelog/db.changelog-master.yaml
+#    url: jdbc:postgresql://localhost:9543/db_order
+#    user: iteuser
+#    password: postgre
+#    driver-class-name: org.postgresql.Driver
+#
+## global.version, service.* និង server.port មកពី Consul KV ទាំងអស់ ដូច្នេះមិនដាក់ក្នុងនេះទេ
+#
+##management:
+##  endpoints:
+##    web:
+##      exposure:
+##        include: health,info
+##  endpoint:
+##    health:
+##      show-details: always
+#
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: "health, gateway"
+#  endpoint:
+#    gateway:
+#      access: read_only
+#
+#  http:
+#    serviceclient:
+#      customer-service:
+#        base-url: http://customer-service:9091
+#        connect-timeout:
+#          seconds: 5
+#        response-timeout:
+#          seconds: 5
+#      business-service:
+#        base-url: http://business-service:9092
+#        connect-timeout:
+#          seconds: 5
+#        response-timeout:
+#          seconds: 5
+server:
+  port: 9093
+
 spring:
   application:
     name: order-service
   profiles:
     active: dev
   config:
-    import: "optional:consul:"
+    import: "optional:consul:localhost:8500"
   cloud:
+    gateway:
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
     consul:
       host: localhost
       port: 8500
-      discovery:
-        service-name: order-service
-        prefer-ip-address: true
-        ip-address: host.docker.internal
-        health-check-path: /actuator/health
-        health-check-interval: 10s
-        instance-id: ${spring.application.name}:${random.value}
       config:
-        format: YAML
-        # true = អាន config ពី Consul KV (global.version, service.*, server.port)
         enabled: true
+        format: YAML
         watch:
           enabled: true
+      discovery:
+        health-check-url: http://host.docker.internal:${server.port}/actuator/health
+        prefer-ip-address: true
+        service-name: ${spring.application.name}
+        instance-id: ${spring.application.name}-${random.value}
 
   r2dbc:
     url: r2dbc:postgresql://localhost:9543/db_order
@@ -36,28 +127,26 @@ spring:
     password: postgre
     driver-class-name: org.postgresql.Driver
 
-# global.version, service.* និង server.port មកពី Consul KV ទាំងអស់ ដូច្នេះមិនដាក់ក្នុងនេះទេ
+#  http:
+#    serviceclient:
+#      customer-service:
+#        base-url: http://customer-service:9091
+#        connect-timeout:
+#          seconds: 5
+#        response-timeout:
+#          seconds: 5
+#      business-service:
+#        base-url: http://business-service:9092
+#        connect-timeout:
+#          seconds: 5
+#        response-timeout:
+#          seconds: 5
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: "health,gateway"
   endpoint:
-    health:
-      show-details: always
-
-  http:
-    serviceclient:
-      customer-service:
-        base-url: http://customer-service:9091
-        connect-timeout:
-          seconds: 5
-        response-timeout:
-          seconds: 5
-      business-service:
-        base-url: http://business-service:9092
-        connect-timeout:
-          seconds: 5
-        response-timeout:
-          seconds: 5
+    gateway:
+      access: read_only
