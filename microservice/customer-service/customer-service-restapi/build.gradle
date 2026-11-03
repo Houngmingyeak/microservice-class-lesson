@@ -7,4 +7,5 @@ dependencies {
 //    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'kh.edu.istad:istad-common-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-security-oauth2-resource-server'
 }
