@@ -7,6 +7,7 @@ dependencyManagement {
     }
 }
 dependencies {
+    implementation 'kh.edu.istad:istad-common-swagger'
     implementation project(':payment-service-domain:payment-domain-core')
     implementation project(':payment-service-domain:payment-application-service')
     implementation project(':payment-service-message')

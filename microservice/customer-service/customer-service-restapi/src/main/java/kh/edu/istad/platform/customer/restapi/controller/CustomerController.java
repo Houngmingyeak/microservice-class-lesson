@@ -1,7 +1,9 @@
 package kh.edu.istad.platform.customer.restapi.controller;
 
 import jakarta.validation.Valid;
+import kh.edu.istad.common.domain.exception.DomainException;
 import kh.edu.istad.common.domain.valueobject.Customerid;
+import kh.edu.istad.platform.customer.domain.entity.Customer;
 import kh.edu.istad.platform.customer.domain.usecase.*;
 import kh.edu.istad.platform.customer.restapi.dto.*;
 import kh.edu.istad.platform.customer.restapi.mapper.CustomerWebMapper;
@@ -29,6 +31,16 @@ public class CustomerController {
     private final CustomerWebMapper customerWebMapper;
     private final GetCustomerStatisticsUseCase getCustomerStatisticsUseCase;
 
+//    @GetMapping
+//    public Flux<Customer> findAllCustomers() {
+//        throw new DomainException("Not implemented yet");
+//    }a
+@GetMapping
+public Flux<CustomerInitiateResponse> findAllCustomers() {
+    return queryRepositoryUseCase.findAll()
+            .map(customerWebMapper::customerToResponse);
+}
+
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public Mono<CustomerInitiateResponse> initiateCustomer(
@@ -39,7 +51,7 @@ public class CustomerController {
                 .map(customerWebMapper::toResponse);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public Flux<CustomerInitiateResponse> findAll() {
         return queryRepositoryUseCase.findAll()
                 .map(customerWebMapper::customerToResponse);

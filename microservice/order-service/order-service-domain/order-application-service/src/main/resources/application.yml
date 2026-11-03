@@ -1,0 +1,6 @@
+spring:
+  cloud:
+    consul:
+      config:
+        watch:
+          wait-time: 5

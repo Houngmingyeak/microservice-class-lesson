@@ -46,3 +46,18 @@ management:
   endpoint:
     health:
       show-details: always
+
+  http:
+    serviceclient:
+      customer-service:
+        base-url: http://customer-service:9091
+        connect-timeout:
+          seconds: 5
+        response-timeout:
+          seconds: 5
+      business-service:
+        base-url: http://business-service:9092
+        connect-timeout:
+          seconds: 5
+        response-timeout:
+          seconds: 5

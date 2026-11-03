@@ -1,6 +1,7 @@
 package kh.edu.istad.platform.order;
 
 import kh.edu.istad.platform.order.config.ServicePropConfig;
+import kh.edu.istad.platform.order.domain.dto.QueryCustomerResult;
 import kh.edu.istad.platform.order.domain.port.out.client.CustomerServiceClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +22,7 @@ public class WebFluxController {
     private final CustomerServiceClient customerServiceClient;
 
     @GetMapping("customers")
-    public Flux<CustomerServiceClient.CustomerResponse> getCustomers(){
+    public Flux<QueryCustomerResult> getCustomers(){
         return customerServiceClient.getCustomers();
     }
 
