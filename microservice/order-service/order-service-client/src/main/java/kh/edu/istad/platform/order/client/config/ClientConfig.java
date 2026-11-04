@@ -1,23 +1,16 @@
 package kh.edu.istad.platform.order.client.config;
 
-import kh.edu.istad.platform.order.client.exception.DownStreamServiceException;
 import kh.edu.istad.platform.order.client.httpclient.BusinessHttpClient;
 import kh.edu.istad.platform.order.client.httpclient.CustomerHttpClient;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.security.oauth2.client.AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager;
-import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientManager;
-import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientProvider;
-import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientProviderBuilder;
-import org.springframework.security.oauth2.client.ReactiveOAuth2AuthorizedClientService;
-import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.support.WebClientAdapter;
-import org.springframework.web.reactive.function.client.support.WebClientHttpServiceGroupConfigurer;
-import org.springframework.web.service.invoker.HttpServiceProxyFactory;
+import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientProviderBuilder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.reactive.function.client.support.OAuth2WebClientHttpServiceGroupConfigurer;
 import org.springframework.web.service.registry.HttpServiceGroup;
 import org.springframework.web.service.registry.ImportHttpServices;
 
@@ -26,123 +19,33 @@ import org.springframework.web.service.registry.ImportHttpServices;
 @ImportHttpServices(
         group = "customer-service",
         clientType = HttpServiceGroup.ClientType.WEB_CLIENT,
-        types = {
-                CustomerHttpClient.class
-        }
+        types = { CustomerHttpClient.class }
 )
 @ImportHttpServices(
         group = "business-service",
         clientType = HttpServiceGroup.ClientType.WEB_CLIENT,
-        types = {
-                BusinessHttpClient.class
-        }
+        types = { BusinessHttpClient.class }
 )
 public class ClientConfig {
 
     @Bean
-    public WebClientHttpServiceGroupConfigurer webClientHttpServiceGroupConfigurer() {
-        return groups -> {
-            groups.filterByName("customer-service")
-                    .forEachClient(
-                            (group, clientBuilder) ->
-                                    clientBuilder
-                                            .defaultHeader("User-Agent", "Web Client")
-                                            .defaultStatusHandler(
-                                                    HttpStatusCode::isError,
-                                                    response -> {
-                                                        return response
-                                                                .createException()
-                                                                .map(
-                                                                        ex -> new DownStreamServiceException(
-                                                                                ex.getMessage(),
-                                                                                "customer-service"
-                                                                        )
-                                                                );
-                                                    }
-                                            )
-                    );
-        };
-    }
+    public OAuth2AuthorizedClientManager authorizedClientManager(
+            ClientRegistrationRepository registrations,
+            OAuth2AuthorizedClientService clientService) {
 
-    // ===== ថ្មី ===== Manager សម្រាប់យក access token (client_credentials) ដោយស្វ័យប្រវត្តិ
-    @Bean
-    public ReactiveOAuth2AuthorizedClientManager authorizedClientManager(
-            ReactiveClientRegistrationRepository clientRegistrationRepository,
-            ReactiveOAuth2AuthorizedClientService authorizedClientService) {
+        var provider = OAuth2AuthorizedClientProviderBuilder.builder()
+                .clientCredentials()
+                .build();
 
-        ReactiveOAuth2AuthorizedClientProvider authorizedClientProvider =
-                ReactiveOAuth2AuthorizedClientProviderBuilder.builder()
-                        .clientCredentials()
-                        .build();
-
-        AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager manager =
-                new AuthorizedClientServiceReactiveOAuth2AuthorizedClientManager(
-                        clientRegistrationRepository,
-                        authorizedClientService
-                );
-        manager.setAuthorizedClientProvider(authorizedClientProvider);
+        var manager = new AuthorizedClientServiceOAuth2AuthorizedClientManager(
+                registrations, clientService);
+        manager.setAuthorizedClientProvider(provider);
         return manager;
     }
 
-    // ===== ថ្មី ===== ធ្វើឱ្យ HTTP Service Group អាន @ClientRegistrationId ហើយភ្ជាប់ Bearer token
     @Bean
-    public OAuth2WebClientHttpServiceGroupConfigurer oauth2WebClientHttpServiceGroupConfigurer(
-            ReactiveOAuth2AuthorizedClientManager authorizedClientManager) {
-        return OAuth2WebClientHttpServiceGroupConfigurer.from(authorizedClientManager);
+    public OAuth2WebClientHttpServiceGroupConfigurer oauth2Configurer(
+            OAuth2AuthorizedClientManager manager) {
+        return OAuth2WebClientHttpServiceGroupConfigurer.from(manager);
     }
-
-//    private final WebClient.Builder webClient;
-
-//    @Bean
-//    public CustomerHttpClient register() {
-//
-//        WebClient customer = webClient
-//                .baseUrl("http://customer-service")
-//                .build();
-//
-//        HttpServiceProxyFactory factory = HttpServiceProxyFactory
-//                .builderFor(WebClientAdapter.create(customer))
-//                .build();
-//
-//        return factory.createClient(CustomerHttpClient.class);
-//    }
-
-//    @Bean
-//    public CustomerHttpClient customerHttpClient() {
-//        return createClient("http://customer-service", CustomerHttpClient.class);
-//    }
-//
-//    @Bean
-//    public BusinessHttpClient businessHttpClient() {
-//        return createClient("http://business-service", BusinessHttpClient.class);
-//    }
-
-//    private <T> T createClient(String url, Class<T> type) {
-//        WebClient wc = webClient
-//                .baseUrl(url)
-//                .build();
-//
-//        HttpServiceProxyFactory factory = HttpServiceProxyFactory
-//                .builderFor(WebClientAdapter.create(wc))
-//                .build();
-//
-//        return factory.createClient(type);
-//    }
-
-//    private <T> T createClient(String url, Class<T> type) {
-//        WebClient wc = webClient
-//                .baseUrl(url)
-//                .build();
-//
-//        return createClient(wc, type);
-//    }
-//
-//    private <T> T createClient(WebClient wc, Class<T> type) {
-//        HttpServiceProxyFactory factory = HttpServiceProxyFactory
-//                .builderFor(WebClientAdapter.create(wc))
-//                .build();
-//
-//        return factory.createClient(type);
-//    }
-
 }
