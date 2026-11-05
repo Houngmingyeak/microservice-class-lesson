@@ -60,6 +60,11 @@
                   <project path="$PROJECT_DIR$/microservice/getway-server" />
                 </projects>
               </build>
+              <build path="$PROJECT_DIR$/microservice/im-service" name="im-service">
+                <projects>
+                  <project path="$PROJECT_DIR$/microservice/im-service" />
+                </projects>
+              </build>
               <build path="$PROJECT_DIR$/microservice/order-service" name="order-service">
                 <projects>
                   <project path="$PROJECT_DIR$/microservice/order-service" />
@@ -117,6 +122,7 @@
             <option value="$PROJECT_DIR$/microservice/customer-service/customer-service-restapi" />
             <option value="$PROJECT_DIR$/microservice/eureka-server" />
             <option value="$PROJECT_DIR$/microservice/getway-server" />
+            <option value="$PROJECT_DIR$/microservice/im-service" />
             <option value="$PROJECT_DIR$/microservice/order-service" />
             <option value="$PROJECT_DIR$/microservice/order-service/order-service-client" />
             <option value="$PROJECT_DIR$/microservice/order-service/order-service-domain" />
@@ -154,6 +160,26 @@
           <set>
             <option value="$PROJECT_DIR$/build-logic" />
             <option value="$PROJECT_DIR$/microservice/getway-server" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <compositeConfiguration>
+          <compositeBuild compositeDefinitionSource="SCRIPT">
+            <builds>
+              <build path="$PROJECT_DIR$/build-logic" name="build-logic">
+                <projects>
+                  <project path="$PROJECT_DIR$/build-logic" />
+                </projects>
+              </build>
+            </builds>
+          </compositeBuild>
+        </compositeConfiguration>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/microservice/im-server" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/build-logic" />
+            <option value="$PROJECT_DIR$/microservice/im-server" />
           </set>
         </option>
       </GradleProjectSettings>
