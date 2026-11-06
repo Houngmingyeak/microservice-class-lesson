@@ -1,0 +1,10 @@
+version: v2
+modules:
+  - path: istad-common/src/main/proto
+    name: buf.build/istad-ite/istad-contracts
+lint:
+  use:
+    - STANDARD
+breaking:
+  use:
+    - FILE
