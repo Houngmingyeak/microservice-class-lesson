@@ -21,7 +21,7 @@ import java.util.UUID;
 public class InitRegisteredClient {
 
     private final RegisteredClientRepository registeredClientRepository;
-//    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @PostConstruct
     public void init(){
