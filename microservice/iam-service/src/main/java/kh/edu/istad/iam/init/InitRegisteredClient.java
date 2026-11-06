@@ -26,30 +26,30 @@ public class InitRegisteredClient {
     @PostConstruct
     public void init(){
 
-//        TokenSettings tokenSettings = TokenSettings.builder()
-//                .accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
-//                .accessTokenTimeToLive(Duration.ofHours(5))
-//                .refreshTokenTimeToLive(Duration.ofDays(7))
-//                .authorizationCodeTimeToLive(Duration.ofMinutes(3))
-//                .reuseRefreshTokens(false)
-//                .build();
-//
-//        ClientSettings clientSettings = ClientSettings.builder()
-//                .requireProofKey(true)
-//                .requireAuthorizationConsent(true)
-//                .build();
+        TokenSettings tokenSettings = TokenSettings.builder()
+                .accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
+                .accessTokenTimeToLive(Duration.ofHours(5))
+                .refreshTokenTimeToLive(Duration.ofDays(7))
+                .authorizationCodeTimeToLive(Duration.ofMinutes(3))
+                .reuseRefreshTokens(false)
+                .build();
+
+        ClientSettings clientSettings = ClientSettings.builder()
+                .requireProofKey(true)
+                .requireAuthorizationConsent(true)
+                .build();
 
         RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
                 .clientId("oidc-client")
-                .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
+                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .redirectUri("http://127.0.0.1:8080/login/oauth2/code/oidc-client")
                 .postLogoutRedirectUri("http://127.0.0.1:8080/")
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)
-//                .clientSettings(clientSettings)
-//                .tokenSettings(tokenSettings)
+                .clientSettings(clientSettings)
+                .tokenSettings(tokenSettings)
                 .build();
 
         var client = registeredClientRepository.findByClientId("oidc-client");
