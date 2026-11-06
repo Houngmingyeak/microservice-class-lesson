@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package istad.customer.v1;
+
+option java_multiple_files = true;
+option java_package = "kh.edu.istad.contract.customer.v1";
+
+enum CustomerStatus {
+  CUSTOMER_STATUS_UNSPECIFIED = 0;
+  CUSTOMER_STATUS_ACTIVE = 1;
+  CUSTOMER_STATUS_INACTIVE = 2;
+}
+
+message Customer {
+  string id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string email = 4;
+  CustomerStatus status = 5;
+}
