@@ -4,6 +4,7 @@ plugins {
 }
 
 dependencies {
+    implementation 'org.postgresql:postgresql:42.7.14'
     implementation 'org.springframework.boot:spring-boot-starter-security-oauth2-authorization-server'
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'

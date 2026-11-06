@@ -7,6 +7,11 @@ spring:
     oauth2:
       authorizationserver:
         issuer: http://localhost:9000
+  datasource:
+    url: jdbc:postgresql://localhost:9543/db_oauth2
+    username: iteuser
+    password: postgre
+    driver-class-name: org.postgresql.Driver
 
 
 
