@@ -12,6 +12,12 @@ spring:
     username: iteuser
     password: postgre
     driver-class-name: org.postgresql.Driver
+  liquibase:
+    url: ${spring.datasource.url}
+    user: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    driver-class-name: ${spring.datasource.driver-class-name}
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
 
 
 
