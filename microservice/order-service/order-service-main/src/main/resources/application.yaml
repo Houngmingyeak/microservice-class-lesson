@@ -67,3 +67,7 @@ management:
   endpoint:
     gateway:
       access: read_only
+grpc:
+  client:
+    customer:
+      address: localhost:9090

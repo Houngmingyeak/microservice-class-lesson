@@ -43,3 +43,6 @@ spring:
 #    instance-id: ${spring.application.name}:${server.port}
 #    lease-renewal-interval-in-seconds: 5
 #    lease-expiration-duration-in-seconds: 15
+grpc:
+  server:
+    port: 9090

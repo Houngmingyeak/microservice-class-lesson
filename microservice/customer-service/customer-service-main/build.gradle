@@ -24,3 +24,11 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
 }
+
+configurations.all {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == 'com.google.protobuf' && details.requested.name == 'protobuf-java') {
+            details.useVersion '4.36.2'
+        }
+    }
+}

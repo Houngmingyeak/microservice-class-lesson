@@ -37,3 +37,18 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+dependencies {
+    implementation 'io.grpc:grpc-netty-shaded:1.85.1'
+    implementation 'io.grpc:grpc-protobuf:1.85.1'
+    implementation 'io.grpc:grpc-stub:1.85.1'
+    implementation 'io.grpc:grpc-services:1.85.1'
+    implementation 'com.google.protobuf:protobuf-java:4.36.2'
+    compileOnly 'org.apache.tomcat:annotations-api:6.0.53'
+}
+configurations.all {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == 'com.google.protobuf' && details.requested.name == 'protobuf-java') {
+            details.useVersion '4.36.2'
+        }
+    }
+}

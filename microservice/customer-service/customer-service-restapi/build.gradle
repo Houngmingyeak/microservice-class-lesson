@@ -9,3 +9,12 @@ dependencies {
     implementation 'kh.edu.istad:istad-common-webflux'
     implementation 'org.springframework.boot:spring-boot-starter-security-oauth2-resource-server'
 }
+
+dependencies {
+    implementation 'io.grpc:grpc-netty-shaded:1.85.1'
+    implementation 'io.grpc:grpc-protobuf:1.85.1'
+    implementation 'io.grpc:grpc-stub:1.85.1'
+    implementation 'io.grpc:grpc-services:1.85.1'
+    implementation 'com.google.protobuf:protobuf-java:4.36.2'
+    compileOnly 'org.apache.tomcat:annotations-api:6.0.53'
+}
