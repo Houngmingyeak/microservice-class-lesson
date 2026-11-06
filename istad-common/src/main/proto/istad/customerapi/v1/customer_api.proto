@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package istad.customerapi.v1;
+
+import "istad/customer/v1/customer.proto";
+
+option java_multiple_files = true;
+option java_package = "kh.edu.istad.contract.customerapi.v1";
+
+service CustomerService {
+  rpc GetCustomer(GetCustomerRequest) returns (GetCustomerResponse);
+  rpc DeactivateCustomer(DeactivateCustomerRequest) returns (DeactivateCustomerResponse);
+}
+
+message GetCustomerRequest {
+  string id = 1;
+}
+
+message GetCustomerResponse {
+  istad.customer.v1.Customer customer = 1;
+}
+
+message DeactivateCustomerRequest {
+  string id = 1;
+}
+
+message DeactivateCustomerResponse {
+  istad.customer.v1.Customer customer = 1;
+}
