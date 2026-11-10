@@ -1,6 +1,14 @@
 plugins {
     id 'java-library'
-    id 'java-common-conventions'
+    id 'springboot-common-conventions'
+}
+
+tasks.named('bootJar') {
+    enabled = false
+}
+
+tasks.named('jar') {
+    enabled = true
 }
 
 dependencies {
