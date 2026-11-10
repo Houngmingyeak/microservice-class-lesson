@@ -56,7 +56,35 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUserRequest request) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(createUserUseCase.execute(request));
+        CreateUserCommand command = new CreateUserCommand(
+                request.username(),
+                request.email(),
+                request.password(),
+                request.givenName(),
+                request.familyName(),
+                request.gender(),
+                request.birthdate(),
+                request.phoneNumber()
+        );
+
+        UserResult result = createUserUseCase.execute(command);
+
+        UserResponse response = new UserResponse(
+                result.uuid(),
+                result.username(),
+                result.email(),
+                result.emailVerified(),
+                result.givenName(),
+                result.familyName(),
+                result.gender(),
+                result.birthdate(),
+                result.phoneNumber(),
+                result.phoneNumberVerified(),
+                result.pictureUrl(),
+                result.enabled()
+        );
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{uuid}")
