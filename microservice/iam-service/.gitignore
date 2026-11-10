@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+# legacy use cases kept until Part 2
+_legacy/
