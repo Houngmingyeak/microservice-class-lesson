@@ -1,12 +1,10 @@
 package kh.edu.istad.iam.feature.user;
 
-import kh.edu.istad.iam.domain.User;
+import kh.edu.istad.iam.domain.model.User;
+import kh.edu.istad.iam.exception.UserAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.UUID;
 
 /**
  * Use case: Register a new user account.
@@ -15,56 +13,46 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CreateUserUseCase {
 
-    private final UserJpaRepository userJpaRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final PasswordHasher passwordHasher;
 
     @Transactional
-    public UserResponse execute(CreateUserRequest request) {
-        if (userJpaRepository.existsByUsername(request.username())) {
-            throw new IllegalArgumentException("Username already exists: " + request.username());
+    public UserResult execute(CreateUserCommand command) {
+        if (userRepository.existsByUsername(command.username())) {
+            throw new UserAlreadyExistsException("Username already exists: " + command.username());
         }
-        if (userJpaRepository.existsByEmail(request.email())) {
-            throw new IllegalArgumentException("Email already exists: " + request.email());
+        if (userRepository.existsByEmail(command.email())) {
+            throw new UserAlreadyExistsException("Email already exists: " + command.email());
         }
 
-        User user = User.builder()
-                .uuid(UUID.randomUUID())
-                .username(request.username())
-                .email(request.email())
-                .passwordHash(passwordEncoder.encode(request.password()))
-                .givenName(request.givenName())
-                .familyName(request.familyName())
-                .gender(request.gender())
-                .birthdate(request.birthdate())
-                .phoneNumber(request.phoneNumber())
-                .emailVerified(false)
-                .phoneNumberVerified(false)
-                .accountNonExpired(true)
-                .accountNonLocked(true)
-                .credentialsNonExpired(true)
-                .enabled(true)
-                .isDeleted(false)
-                .failedLoginAttempts(0)
-                .build();
+        String passwordHash = passwordHasher.hash(command.password());
 
-        user = userJpaRepository.save(user);
-        return toResponse(user);
-    }
+        User user = User.register(
+                command.username(),
+                command.email(),
+                passwordHash,
+                command.givenName(),
+                command.familyName(),
+                command.gender(),
+                command.birthdate(),
+                command.phoneNumber()
+        );
 
-    static UserResponse toResponse(User user) {
-        return new UserResponse(
-                user.getUuid(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getEmailVerified(),
-                user.getGivenName(),
-                user.getFamilyName(),
-                user.getGender(),
-                user.getBirthdate(),
-                user.getPhoneNumber(),
-                user.getPhoneNumberVerified(),
-                user.getPictureUrl(),
-                user.getEnabled()
+        User saved = userRepository.save(user);
+
+        return new UserResult(
+                saved.getUuid(),
+                saved.getUsername(),
+                saved.getEmail(),
+                saved.getEmailVerified(),
+                saved.getGivenName(),
+                saved.getFamilyName(),
+                saved.getGender(),
+                saved.getBirthdate(),
+                saved.getPhoneNumber(),
+                saved.getPhoneNumberVerified(),
+                saved.getPictureUrl(),
+                saved.getEnabled()
         );
     }
 }
