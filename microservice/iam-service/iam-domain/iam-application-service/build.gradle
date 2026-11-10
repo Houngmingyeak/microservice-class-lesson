@@ -1,7 +1,23 @@
 plugins {
     id 'java-library'
+    id 'springboot-common-conventions'
+}
+
+tasks.named('bootJar') {
+    enabled = false
+}
+
+tasks.named('jar') {
+    enabled = true
 }
 
 dependencies {
     api project(':iam-domain:iam-domain-core')
+
+    implementation 'org.springframework:spring-context'
+    implementation 'org.springframework:spring-tx'
+    implementation 'org.springframework.security:spring-security-crypto'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 }
