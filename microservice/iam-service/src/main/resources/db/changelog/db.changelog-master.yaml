@@ -1,3 +1,13 @@
 databaseChangeLog:
-  - includeAll:
-      path: db/changelog/ddl
+  - include:
+      file: db/changelog/ddl/001-create-client-table.sql
+  - include:
+      file: db/changelog/ddl/002-create-authorization-table.sql
+  - include:
+      file: db/changelog/ddl/003-create-authorization-consent-table.sql
+  - include:
+      file: db/changelog/ddl/004-create-core-table.sql
+  - include:
+      file: db/changelog/ddl/005-update-table-user.sql
+  - include:
+      file: db/changelog/ddl/006-rebuild-core-tables.sql

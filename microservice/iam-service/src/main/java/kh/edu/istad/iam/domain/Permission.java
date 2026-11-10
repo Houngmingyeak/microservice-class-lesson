@@ -3,29 +3,53 @@ package kh.edu.istad.iam.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
+import java.time.OffsetDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "permissions")
-@Builder
-public class Permission {
+public class Permission extends BaseAudit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
-    private String permission;
+    @Column(name = "uuid", unique = true, nullable = false, updatable = false)
+    private UUID uuid;
 
+    @Column(name = "name", unique = true, length = 100)
+    private String name;
+
+    @Column(name = "resource", length = 50)
+    private String resource;
+
+    @Column(name = "action", length = 50)
+    private String action;
+
+    @Column(name = "description", length = 255)
     private String description;
 
-    @ManyToMany(mappedBy = "permissions")
-    private List<User> users;
+    @Column(name = "is_system")
+    private Boolean isSystem;
 
-    @ManyToMany(mappedBy = "permissions")
-    private List<Role> roles;
+    @Column(name = "is_active")
+    private Boolean isActive;
 
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
+
+    @Column(name = "deleted_at")
+    private OffsetDateTime deletedAt;
+
+    @Column(name = "deleted_by", length = 100)
+    private String deletedBy;
+
+    @Version
+    @Column(name = "version")
+    private Long version;
 }

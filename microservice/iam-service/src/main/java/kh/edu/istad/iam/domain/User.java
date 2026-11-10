@@ -4,69 +4,122 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Set;
+import java.time.OffsetDateTime;
+import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "users")
-@Builder
-public class User {
+public class User extends BaseAudit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
-    private String uuid;
+    @Column(name = "uuid", unique = true, nullable = false, updatable = false)
+    private UUID uuid;
 
+    @Column(name = "username", unique = true, length = 50)
     private String username;
 
+    @Column(name = "email", unique = true, nullable = false, length = 255)
     private String email;
 
-    private boolean emailVerified;
+    @Column(name = "email_verified")
+    private Boolean emailVerified;
 
-    private String familyName;
+    @Column(name = "password_hash", length = 255)
+    private String passwordHash;
 
+    @Column(name = "given_name", length = 100)
     private String givenName;
 
+    @Column(name = "family_name", length = 100)
+    private String familyName;
+
+    @Column(name = "middle_name", length = 100)
+    private String middleName;
+
+    @Column(name = "nickname", length = 100)
+    private String nickname;
+
+    @Column(name = "gender", length = 20)
     private String gender;
 
-    private String picture;
-
-    private String cover;
-
+    @Column(name = "birthdate")
     private LocalDate birthdate;
 
+    @Column(name = "profile_url", length = 500)
+    private String profileUrl;
+
+    @Column(name = "picture_url", length = 500)
+    private String pictureUrl;
+
+    @Column(name = "website_url", length = 500)
+    private String websiteUrl;
+
+    @Column(name = "zoneinfo", length = 500)
+    private String zoneinfo;
+
+    @Column(name = "locale", length = 100)
+    private String locale;
+
+    @Column(name = "phone_number", unique = true, length = 20)
     private String phoneNumber;
 
-    private String password;
+    @Column(name = "phone_number_verified")
+    private Boolean phoneNumberVerified;
 
-    private boolean phoneNumberVerified;
+    @Column(name = "address_street_address", length = 255)
+    private String addressStreetAddress;
 
-    private boolean isAccountNonExpired;
+    @Column(name = "address_locality", length = 100)
+    private String addressLocality;
 
-    private boolean isAccountNonLocked;
+    @Column(name = "address_region", length = 100)
+    private String addressRegion;
 
-    private boolean isCredentialsNonExpired;
+    @Column(name = "address_postal_code", length = 20)
+    private String addressPostalCode;
 
-    private boolean isEnabled;
+    @Column(name = "address_country", length = 2, columnDefinition = "CHAR(2)")
+    private String addressCountry;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "users_permissions",
-            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "permission_id", referencedColumnName = "id")
-    )
-    private Set<Permission> permissions;
+    @Column(name = "enabled")
+    private Boolean enabled;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "users_roles",
-            joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
-    )
-    private Set<Role> roles;
+    @Column(name = "account_non_expired")
+    private Boolean accountNonExpired;
+
+    @Column(name = "account_non_locked")
+    private Boolean accountNonLocked;
+
+    @Column(name = "credentials_non_expired")
+    private Boolean credentialsNonExpired;
+
+    @Column(name = "failed_login_attempts")
+    private Integer failedLoginAttempts;
+
+    @Column(name = "last_login_at")
+    private OffsetDateTime lastLoginAt;
+
+    @Column(name = "password_changed_at")
+    private OffsetDateTime passwordChangedAt;
+
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
+
+    @Column(name = "deleted_at")
+    private OffsetDateTime deletedAt;
+
+    @Column(name = "deleted_by", length = 100)
+    private String deletedBy;
+
+    @Version
+    @Column(name = "version")
+    private Long version;
 }
