@@ -1,7 +1,22 @@
 plugins {
     id 'java-library'
+    id 'springboot-common-conventions'
+}
+
+tasks.named('bootJar') {
+    enabled = false
+}
+
+tasks.named('jar') {
+    enabled = true
 }
 
 dependencies {
     api project(':iam-domain:iam-application-service')
+
+    implementation 'org.springframework.boot:spring-boot-starter-security-oauth2-authorization-server'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 }
