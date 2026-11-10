@@ -40,11 +40,13 @@ public class InitRegisteredClient {
                 .build();
 
         RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("oidc-client")
+//                .clientId("oidc-client")
+                .clientId("front-bff-client")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/oidc-client")
+//                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/oidc-client")
+                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/front-bff-client")
                 .postLogoutRedirectUri("http://127.0.0.1:8080/")
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)
@@ -52,7 +54,8 @@ public class InitRegisteredClient {
                 .tokenSettings(tokenSettings)
                 .build();
 
-        var client = registeredClientRepository.findByClientId("oidc-client");
+//        var client = registeredClientRepository.findByClientId("oidc-client");
+        var client = registeredClientRepository.findByClientId("front-bff-client");
 
         if(client == null){
             registeredClientRepository.save(oidcClient);

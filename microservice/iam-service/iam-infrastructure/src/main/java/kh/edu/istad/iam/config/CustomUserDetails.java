@@ -1,6 +1,6 @@
 package kh.edu.istad.iam.config;
 
-import kh.edu.istad.iam.domain.User;
+import kh.edu.istad.iam.domain.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
