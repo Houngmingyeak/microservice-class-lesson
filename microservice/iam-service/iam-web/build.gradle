@@ -1,7 +1,22 @@
 plugins {
     id 'java-library'
+    id 'springboot-common-conventions'
+}
+
+tasks.named('bootJar') {
+    enabled = false
+}
+
+tasks.named('jar') {
+    enabled = true
 }
 
 dependencies {
     api project(':iam-domain:iam-application-service')
+
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'gg.jte:jte-spring-boot-starter-3:3.2.0'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
 }
