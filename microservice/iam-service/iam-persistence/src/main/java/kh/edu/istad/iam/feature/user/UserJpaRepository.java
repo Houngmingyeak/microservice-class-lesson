@@ -1,4 +1,4 @@
-package kh.edu.istad.iam.feature.UserEntity;
+package kh.edu.istad.iam.feature.user;
 
 import kh.edu.istad.iam.domain.UserEntity;
 import org.springframework.data.domain.Page;

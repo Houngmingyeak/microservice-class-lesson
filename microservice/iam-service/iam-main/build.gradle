@@ -4,27 +4,20 @@ plugins {
 }
 
 dependencies {
-    implementation project(':iam-domain:iam-domain-core')
-    implementation project(':iam-domain:iam-application-service')
     implementation project(':iam-persistence')
     implementation project(':iam-infrastructure')
     implementation project(':iam-rest-api')
     implementation project(':iam-web')
 
-    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-liquibase'
 
     runtimeOnly 'org.postgresql:postgresql'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
-
-    testImplementation 'org.springframework.boot:spring-boot-starter-security-oauth2-authorization-server-test'
-    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
-    testCompileOnly 'org.projectlombok:lombok'
-    testAnnotationProcessor 'org.projectlombok:lombok'
-    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
-
 tasks.named('test') {
     useJUnitPlatform()
 }

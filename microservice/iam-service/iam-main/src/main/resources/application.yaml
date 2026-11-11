@@ -22,5 +22,11 @@ spring:
     driver-class-name: ${spring.datasource.driver-class-name}
     change-log: classpath:/db/changelog/db.changelog-master.yaml
 
+#gg:
+#  jte:
+#    development-mode: true
+#    template-location: iam-web/src/main/jte
 
-
+logging:
+  level:
+    org.springframework.security: DEBUG

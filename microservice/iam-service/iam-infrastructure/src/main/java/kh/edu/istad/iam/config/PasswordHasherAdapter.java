@@ -18,4 +18,9 @@ public class PasswordHasherAdapter implements PasswordHasher {
     public String hash(String rawPassword) {
         return passwordEncoder.encode(rawPassword);
     }
+
+    @Override
+    public boolean matches(String rawPassword, String hashedPassword) {
+        return false;
+    }
 }

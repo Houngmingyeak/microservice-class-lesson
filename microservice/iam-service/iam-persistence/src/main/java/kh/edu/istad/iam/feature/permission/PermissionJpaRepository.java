@@ -17,4 +17,6 @@ public interface PermissionJpaRepository extends JpaRepository<Permission, Long>
     Optional<Permission> findByUuid(UUID uuid);
 
     Page<Permission> findAllByIsDeletedFalse(Pageable pageable);
+
+    Permission save(Permission permission);
 }

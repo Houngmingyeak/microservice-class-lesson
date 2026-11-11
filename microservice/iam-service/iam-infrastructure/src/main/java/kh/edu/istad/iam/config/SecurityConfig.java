@@ -48,7 +48,7 @@ public class SecurityConfig {
     private final JdbcTemplate jdbcTemplate;
 
     /**
-     * Authorization Server security filter chain (handles OAuth2/OIDC endpoints).
+     * Authorization Server security filter chain (handles OAuth2/OIDC endpoints and Dynamic Client Registration).
      */
     @Bean
     @Order(1)
@@ -61,7 +61,9 @@ public class SecurityConfig {
                 .securityMatcher(authorizationServerConfigurer.getEndpointsMatcher())
                 .with(authorizationServerConfigurer, authorizationServer ->
                         authorizationServer
-                                .oidc(Customizer.withDefaults()) // Enable OpenID Connect 1.0
+                                .oidc(oidc -> oidc
+                                        .clientRegistrationEndpoint(Customizer.withDefaults()) // Enable Dynamic Client Registration (DCR)
+                                )
                 )
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
                 .exceptionHandling(exceptions -> exceptions
@@ -75,7 +77,7 @@ public class SecurityConfig {
     }
 
     /**
-     * REST API resource server security filter chain (handles /api/v1/** endpoints).
+     * REST API resource server security filter chain (handles /api/** endpoints).
      */
     @Bean
     @Order(2)
@@ -93,14 +95,20 @@ public class SecurityConfig {
     }
 
     /**
-     * Default security filter chain (handles login page and other web pages).
+     * Default security filter chain (handles web pages, login, and consent).
      */
     @Bean
     @Order(3)
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
-                .formLogin(Customizer.withDefaults());
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/login", "/register", "/oauth2/**", "/css/**", "/js/**", "/images/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .permitAll()
+                );
 
         return http.build();
     }
