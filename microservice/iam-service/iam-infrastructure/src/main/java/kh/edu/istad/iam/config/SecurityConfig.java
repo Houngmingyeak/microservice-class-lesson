@@ -108,7 +108,8 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/login")
                         .permitAll()
-                );
+                )
+                .oauth2Login(Customizer.withDefaults()); // <-- ថ្មី: បង្កើត /oauth2/authorization/github
 
         return http.build();
     }
