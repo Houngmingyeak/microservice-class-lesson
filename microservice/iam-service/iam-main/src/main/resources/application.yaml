@@ -21,9 +21,40 @@ spring:
             client-secret: ${GOOGLE_CLIENT_SECRET}
             client-name: Google
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+
+          # <-- ថ្មី: Facebook (OAuth2 ធម្មតា Spring មាន preset ឈ្មោះ facebook រួចហើយ)
+          facebook:
+            provider: facebook
+            client-id: ${FACEBOOK_CLIENT_ID}
+            client-secret: ${FACEBOOK_CLIENT_SECRET}
+            client-name: Facebook
+#            scope: public_profile, email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+
+          # <-- ថ្មី: Telegram (OpenID Connect)
+          telegram:
+            provider: telegram
+            client-id: ${TELEGRAM_CLIENT_ID}
+            client-secret: ${TELEGRAM_CLIENT_SECRET}
+            client-name: Telegram
+            authorization-grant-type: authorization_code
+            # Telegram ទាមទារ Basic Authorization (client_id:client_secret) ពេលប្តូរ code ជា token
+            client-authentication-method: client_secret_basic
+            # openid ចាំបាច់ profile ផ្តល់ឈ្មោះ username រូបភាព
+#            scope: openid, profile
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+
         provider:
           github:
           google:
+          facebook:                              # <-- ថ្មី (ទទេ ដូច github/google)
+          telegram:                              # <-- ថ្មី: Telegram មិនមាន preset ត្រូវដាក់ URL ខ្លួនឯង
+            authorization-uri: https://oauth.telegram.org/auth
+            token-uri: https://oauth.telegram.org/token
+            jwk-set-uri: https://oauth.telegram.org/.well-known/jwks.json
+            # Telegram មិនមាន UserInfo endpoint ដូច្នេះមិនដាក់ user-info-uri
+            # ហើយប្រើ sub ក្នុង id_token ជាអត្តសញ្ញាណអ្នកប្រើ
+            user-name-attribute: sub
     authorizationserver:
       issuer: http://localhost:9000
 
@@ -38,7 +69,6 @@ spring:
       ddl-auto: none
     open-in-view: false
 
-  # បន្ថែមថ្មី: ដោះស្រាយកំហុស relation "spring_session" does not exist
   session:
     jdbc:
       initialize-schema: always
@@ -50,15 +80,9 @@ spring:
     driver-class-name: ${spring.datasource.driver-class-name}
     change-log: classpath:/db/changelog/db.changelog-master.yaml
 
-# ===== បន្ថែមថ្មី: កំណត់ JTE សម្រាប់ page login.jte =====
-# សម្គាល់: "gg" ស្ថិតនៅកម្រិតលើបំផុត (មិនមែននៅក្នុង spring ទេ)
 gg:
   jte:
-    # JTE អានឯកសារ .jte ដោយផ្ទាល់ ដូច្នេះកែ design ហើយ refresh browser ឃើញភ្លាម
     development-mode: true
-    # ទីតាំង folder ដែលមាន login.jte និង consent.jte
-    # (ទាក់ទងនឹង Working directory ក្នុង IntelliJ ជា root istad-ite-project)
-    # បើ Working directory ជា iam-main ត្រូវប្រើ: ../iam-web/src/main/jte
     template-location: microservice/iam-service/iam-web/src/main/jte
 
 logging:
