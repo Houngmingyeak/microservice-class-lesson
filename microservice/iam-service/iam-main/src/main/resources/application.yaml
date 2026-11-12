@@ -1,31 +1,48 @@
 server:
   port: 9000
+
 spring:
   application:
     name: iam-service
+
   security:
     oauth2:
       client:
         registration:
           github:
             provider: github
-            client-id: Ov23liLGg9q0KkevX8PC
-            client-secret: 6d479621ecb3b98b595e4a61cec4acf75447c544
+            client-id: ${GITHUB_CLIENT_ID}
+            client-secret: ${GITHUB_CLIENT_SECRET}
             client-name: GitHub
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-#        provider:
-#          github:
-
+          google:
+            provider: google
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            client-name: Google
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          github:
+          google:
     authorizationserver:
       issuer: http://localhost:9000
+
   datasource:
     url: jdbc:postgresql://localhost:9543/db_oauth2
     username: iteuser
     password: postgre
     driver-class-name: org.postgresql.Driver
+
   jpa:
     hibernate:
       ddl-auto: none
+    open-in-view: false
+
+  # បន្ថែមថ្មី: ដោះស្រាយកំហុស relation "spring_session" does not exist
+  session:
+    jdbc:
+      initialize-schema: always
+
   liquibase:
     url: ${spring.datasource.url}
     user: ${spring.datasource.username}
@@ -33,11 +50,17 @@ spring:
     driver-class-name: ${spring.datasource.driver-class-name}
     change-log: classpath:/db/changelog/db.changelog-master.yaml
 
-#gg:
-#  jte:
-#    development-mode: true
-#    template-location: iam-web/src/main/jte
+# ===== បន្ថែមថ្មី: កំណត់ JTE សម្រាប់ page login.jte =====
+# សម្គាល់: "gg" ស្ថិតនៅកម្រិតលើបំផុត (មិនមែននៅក្នុង spring ទេ)
+gg:
+  jte:
+    # JTE អានឯកសារ .jte ដោយផ្ទាល់ ដូច្នេះកែ design ហើយ refresh browser ឃើញភ្លាម
+    development-mode: true
+    # ទីតាំង folder ដែលមាន login.jte និង consent.jte
+    # (ទាក់ទងនឹង Working directory ក្នុង IntelliJ ជា root istad-ite-project)
+    # បើ Working directory ជា iam-main ត្រូវប្រើ: ../iam-web/src/main/jte
+    template-location: microservice/iam-service/iam-web/src/main/jte
 
 logging:
   level:
-    org.springframework.security: DEBUG
+    org.springframework.security: INFO
