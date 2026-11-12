@@ -109,7 +109,12 @@ public class SecurityConfig {
                         .loginPage("/login")
                         .permitAll()
                 )
-                .oauth2Login(Customizer.withDefaults()); // <-- ថ្មី: បង្កើត /oauth2/authorization/github
+                // ត្រូវបន្ថែម loginPage("/login") ទើបប្រើ page login.jte របស់យើង
+                // បើគ្មានវា Spring នឹងបង្កើត page "Login with OAuth 2.0" ខ្លួនឯង
+                // ប៊ូតុង GitHub / Google នៅតែដំណើរការ (/oauth2/authorization/{registrationId})
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")
+                );
 
         return http.build();
     }
