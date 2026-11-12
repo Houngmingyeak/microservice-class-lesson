@@ -19,9 +19,9 @@ public class SecurityConfig {
     private final ReactiveClientRegistrationRepository clientRegistrationRepository;
 
     @Bean
-    public SecurityWebFilterChain gatewayFilterChain(ServerHttpSecurity http) {
+    public SecurityWebFilterChain gatewayFilterChain (ServerHttpSecurity http) {
         return http
-                .authorizeExchange(exchange -> exchange
+                .authorizeExchange(exchange-> exchange
                         .pathMatchers("/actuator/health/**").permitAll()
                         .anyExchange().authenticated()
                 )
@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .formLogin(ServerHttpSecurity.FormLoginSpec::disable)
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .oauth2Login(Customizer.withDefaults())
-                .oauth2ResourceServer(oauth2 -> oauth2
+                .oauth2ResourceServer(oauth2-> oauth2
                         .jwt(Customizer.withDefaults())
                 )
                 .logout(logoutSpec -> logoutSpec
@@ -47,5 +47,4 @@ public class SecurityConfig {
 
         return oidcLogoutSuccessHandler;
     }
-
 }
