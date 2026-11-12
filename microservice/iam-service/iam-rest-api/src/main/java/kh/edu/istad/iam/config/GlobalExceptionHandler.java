@@ -14,7 +14,8 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.net.URI;
 import java.time.Instant;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RestControllerAdvice
@@ -25,8 +26,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ProblemDetail handleResourceNotFoundException(ResourceNotFoundException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
-        problemDetail.setTitle("Resource Not Found");
-        problemDetail.setType(URI.create("https://problems.istad.edu.kh/resource-not-found"));
+        problemDetail.setTitle("Resource not found");
+        problemDetail.setType(URI.create("https://iam.istad.co/problems/resource-not-found"));
         problemDetail.setProperty("timestamp", Instant.now());
         return problemDetail;
     }
@@ -34,13 +35,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ProblemDetail handleValidationException(MethodArgumentNotValidException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Validation failed");
-        problemDetail.setTitle("Validation Error");
-        problemDetail.setType(URI.create("https://problems.istad.edu.kh/validation-error"));
+        problemDetail.setTitle("Validation failed");
+        problemDetail.setType(URI.create("https://iam.istad.co/problems/validation-error"));
         problemDetail.setProperty("timestamp", Instant.now());
 
-        Map<String, String> errors = new HashMap<>();
+        List<Map<String, String>> errors = new ArrayList<>();
         for (FieldError fieldError : ex.getBindingResult().getFieldErrors()) {
-            errors.put(fieldError.getField(), fieldError.getDefaultMessage());
+            errors.add(Map.of(
+                    "field", fieldError.getField(),
+                    "message", fieldError.getDefaultMessage() != null ? fieldError.getDefaultMessage() : "Invalid value"
+            ));
         }
         problemDetail.setProperty("errors", errors);
         return problemDetail;
@@ -49,8 +53,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ProblemDetail handleAccessDeniedException(AccessDeniedException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
-        problemDetail.setTitle("Access Denied");
-        problemDetail.setType(URI.create("https://problems.istad.edu.kh/access-denied"));
+        problemDetail.setTitle("Access denied");
+        problemDetail.setType(URI.create("https://iam.istad.co/problems/access-denied"));
         problemDetail.setProperty("timestamp", Instant.now());
         return problemDetail;
     }
@@ -58,8 +62,17 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ProblemDetail handleIllegalArgumentException(IllegalArgumentException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
-        problemDetail.setTitle("Bad Request");
-        problemDetail.setType(URI.create("https://problems.istad.edu.kh/bad-request"));
+        problemDetail.setTitle("Bad request");
+        problemDetail.setType(URI.create("https://iam.istad.co/problems/bad-request"));
+        problemDetail.setProperty("timestamp", Instant.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ProblemDetail handleIllegalStateException(IllegalStateException ex) {
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
+        problemDetail.setTitle("Invalid operation");
+        problemDetail.setType(URI.create("https://iam.istad.co/problems/invalid-operation"));
         problemDetail.setProperty("timestamp", Instant.now());
         return problemDetail;
     }
@@ -67,8 +80,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoResourceFoundException.class)
     public ProblemDetail handleNoResourceFoundException(NoResourceFoundException ex) {
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, "Resource not found");
-        problemDetail.setTitle("Not Found");
-        problemDetail.setType(URI.create("https://problems.istad.edu.kh/not-found"));
+        problemDetail.setTitle("Not found");
+        problemDetail.setType(URI.create("https://iam.istad.co/problems/not-found"));
         problemDetail.setProperty("timestamp", Instant.now());
         return problemDetail;
     }
@@ -78,8 +91,8 @@ public class GlobalExceptionHandler {
         log.error("Unexpected error", ex);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.INTERNAL_SERVER_ERROR,
                 "An unexpected error occurred");
-        problemDetail.setTitle("Internal Server Error");
-        problemDetail.setType(URI.create("https://problems.istad.edu.kh/internal-server-error"));
+        problemDetail.setTitle("Internal server error");
+        problemDetail.setType(URI.create("https://iam.istad.co/problems/internal-server-error"));
         problemDetail.setProperty("timestamp", Instant.now());
         return problemDetail;
     }

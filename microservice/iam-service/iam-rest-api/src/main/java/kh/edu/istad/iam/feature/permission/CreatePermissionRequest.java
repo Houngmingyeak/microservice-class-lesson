@@ -7,17 +7,15 @@ import jakarta.validation.constraints.Size;
  * Request DTO for creating a Permission.
  */
 public record CreatePermissionRequest(
-        @NotBlank(message = "Name is required")
-        @Size(max = 100, message = "Name must not exceed 100 characters")
-        String name,
-
-        @Size(max = 50)
+        @NotBlank(message = "Resource is required")
+        @Size(max = 50, message = "Resource must not exceed 50 characters")
         String resource,
 
-        @Size(max = 50)
+        @NotBlank(message = "Action is required")
+        @Size(max = 50, message = "Action must not exceed 50 characters")
         String action,
 
-        @Size(max = 255)
+        @Size(max = 255, message = "Description must not exceed 255 characters")
         String description
 ) {
 }

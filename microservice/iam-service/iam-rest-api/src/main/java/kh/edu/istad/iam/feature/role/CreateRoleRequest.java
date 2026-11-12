@@ -3,6 +3,9 @@ package kh.edu.istad.iam.feature.role;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import java.util.List;
+import java.util.UUID;
+
 /**
  * Request DTO for creating a Role.
  */
@@ -12,6 +15,8 @@ public record CreateRoleRequest(
         String name,
 
         @Size(max = 255, message = "Description must not exceed 255 characters")
-        String description
+        String description,
+
+        List<UUID> permissionUuids
 ) {
 }
