@@ -114,6 +114,7 @@ public class SecurityConfig {
                 // ប៊ូតុង GitHub / Google នៅតែដំណើរការ (/oauth2/authorization/{registrationId})
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
+                        .defaultSuccessUrl("/", true)
                 );
 
         return http.build();
