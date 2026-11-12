@@ -4,26 +4,38 @@ plugins {
 }
 
 dependencies {
+    // Project Modules
     implementation project(':iam-persistence')
     implementation project(':iam-infrastructure')
     implementation project(':iam-rest-api')
     implementation project(':iam-web')
 
+    // Spring Boot Starters
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-security-oauth2-client'
     implementation 'org.springframework.boot:spring-boot-starter-security-oauth2-authorization-server'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
     implementation 'org.springframework.boot:spring-boot-starter-liquibase'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
+    implementation 'org.springframework.boot:spring-boot-starter-session-jdbc'
 
-    runtimeOnly 'org.postgresql:postgresql'
+    // JTE ត្រូវបានទាញចូលតាម project(':iam-web') ដោយស្វ័យប្រវត្តិ
+    // (iam-web មាន jte-spring-boot-starter-4) ដូច្នេះមិនបាច់ដាក់ទីនេះទេ
 
+    // Lombok (Main)
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
+    // Runtime Dependencies
+    runtimeOnly 'org.postgresql:postgresql'
+
+    // Test Dependencies
     testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-security-oauth2-authorization-server-test'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
