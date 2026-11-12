@@ -16,7 +16,10 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation 'org.springframework.boot:spring-boot-starter-security'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    // JTE template engine សម្រាប់ Spring Boot 4.x (ជំនួស Thymeleaf)
+    // ត្រូវដាក់ជំនាន់ច្បាស់លាស់ ព្រោះ Spring Boot BOM មិនគ្រប់គ្រង JTE
+    implementation 'gg.jte:jte-spring-boot-starter-4:3.2.4'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
