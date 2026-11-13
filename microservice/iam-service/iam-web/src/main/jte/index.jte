@@ -4,7 +4,7 @@
 @param String email = ""
 @param java.util.Collection roles = java.util.List.of()
 @param java.util.Collection permissions = java.util.List.of()
-@param java.util.Map claims = java.util.Map.of()
+@param java.util.Map<String, Object> claims = java.util.Map.of()
 @param String csrfParameterName = "_csrf"
 @param String csrfToken = ""
 
@@ -80,7 +80,7 @@
                 <tr><th>Claim</th><th>Value</th></tr>
             </thead>
             <tbody>
-                @for(java.util.Map.Entry entry : claims.entrySet())
+                @for(var entry : claims.entrySet())
                     <tr><td>${entry.getKey().toString()}</td><td>${entry.getValue() != null ? entry.getValue().toString() : ""}</td></tr>
                 @endfor
             </tbody>
