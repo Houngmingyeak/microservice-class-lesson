@@ -1,5 +1,9 @@
 server:
   port: 9000
+  servlet:
+    session:
+      cookie:
+        name: IAM_SESSION
 
 spring:
   application:
@@ -28,7 +32,7 @@ spring:
             client-id: ${FACEBOOK_CLIENT_ID:facebook-client-id}
             client-secret: ${FACEBOOK_CLIENT_SECRET:facebook-client-secret}
             client-name: Facebook
-            scope: public_profile, email
+#            scope: public_profile, email
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
 
           # <-- ថ្មី: Telegram (OpenID Connect)
@@ -55,8 +59,8 @@ spring:
             # Telegram មិនមាន UserInfo endpoint ដូច្នេះមិនដាក់ user-info-uri
             # ហើយប្រើ sub ក្នុង id_token ជាអត្តសញ្ញាណអ្នកប្រើ
             user-name-attribute: sub
-    authorizationserver:
-      issuer: http://localhost:9000
+      authorizationserver:
+        issuer: http://localhost:9000
 
   datasource:
     url: jdbc:postgresql://localhost:9543/db_oauth2
@@ -87,7 +91,7 @@ gg:
 
 logging:
   level:
-    org.springframework.security: INFO
+    org.springframework.security: TRACE
 
 telegram:
   bot-token: ${TELEGRAM_BOT_TOKEN:mock-telegram-token}

@@ -100,9 +100,6 @@ public class TokenConfig {
                         if (user.getLocale() != null) {
                             claims.put("locale", user.getLocale());
                         }
-                        if (user.getUpdatedAt() != null) {
-                            claims.put("updated_at", user.getUpdatedAt().toEpochSecond());
-                        }
 
                         // email scope
                         if (user.getEmail() != null) {
