@@ -1,6 +1,6 @@
 server:
   port: 9092
-
+  forward-headers-strategy: framework
 spring:
   security:
     oauth2:
