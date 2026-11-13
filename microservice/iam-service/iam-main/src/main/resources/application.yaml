@@ -11,22 +11,22 @@ spring:
         registration:
           github:
             provider: github
-            client-id: ${GITHUB_CLIENT_ID}
-            client-secret: ${GITHUB_CLIENT_SECRET}
+            client-id: ${GITHUB_CLIENT_ID:github-client-id}
+            client-secret: ${GITHUB_CLIENT_SECRET:github-client-secret}
             client-name: GitHub
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
           google:
             provider: google
-            client-id: ${GOOGLE_CLIENT_ID}
-            client-secret: ${GOOGLE_CLIENT_SECRET}
+            client-id: ${GOOGLE_CLIENT_ID:google-client-id}
+            client-secret: ${GOOGLE_CLIENT_SECRET:google-client-secret}
             client-name: Google
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
 
           # <-- ថ្មី: Facebook (OAuth2 ធម្មតា Spring មាន preset ឈ្មោះ facebook រួចហើយ)
           facebook:
             provider: facebook
-            client-id: ${FACEBOOK_CLIENT_ID}
-            client-secret: ${FACEBOOK_CLIENT_SECRET}
+            client-id: ${FACEBOOK_CLIENT_ID:facebook-client-id}
+            client-secret: ${FACEBOOK_CLIENT_SECRET:facebook-client-secret}
             client-name: Facebook
 #            scope: public_profile, email
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
@@ -34,8 +34,8 @@ spring:
           # <-- ថ្មី: Telegram (OpenID Connect)
           telegram:
             provider: telegram
-            client-id: ${TELEGRAM_CLIENT_ID}
-            client-secret: ${TELEGRAM_CLIENT_SECRET}
+            client-id: ${TELEGRAM_CLIENT_ID:telegram-client-id}
+            client-secret: ${TELEGRAM_CLIENT_SECRET:telegram-client-secret}
             client-name: Telegram
             authorization-grant-type: authorization_code
             # Telegram ទាមទារ Basic Authorization (client_id:client_secret) ពេលប្តូរ code ជា token
@@ -88,3 +88,7 @@ gg:
 logging:
   level:
     org.springframework.security: INFO
+
+telegram:
+  bot-token: ${TELEGRAM_BOT_TOKEN:mock-telegram-token}
+  bot-username: ${TELEGRAM_BOT_USERNAME:mock_telegram_bot}
