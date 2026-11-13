@@ -1,7 +1,7 @@
 package kh.edu.istad.iam.feature.permission;
 
 import jakarta.validation.Valid;
-import kh.edu.istad.iam.shared.PageResponse;
+import kh.edu.istad.iam.shared.PageResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,11 +36,11 @@ public class PermissionController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('permission:read') or hasRole('ADMIN')")
-    public ResponseEntity<PageResponse<PermissionResult>> listPermissions(
+    public ResponseEntity<PageResult<PermissionResult>> listPermissions(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
     ) {
-        return ResponseEntity.ok(listPermissionsUseCase.execute(page, size));
+        return ResponseEntity.ok(listPermissionsUseCase.execute(new PermissionFilterQuery(page, size)));
     }
 
     @GetMapping("/{uuid}")
@@ -80,4 +80,3 @@ public class PermissionController {
         return ResponseEntity.noContent().build();
     }
 }
-

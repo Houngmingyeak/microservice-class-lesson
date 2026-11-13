@@ -1,7 +1,7 @@
 package kh.edu.istad.iam.feature.role;
 
 import jakarta.validation.Valid;
-import kh.edu.istad.iam.shared.PageResponse;
+import kh.edu.istad.iam.shared.PageResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,11 +39,11 @@ public class RoleController {
 
     @GetMapping
     @PreAuthorize("hasAuthority('role:read') or hasRole('ADMIN')")
-    public ResponseEntity<PageResponse<RoleSummary>> listRoles(
+    public ResponseEntity<PageResult<RoleSummary>> listRoles(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
     ) {
-        return ResponseEntity.ok(listRolesUseCase.execute(page, size));
+        return ResponseEntity.ok(listRolesUseCase.execute(new RoleFilterQuery(page, size)));
     }
 
     @GetMapping("/{uuid}")
@@ -110,4 +110,3 @@ public class RoleController {
         return ResponseEntity.noContent().build();
     }
 }
-

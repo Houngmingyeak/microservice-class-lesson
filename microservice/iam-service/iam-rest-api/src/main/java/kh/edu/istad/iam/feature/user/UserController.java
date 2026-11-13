@@ -5,7 +5,7 @@ import kh.edu.istad.iam.exception.ResourceNotFoundException;
 import kh.edu.istad.iam.feature.identity.IdentityResult;
 import kh.edu.istad.iam.feature.identity.ListUserIdentitiesUseCase;
 import kh.edu.istad.iam.feature.identity.UnlinkIdentityUseCase;
-import kh.edu.istad.iam.shared.PageResponse;
+import kh.edu.istad.iam.shared.PageResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,10 @@ public class UserController {
     private final GetUserUseCase getUserUseCase;
     private final ListUsersUseCase listUsersUseCase;
     private final UpdateUserProfileUseCase updateUserProfileUseCase;
-    private final SetUserStatusUseCase setUserStatusUseCase;
+    private final EnableUserUseCase enableUserUseCase;
+    private final DisableUserUseCase disableUserUseCase;
+    private final LockUserUseCase lockUserUseCase;
+    private final UnlockUserUseCase unlockUserUseCase;
     private final ResetUserPasswordUseCase resetUserPasswordUseCase;
     private final ChangePasswordUseCase changePasswordUseCase;
     private final DeleteUserUseCase deleteUserUseCase;
@@ -37,7 +40,7 @@ public class UserController {
     private final UnlinkIdentityUseCase unlinkIdentityUseCase;
     private final UserRepository userRepository;
 
-    // --- Users endpoints ---
+    // --- Users endpoints (Section D.1) ---
 
     @PostMapping("/api/users")
     @PreAuthorize("hasAuthority('user:create') or hasRole('ADMIN')")
@@ -47,13 +50,14 @@ public class UserController {
 
     @GetMapping("/api/users")
     @PreAuthorize("hasAuthority('user:read') or hasRole('ADMIN')")
-    public ResponseEntity<PageResponse<UserSummary>> listUsers(
+    public ResponseEntity<PageResult<UserSummary>> listUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String direction
     ) {
-        return ResponseEntity.ok(listUsersUseCase.execute(page, size, sortBy, direction));
+        UserFilterQuery query = new UserFilterQuery(page, size, sortBy, direction);
+        return ResponseEntity.ok(listUsersUseCase.execute(query));
     }
 
     @GetMapping("/api/users/{uuid}")
@@ -81,28 +85,28 @@ public class UserController {
     @PostMapping("/api/users/{uuid}/enable")
     @PreAuthorize("hasAuthority('user:update') or hasRole('ADMIN')")
     public ResponseEntity<Void> enableUser(@PathVariable UUID uuid) {
-        setUserStatusUseCase.setEnabled(uuid, true);
+        enableUserUseCase.execute(uuid);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/api/users/{uuid}/disable")
     @PreAuthorize("hasAuthority('user:update') or hasRole('ADMIN')")
     public ResponseEntity<Void> disableUser(@PathVariable UUID uuid) {
-        setUserStatusUseCase.setEnabled(uuid, false);
+        disableUserUseCase.execute(uuid);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/api/users/{uuid}/lock")
     @PreAuthorize("hasAuthority('user:update') or hasRole('ADMIN')")
     public ResponseEntity<Void> lockUser(@PathVariable UUID uuid) {
-        setUserStatusUseCase.setLocked(uuid, true);
+        lockUserUseCase.execute(uuid);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/api/users/{uuid}/unlock")
     @PreAuthorize("hasAuthority('user:update') or hasRole('ADMIN')")
     public ResponseEntity<Void> unlockUser(@PathVariable UUID uuid) {
-        setUserStatusUseCase.setLocked(uuid, false);
+        unlockUserUseCase.execute(uuid);
         return ResponseEntity.noContent().build();
     }
 
@@ -110,16 +114,26 @@ public class UserController {
     @PreAuthorize("hasAuthority('user:update') or hasRole('ADMIN')")
     public ResponseEntity<Void> resetPassword(
             @PathVariable UUID uuid,
-            @RequestBody String newPassword
+            @Valid @RequestBody ResetPasswordRequest request
     ) {
-        resetUserPasswordUseCase.execute(uuid, newPassword);
+        resetUserPasswordUseCase.execute(new ResetUserPasswordCommand(uuid, request.newPassword()));
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/api/users/{uuid}/authorities")
     @PreAuthorize("hasAuthority('user:read') or hasRole('ADMIN')")
-    public ResponseEntity<UserAuthoritiesResult> getUserAuthorities(@PathVariable UUID uuid) {
-        return ResponseEntity.ok(getUserAuthoritiesUseCase.execute(uuid));
+    public ResponseEntity<UserAuthoritiesResponse> getUserAuthorities(@PathVariable UUID uuid) {
+        UserAuthoritiesResult result = getUserAuthoritiesUseCase.execute(uuid);
+
+        var roles = result.roles().stream()
+                .map(r -> new UserAuthoritiesResponse.RoleAuthorityResponse(r.uuid(), r.name(), r.expiresAt()))
+                .toList();
+
+        var directPerms = result.directPermissions().stream()
+                .map(p -> new UserAuthoritiesResponse.DirectPermissionResponse(p.name(), p.effect()))
+                .toList();
+
+        return ResponseEntity.ok(new UserAuthoritiesResponse(roles, directPerms, result.effectivePermissions()));
     }
 
     @PostMapping("/api/users/{uuid}/roles")
@@ -175,8 +189,11 @@ public class UserController {
 
     @GetMapping("/api/users/{uuid}/identities")
     @PreAuthorize("hasAuthority('user:read') or hasRole('ADMIN')")
-    public ResponseEntity<List<IdentityResult>> listUserIdentities(@PathVariable UUID uuid) {
-        return ResponseEntity.ok(listUserIdentitiesUseCase.execute(uuid));
+    public ResponseEntity<List<IdentityResponse>> listUserIdentities(@PathVariable UUID uuid) {
+        var list = listUserIdentitiesUseCase.execute(uuid).stream()
+                .map(i -> new IdentityResponse(i.uuid(), i.provider(), i.email(), i.displayName(), i.linkedAt()))
+                .toList();
+        return ResponseEntity.ok(list);
     }
 
     @DeleteMapping("/api/users/{uuid}/identities/{identityUuid}")
@@ -212,19 +229,22 @@ public class UserController {
             @Valid @RequestBody ChangePasswordRequest request
     ) {
         UUID currentUuid = resolveCurrentUserUuid(authentication);
-        changePasswordUseCase.execute(
+        changePasswordUseCase.execute(new ChangePasswordCommand(
                 currentUuid,
                 request.currentPassword(),
                 request.newPassword(),
                 request.confirmPassword() != null ? request.confirmPassword() : request.newPassword()
-        );
+        ));
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/api/me/identities")
-    public ResponseEntity<List<IdentityResult>> getMeIdentities(Authentication authentication) {
+    public ResponseEntity<List<IdentityResponse>> getMeIdentities(Authentication authentication) {
         UUID currentUuid = resolveCurrentUserUuid(authentication);
-        return ResponseEntity.ok(listUserIdentitiesUseCase.execute(currentUuid));
+        var list = listUserIdentitiesUseCase.execute(currentUuid).stream()
+                .map(i -> new IdentityResponse(i.uuid(), i.provider(), i.email(), i.displayName(), i.linkedAt()))
+                .toList();
+        return ResponseEntity.ok(list);
     }
 
     @DeleteMapping("/api/me/identities/{identityUuid}")

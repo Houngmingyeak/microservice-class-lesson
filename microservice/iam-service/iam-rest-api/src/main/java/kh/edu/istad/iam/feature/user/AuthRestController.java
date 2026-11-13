@@ -17,8 +17,16 @@ public class AuthRestController {
     private final RegisterUserUseCase registerUserUseCase;
 
     @PostMapping("/register")
-    public ResponseEntity<UserResult> register(@Valid @RequestBody RegisterUserCommand command) {
+    public ResponseEntity<UserResult> register(@Valid @RequestBody RegisterUserRequest request) {
+        RegisterUserCommand command = new RegisterUserCommand(
+                request.username(),
+                request.email(),
+                request.password(),
+                request.confirmPassword(),
+                request.givenName(),
+                request.familyName(),
+                request.locale() != null ? request.locale() : "en"
+        );
         return ResponseEntity.status(HttpStatus.CREATED).body(registerUserUseCase.execute(command));
     }
 }
-
