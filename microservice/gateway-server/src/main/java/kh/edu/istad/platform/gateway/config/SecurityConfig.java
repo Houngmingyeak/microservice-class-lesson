@@ -10,6 +10,7 @@ import org.springframework.security.oauth2.client.oidc.web.server.logout.OidcCli
 import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
+import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatchers;
 
 @Configuration
 @EnableWebFluxSecurity
@@ -33,7 +34,9 @@ public class SecurityConfig {
                         .jwt(Customizer.withDefaults())
                 )
                 .logout(logoutSpec -> logoutSpec
-                        .logoutSuccessHandler(oidcLogoutSuccessHandler()))
+                        .requiresLogout(ServerWebExchangeMatchers.pathMatchers("/logout"))
+                        .logoutSuccessHandler(oidcLogoutSuccessHandler())
+                )
                 .build();
     }
 

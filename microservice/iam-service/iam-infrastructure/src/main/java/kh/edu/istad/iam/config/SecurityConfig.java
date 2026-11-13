@@ -47,6 +47,7 @@ public class SecurityConfig {
 
     private final JdbcTemplate jdbcTemplate;
     private final kh.edu.istad.iam.social.OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+    private final CustomOidcUserInfoMapper customOidcUserInfoMapper;
 
     /**
      * Authorization Server security filter chain (handles OAuth2/OIDC endpoints and Dynamic Client Registration).
@@ -64,6 +65,10 @@ public class SecurityConfig {
                         authorizationServer
                                 .oidc(oidc -> oidc
                                         .clientRegistrationEndpoint(Customizer.withDefaults()) // Enable Dynamic Client Registration (DCR)
+                                        .logoutEndpoint(Customizer.withDefaults()) // Enable OIDC RP-Initiated Logout (/connect/logout)
+                                        .userInfoEndpoint(userInfo -> userInfo
+                                                .userInfoMapper(customOidcUserInfoMapper)
+                                        )
                                 )
                 )
                 .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
@@ -113,6 +118,10 @@ public class SecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
                         .successHandler(oAuth2LoginSuccessHandler)
+                )
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/login?logout")
+                        .permitAll()
                 );
 
         return http.build();

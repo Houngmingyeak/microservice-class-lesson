@@ -24,6 +24,13 @@ spring:
               enabled: true
               lower-case-service-id: true
           routes:
+            - id: business-service
+              uri: lb://business-service
+              predicates:
+                - Path=/business-service/**
+              filters:
+                - StripPrefix=1
+
             - id: my-order-service
               uri: lb://order-service
               predicates:
