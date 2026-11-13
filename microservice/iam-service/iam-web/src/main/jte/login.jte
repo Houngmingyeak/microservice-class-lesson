@@ -195,7 +195,7 @@
     <a class="btn-social" href="/oauth2/authorization/google">Continue with Google</a>
     <a class="btn-social" href="/oauth2/authorization/github">Continue with GitHub</a>
     <a class="btn-social" href="/oauth2/authorization/facebook">Continue with Facebook</a>
-    <a class="btn-social" href="/oauth2/authorization/telegram">Continue with Telegram</a>
+    <a class="btn-social" href="/login/oauth2/code/telegram?demo=true">Continue with Telegram</a>
 </div>
 
 <script>
