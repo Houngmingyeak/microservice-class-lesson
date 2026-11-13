@@ -58,7 +58,7 @@ public class SecurityConfig {
 
         // Sets the location that the End-User's User Agent will be redirected to
         // after the logout has been performed at the Provider
-        oidcLogoutSuccessHandler.setPostLogoutRedirectUri("http://localhost:9000/login");
+        oidcLogoutSuccessHandler.setPostLogoutRedirectUri("http://localhost:39000/login");
 
         return oidcLogoutSuccessHandler;
     }

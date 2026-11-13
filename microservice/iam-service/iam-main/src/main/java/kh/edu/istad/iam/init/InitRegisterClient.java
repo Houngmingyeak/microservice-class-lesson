@@ -57,7 +57,7 @@ public class InitRegisterClient implements ApplicationRunner {
                 .postLogoutRedirectUri("http://localhost:9999/")
                 .postLogoutRedirectUri("http://127.0.0.1:9999/")
                 .postLogoutRedirectUri("http://localhost:9999/login?logout")
-                .postLogoutRedirectUri("http://localhost:9000/login")
+                .postLogoutRedirectUri("http://localhost:39000/login")
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)
                 .scope(OidcScopes.EMAIL)

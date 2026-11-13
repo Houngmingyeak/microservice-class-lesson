@@ -58,11 +58,11 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:9000
+          issuer-uri: http://localhost:39000
       client:
         provider:
           iam-service:
-            issuer-uri: http://localhost:9000
+            issuer-uri: http://localhost:39000
         registration:
           front-bff-client:
             provider: iam-service

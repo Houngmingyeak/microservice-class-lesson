@@ -22,7 +22,7 @@ spring:
               - customer.read
         provider:
           auth-server:
-            token-uri: http://localhost:9000/oauth2/token
+            token-uri: http://localhost:39000/oauth2/token
 
   cloud:
     gateway:
