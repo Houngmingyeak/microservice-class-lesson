@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 
 /**
@@ -12,7 +13,9 @@ import java.time.OffsetDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-public class RolePermission {
+public class RolePermission implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private Long id;
     private Long roleId;
