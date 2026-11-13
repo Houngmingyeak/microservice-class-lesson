@@ -197,17 +197,12 @@ public class WebPageController {
                 nickname,
                 null,
                 null,
-                null,
-                null,
-                null,
-                locale.getLanguage(),
                 phoneNumber,
                 null,
                 null,
                 null,
                 null,
-                null,
-                null
+                locale.getLanguage()
         );
         updateUserProfileUseCase.execute(user.getUuid(), command);
 
