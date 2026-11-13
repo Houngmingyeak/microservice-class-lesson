@@ -4,18 +4,21 @@ import kh.edu.istad.iam.domain.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+public class CustomUserDetails implements UserDetails, Serializable {
 
-public class CustomUserDetails implements UserDetails {
+    private static final long serialVersionUID = 1L;
 
     private final User user;
     private final Collection<? extends GrantedAuthority> authorities;
 
     public CustomUserDetails(User user, Collection<? extends GrantedAuthority> authorities) {
         this.user = user;
-        this.authorities = authorities;
+        this.authorities = authorities != null ? new ArrayList<>(authorities) : List.of();
     }
 
     public User getUser() {
