@@ -46,7 +46,7 @@ public class SecurityConfig {
                         .jwt(Customizer.withDefaults())
                 )
                 .logout(logoutSpec -> logoutSpec
-                        .requiresLogout(ServerWebExchangeMatchers.pathMatchers(HttpMethod.GET, "/logout"))
+                        .requiresLogout(ServerWebExchangeMatchers.pathMatchers("/logout"))
                         .logoutSuccessHandler(oidcLogoutSuccessHandler())
                 )
                 .build();
@@ -58,7 +58,7 @@ public class SecurityConfig {
 
         // Sets the location that the End-User's User Agent will be redirected to
         // after the logout has been performed at the Provider
-        oidcLogoutSuccessHandler.setPostLogoutRedirectUri("{baseUrl}");
+        oidcLogoutSuccessHandler.setPostLogoutRedirectUri("http://localhost:9000/login");
 
         return oidcLogoutSuccessHandler;
     }
