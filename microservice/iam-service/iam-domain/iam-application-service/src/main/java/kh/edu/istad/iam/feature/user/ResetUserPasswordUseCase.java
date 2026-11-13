@@ -17,14 +17,20 @@ public class ResetUserPasswordUseCase {
     private final PasswordHasher passwordHasher;
 
     @Transactional
+    public void execute(ResetUserPasswordCommand command) {
+        execute(command.userUuid(), command.newPassword());
+    }
+
+    @Transactional
     public void execute(UUID userUuid, String newPassword) {
         User user = userRepository.findByUuid(userUuid)
                 .filter(u -> !Boolean.TRUE.equals(u.getIsDeleted()))
-                .orElseThrow(() -> new ResourceNotFoundException("User", "uuid", userUuid));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with uuid: " + userUuid));
 
         user.setPasswordHash(passwordHasher.hash(newPassword));
         user.setPasswordChangedAt(OffsetDateTime.now());
+        user.setCredentialsNonExpired(true);
+        user.setFailedLoginAttempts(0);
         userRepository.save(user);
     }
 }
-

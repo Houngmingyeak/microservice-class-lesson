@@ -17,13 +17,18 @@ public class ChangePasswordUseCase {
     private final PasswordHasher passwordHasher;
 
     @Transactional
+    public void execute(ChangePasswordCommand command) {
+        execute(command.userUuid(), command.currentPassword(), command.newPassword(), command.confirmPassword());
+    }
+
+    @Transactional
     public void execute(UUID userUuid, String currentPassword, String newPassword, String confirmPassword) {
         if (!newPassword.equals(confirmPassword)) {
             throw new IllegalArgumentException("New passwords do not match");
         }
         User user = userRepository.findByUuid(userUuid)
                 .filter(u -> !Boolean.TRUE.equals(u.getIsDeleted()))
-                .orElseThrow(() -> new ResourceNotFoundException("User", "uuid", userUuid));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with uuid: " + userUuid));
 
         if (!passwordHasher.matches(currentPassword, user.getPasswordHash())) {
             throw new IllegalArgumentException("Current password is incorrect");
@@ -34,4 +39,3 @@ public class ChangePasswordUseCase {
         userRepository.save(user);
     }
 }
-
