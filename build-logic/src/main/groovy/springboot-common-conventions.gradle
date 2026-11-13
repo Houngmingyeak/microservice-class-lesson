@@ -20,9 +20,9 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.48'
     annotationProcessor 'org.projectlombok:lombok:1.18.48'
 }
-//tasks.withType(Test).configureEach {
-//    useJUnitPlatform()
-//}
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
 tasks.withType(JavaCompile).configureEach {
     options.compilerArgs
 }
