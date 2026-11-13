@@ -22,7 +22,7 @@ spring:
         webflux:
           default-filters:
             - SaveSession
-            - TokenRelay
+            - TokenRelay=
           discovery:
             locator:
               enabled: true

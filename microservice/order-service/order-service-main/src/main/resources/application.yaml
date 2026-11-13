@@ -1,5 +1,5 @@
 server:
-  port: 9093
+  port: 9099
 
 spring:
   application:
@@ -11,6 +11,9 @@ spring:
   debug: true
   security:
     oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:39000
       client:
         registration:
           customer-service:
