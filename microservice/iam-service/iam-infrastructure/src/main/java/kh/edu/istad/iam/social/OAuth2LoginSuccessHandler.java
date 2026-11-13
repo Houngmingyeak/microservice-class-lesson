@@ -103,7 +103,12 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
                 UsernamePasswordAuthenticationToken newAuth = new UsernamePasswordAuthenticationToken(
                         userDetails, null, authorities
                 );
-                SecurityContextHolder.getContext().setAuthentication(newAuth);
+                org.springframework.security.core.context.SecurityContext context = SecurityContextHolder.createEmptyContext();
+                context.setAuthentication(newAuth);
+                SecurityContextHolder.setContext(context);
+                request.getSession().setAttribute(
+                        org.springframework.security.web.context.HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context
+                );
             }
         }
 
