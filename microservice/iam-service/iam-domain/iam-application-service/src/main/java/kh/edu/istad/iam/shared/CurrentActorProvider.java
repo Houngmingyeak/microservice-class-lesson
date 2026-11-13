@@ -7,4 +7,8 @@ package kh.edu.istad.iam.shared;
 public interface CurrentActorProvider {
 
     String currentActor();
+
+    default String getCurrentActorSub() {
+        return currentActor();
+    }
 }
