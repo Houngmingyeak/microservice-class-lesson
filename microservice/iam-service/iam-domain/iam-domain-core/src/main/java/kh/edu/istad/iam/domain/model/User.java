@@ -16,6 +16,8 @@ import java.util.UUID;
 @NoArgsConstructor
 public class User extends AuditableModel {
 
+    private static final long serialVersionUID = 1L;
+
     private Long id;
     private UUID uuid;
     private String username;

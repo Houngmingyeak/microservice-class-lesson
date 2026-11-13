@@ -3,6 +3,7 @@ package kh.edu.istad.iam.domain.model;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.OffsetDateTime;
 
 /**
@@ -11,7 +12,9 @@ import java.time.OffsetDateTime;
  */
 @Getter
 @Setter
-public abstract class AuditableModel {
+public abstract class AuditableModel implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private OffsetDateTime createdAt;
     private String createdBy;
