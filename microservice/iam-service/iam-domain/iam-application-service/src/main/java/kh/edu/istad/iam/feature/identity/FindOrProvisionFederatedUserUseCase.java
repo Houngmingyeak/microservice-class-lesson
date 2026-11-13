@@ -4,6 +4,8 @@ import kh.edu.istad.iam.domain.model.Identity;
 import kh.edu.istad.iam.domain.model.User;
 import kh.edu.istad.iam.domain.model.UserRole;
 import kh.edu.istad.iam.feature.role.RoleRepository;
+import kh.edu.istad.iam.feature.user.GetUserAuthoritiesUseCase;
+import kh.edu.istad.iam.feature.user.UserAuthoritiesResult;
 import kh.edu.istad.iam.feature.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ public class FindOrProvisionFederatedUserUseCase {
     private final IdentityRepository identityRepository;
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
+    private final GetUserAuthoritiesUseCase getUserAuthoritiesUseCase;
 
     @Transactional
     public AuthUserResult execute(FederatedIdentityCommand command) {
@@ -69,17 +72,6 @@ public class FindOrProvisionFederatedUserUseCase {
                 user.setEmailVerified(Boolean.TRUE.equals(command.emailVerified()));
                 user.setPictureUrl(command.pictureUrl());
                 user = userRepository.save(user);
-
-                // Assign default USER role
-                final User finalUser = user;
-                roleRepository.findByName("USER").ifPresent(role -> {
-                    UserRole ur = new UserRole();
-                    ur.setUserId(finalUser.getId());
-                    ur.setRoleId(role.getId());
-                    ur.setAssignedAt(OffsetDateTime.now());
-                    ur.setAssignedBy("system");
-                    userRepository.saveUserRole(ur);
-                });
             }
 
             // Link new identity
@@ -98,16 +90,24 @@ public class FindOrProvisionFederatedUserUseCase {
             identityRepository.save(identity);
         }
 
-        // Calculate authorities
-        Set<String> authorities = new HashSet<>();
-        userRepository.findActiveRolesByUserId(user.getId()).forEach(ur -> {
-            roleRepository.findById(ur.getRoleId()).ifPresent(r -> {
-                authorities.add("ROLE_" + r.getName());
-                roleRepository.findActivePermissionsByRoleId(r.getId()).forEach(rp -> {
-                    // role permission
-                });
+        // Ensure default USER role is assigned if user has no active roles
+        if (userRepository.findActiveRolesByUserId(user.getId()).isEmpty()) {
+            final User finalUser = user;
+            roleRepository.findByName("USER").ifPresent(role -> {
+                UserRole ur = new UserRole();
+                ur.setUserId(finalUser.getId());
+                ur.setRoleId(role.getId());
+                ur.setAssignedAt(OffsetDateTime.now());
+                ur.setAssignedBy("system");
+                userRepository.saveUserRole(ur);
             });
-        });
+        }
+
+        // Calculate authorities (roles + effective permissions)
+        UserAuthoritiesResult authoritiesResult = getUserAuthoritiesUseCase.execute(user.getUuid());
+        Set<String> authorities = new HashSet<>();
+        authoritiesResult.roles().forEach(r -> authorities.add("ROLE_" + r.name()));
+        authorities.addAll(authoritiesResult.effectivePermissions());
 
         return new AuthUserResult(
                 user.getUuid(),

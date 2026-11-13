@@ -28,7 +28,7 @@ spring:
             client-id: ${FACEBOOK_CLIENT_ID:facebook-client-id}
             client-secret: ${FACEBOOK_CLIENT_SECRET:facebook-client-secret}
             client-name: Facebook
-#            scope: public_profile, email
+            scope: public_profile, email
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
 
           # <-- ថ្មី: Telegram (OpenID Connect)

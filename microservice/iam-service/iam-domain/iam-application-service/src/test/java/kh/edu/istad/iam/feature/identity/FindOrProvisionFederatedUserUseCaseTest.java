@@ -5,6 +5,8 @@ import kh.edu.istad.iam.domain.model.Role;
 import kh.edu.istad.iam.domain.model.User;
 import kh.edu.istad.iam.domain.model.UserRole;
 import kh.edu.istad.iam.feature.role.RoleRepository;
+import kh.edu.istad.iam.feature.user.GetUserAuthoritiesUseCase;
+import kh.edu.istad.iam.feature.user.UserAuthoritiesResult;
 import kh.edu.istad.iam.feature.user.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -32,6 +35,9 @@ class FindOrProvisionFederatedUserUseCaseTest {
 
     @Mock
     private RoleRepository roleRepository;
+
+    @Mock
+    private GetUserAuthoritiesUseCase getUserAuthoritiesUseCase;
 
     @InjectMocks
     private FindOrProvisionFederatedUserUseCase findOrProvisionFederatedUserUseCase;
@@ -58,11 +64,20 @@ class FindOrProvisionFederatedUserUseCaseTest {
         when(identityRepository.findByProviderAndProviderSubject("GOOGLE", "sub123"))
                 .thenReturn(Optional.of(identity));
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(getUserAuthoritiesUseCase.execute(any())).thenReturn(
+                new UserAuthoritiesResult(
+                        List.of(new UserAuthoritiesResult.RoleAuthority(UUID.randomUUID(), "USER", null)),
+                        List.of(),
+                        List.of("user:read")
+                )
+        );
 
         AuthUserResult result = findOrProvisionFederatedUserUseCase.execute(command);
 
         assertNotNull(result);
         assertEquals("guser", result.username());
+        assertTrue(result.authorities().contains("ROLE_USER"));
+        assertTrue(result.authorities().contains("user:read"));
         verify(identityRepository, times(1)).save(identity);
     }
 
@@ -88,11 +103,19 @@ class FindOrProvisionFederatedUserUseCaseTest {
         userRole.setId(2L);
         userRole.setName("USER");
         when(roleRepository.findByName("USER")).thenReturn(Optional.of(userRole));
+        when(getUserAuthoritiesUseCase.execute(any())).thenReturn(
+                new UserAuthoritiesResult(
+                        List.of(new UserAuthoritiesResult.RoleAuthority(UUID.randomUUID(), "USER", null)),
+                        List.of(),
+                        List.of("user:read")
+                )
+        );
 
         AuthUserResult result = findOrProvisionFederatedUserUseCase.execute(command);
 
         assertNotNull(result);
         assertEquals("gitdev", result.username());
+        assertTrue(result.authorities().contains("ROLE_USER"));
         verify(userRepository, times(1)).save(any(User.class));
         verify(userRepository, times(1)).saveUserRole(any(UserRole.class));
         verify(identityRepository, times(1)).save(any(Identity.class));
