@@ -1,6 +1,6 @@
 package kh.edu.istad.iam.feature.user;
 
-import kh.edu.istad.iam.shared.PageResponse;
+import kh.edu.istad.iam.shared.PageResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,10 +14,10 @@ public class ListUsersUseCase {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public PageResponse<UserSummary> execute(int page, int size, String sortBy, String direction) {
-        var users = userRepository.findAll(page, size, sortBy, direction);
+    public PageResult<UserSummary> execute(UserFilterQuery query) {
+        var users = userRepository.findAll(query.page(), query.size(), query.sortBy(), query.direction());
         long total = userRepository.count();
-        int totalPages = (int) Math.ceil((double) total / size);
+        int totalPages = (int) Math.ceil((double) total / query.size());
 
         List<UserSummary> summaries = users.stream().map(u -> new UserSummary(
                 u.getUuid(),
@@ -29,7 +29,11 @@ public class ListUsersUseCase {
                 u.getCreatedAt()
         )).toList();
 
-        return new PageResponse<>(summaries, page, size, total, totalPages, page >= totalPages - 1);
+        return new PageResult<>(summaries, query.page(), query.size(), total, totalPages, query.page() == 0, query.page() >= totalPages - 1);
+    }
+
+    @Transactional(readOnly = true)
+    public PageResult<UserSummary> execute(int page, int size, String sortBy, String direction) {
+        return execute(new UserFilterQuery(page, size, sortBy, direction));
     }
 }
-
