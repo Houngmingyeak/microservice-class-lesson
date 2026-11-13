@@ -46,6 +46,7 @@ import java.util.UUID;
 public class SecurityConfig {
 
     private final JdbcTemplate jdbcTemplate;
+    private final kh.edu.istad.iam.social.OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     /**
      * Authorization Server security filter chain (handles OAuth2/OIDC endpoints and Dynamic Client Registration).
@@ -102,19 +103,16 @@ public class SecurityConfig {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/login", "/register", "/oauth2/**", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/login", "/register", "/oauth2/**", "/login/oauth2/code/**", "/css/**", "/js/**", "/images/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
                         .permitAll()
                 )
-                // ត្រូវបន្ថែម loginPage("/login") ទើបប្រើ page login.jte របស់យើង
-                // បើគ្មានវា Spring នឹងបង្កើត page "Login with OAuth 2.0" ខ្លួនឯង
-                // ប៊ូតុង GitHub / Google នៅតែដំណើរការ (/oauth2/authorization/{registrationId})
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
-                        .defaultSuccessUrl("/", true)
+                        .successHandler(oAuth2LoginSuccessHandler)
                 );
 
         return http.build();
