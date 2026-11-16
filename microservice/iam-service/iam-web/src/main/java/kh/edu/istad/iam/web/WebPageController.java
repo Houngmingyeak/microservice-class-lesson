@@ -3,19 +3,21 @@ package kh.edu.istad.iam.web;
 import jakarta.servlet.http.HttpServletRequest;
 import kh.edu.istad.iam.domain.model.User;
 import kh.edu.istad.iam.feature.identity.ListUserIdentitiesUseCase;
+import kh.edu.istad.iam.feature.role.RoleRepository;
 import kh.edu.istad.iam.feature.user.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.*;
 
 @Controller
@@ -23,6 +25,7 @@ import java.util.*;
 public class WebPageController {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final RegisterUserUseCase registerUserUseCase;
     private final UpdateUserProfileUseCase updateUserProfileUseCase;
     private final ChangePasswordUseCase changePasswordUseCase;
@@ -42,7 +45,7 @@ public class WebPageController {
      * REST endpoint for React to retrieve currently authenticated session user.
      */
     @GetMapping("/web-api/me")
-    @org.springframework.web.bind.annotation.ResponseBody
+    @ResponseBody
     public Map<String, Object> currentUser(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
             return Map.of("authenticated", false);
@@ -84,6 +87,181 @@ public class WebPageController {
         res.put("claims", claims);
 
         return res;
+    }
+
+    /**
+     * REST endpoint for user self-registration directly into PostgreSQL database.
+     */
+    @PostMapping("/web-api/auth/register")
+    @ResponseBody
+    public ResponseEntity<?> registerUser(@RequestBody Map<String, String> body) {
+        try {
+            String username = body.get("username");
+            String email = body.get("email");
+            String password = body.get("password");
+            String confirmPassword = body.getOrDefault("confirmPassword", password);
+            String givenName = body.getOrDefault("givenName", "");
+            String familyName = body.getOrDefault("familyName", "");
+            String locale = body.getOrDefault("locale", "en");
+
+            RegisterUserCommand command = new RegisterUserCommand(
+                    username, email, password, confirmPassword, givenName, familyName, locale
+            );
+            UserResult result = registerUserUseCase.execute(command);
+            return ResponseEntity.status(HttpStatus.CREATED).body(Map.of(
+                    "success", true,
+                    "message", "User registered successfully",
+                    "userId", result.uuid().toString(),
+                    "username", result.username(),
+                    "email", result.email()
+            ));
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().body(Map.of(
+                    "success", false,
+                    "message", ex.getMessage()
+            ));
+        }
+    }
+
+    /**
+     * REST endpoint to list users directly from PostgreSQL database for Admin Management.
+     */
+    @GetMapping("/web-api/users")
+    @ResponseBody
+    public List<Map<String, Object>> listAllUsers() {
+        var users = userRepository.findAll(0, 100, "id", "asc");
+        return users.stream().map(u -> {
+            var activeRoles = userRepository.findActiveRolesByUserId(u.getId());
+            List<String> roleNames = activeRoles.stream()
+                    .map(ur -> roleRepository.findById(ur.getRoleId()).map(kh.edu.istad.iam.domain.model.Role::getName).orElse("USER"))
+                    .toList();
+            if (roleNames.isEmpty()) {
+                roleNames = List.of("USER");
+            }
+
+            Map<String, Object> map = new LinkedHashMap<>();
+            map.put("id", u.getUuid().toString());
+            map.put("uuid", u.getUuid().toString());
+            map.put("username", u.getUsername());
+            map.put("email", u.getEmail());
+            map.put("givenName", u.getGivenName() != null ? u.getGivenName() : "");
+            map.put("familyName", u.getFamilyName() != null ? u.getFamilyName() : "");
+            map.put("phoneNumber", u.getPhoneNumber() != null ? u.getPhoneNumber() : "");
+            map.put("roles", roleNames);
+            map.put("enabled", Boolean.TRUE.equals(u.getEnabled()));
+            map.put("accountNonLocked", Boolean.TRUE.equals(u.getAccountNonLocked()));
+            map.put("createdAt", u.getCreatedAt() != null ? u.getCreatedAt().toString() : "");
+            map.put("avatar", u.getPictureUrl());
+            return map;
+        }).toList();
+    }
+
+    /**
+     * REST endpoint for Admin to create a new user directly into PostgreSQL database.
+     */
+    @PostMapping("/web-api/users")
+    @ResponseBody
+    public ResponseEntity<?> createUserByAdmin(@RequestBody Map<String, Object> body) {
+        try {
+            String username = (String) body.get("username");
+            String email = (String) body.get("email");
+            String password = (String) body.getOrDefault("password", "Password123!");
+            String givenName = (String) body.getOrDefault("givenName", "");
+            String familyName = (String) body.getOrDefault("familyName", "");
+            String roleName = body.containsKey("role") ? (String) body.get("role") : "USER";
+
+            RegisterUserCommand command = new RegisterUserCommand(
+                    username, email, password, password, givenName, familyName, "en"
+            );
+            UserResult result = registerUserUseCase.execute(command);
+
+            if (!"USER".equalsIgnoreCase(roleName)) {
+                roleRepository.findByName(roleName.toUpperCase()).ifPresent(r -> {
+                    userRepository.findByUuid(result.uuid()).ifPresent(u -> {
+                        userRepository.saveUserRole(kh.edu.istad.iam.domain.model.UserRole.assign(
+                                u.getId(), r.getId(), "admin", null, "Assigned by admin"
+                        ));
+                    });
+                });
+            }
+
+            Map<String, Object> res = new LinkedHashMap<>();
+            res.put("id", result.uuid().toString());
+            res.put("uuid", result.uuid().toString());
+            res.put("username", result.username());
+            res.put("email", result.email());
+            res.put("givenName", result.givenName());
+            res.put("familyName", result.familyName());
+            res.put("roles", List.of(roleName.toUpperCase()));
+            res.put("enabled", true);
+            res.put("accountNonLocked", true);
+            res.put("createdAt", OffsetDateTime.now().toString());
+            return ResponseEntity.status(HttpStatus.CREATED).body(res);
+        } catch (Exception ex) {
+            return ResponseEntity.badRequest().body(Map.of("message", ex.getMessage()));
+        }
+    }
+
+    @PostMapping("/web-api/users/{uuid}/toggle-status")
+    @ResponseBody
+    public ResponseEntity<?> toggleUserStatus(@PathVariable UUID uuid) {
+        Optional<User> uOpt = userRepository.findByUuid(uuid);
+        if (uOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        User u = uOpt.get();
+        u.setEnabled(!Boolean.TRUE.equals(u.getEnabled()));
+        userRepository.save(u);
+        return ResponseEntity.ok(Map.of("enabled", u.getEnabled()));
+    }
+
+    @PostMapping("/web-api/users/{uuid}/toggle-lock")
+    @ResponseBody
+    public ResponseEntity<?> toggleUserLock(@PathVariable UUID uuid) {
+        Optional<User> uOpt = userRepository.findByUuid(uuid);
+        if (uOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        User u = uOpt.get();
+        u.setAccountNonLocked(!Boolean.TRUE.equals(u.getAccountNonLocked()));
+        userRepository.save(u);
+        return ResponseEntity.ok(Map.of("accountNonLocked", u.getAccountNonLocked()));
+    }
+
+    @DeleteMapping("/web-api/users/{uuid}")
+    @ResponseBody
+    public ResponseEntity<?> deleteUser(@PathVariable UUID uuid) {
+        Optional<User> uOpt = userRepository.findByUuid(uuid);
+        if (uOpt.isPresent()) {
+            User u = uOpt.get();
+            u.setIsDeleted(true);
+            u.setDeletedAt(OffsetDateTime.now());
+            userRepository.save(u);
+        }
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/web-api/users/{uuid}/roles")
+    @ResponseBody
+    public ResponseEntity<?> assignRole(@PathVariable UUID uuid, @RequestBody Map<String, Object> body) {
+        Optional<User> uOpt = userRepository.findByUuid(uuid);
+        if (uOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        User u = uOpt.get();
+        List<?> roles = (List<?>) body.get("roles");
+        String reason = (String) body.getOrDefault("reason", "Admin role assignment");
+        if (roles != null) {
+            for (Object rObj : roles) {
+                String rName = rObj.toString();
+                roleRepository.findByName(rName.toUpperCase()).ifPresent(r -> {
+                    userRepository.saveUserRole(kh.edu.istad.iam.domain.model.UserRole.assign(
+                            u.getId(), r.getId(), "admin", null, reason
+                    ));
+                });
+            }
+        }
+        return ResponseEntity.ok(Map.of("success", true));
     }
 
     // ---------------------------------------------------------
