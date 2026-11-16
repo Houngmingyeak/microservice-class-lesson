@@ -14,7 +14,7 @@ import {
 } from '../common/Icons';
 
 export const LoginView = ({ onShowToast }) => {
-  const { login, quickLogin, setAuthView } = useAuth();
+  const { login, setAuthView } = useAuth();
   const { locale, setLocale, t } = useI18n();
 
   const [username, setUsername] = useState('');
@@ -115,29 +115,6 @@ export const LoginView = ({ onShowToast }) => {
           </button>
         </form>
 
-        {/* Quick Demo Logins */}
-        <div className="mt-6 pt-5 border-t border-slate-200">
-          <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider block mb-2.5 text-center">
-            {t('quickDemoLogin')}
-          </span>
-          <div className="grid grid-cols-2 gap-2">
-            <button
-              type="button"
-              onClick={() => quickLogin('admin')}
-              className="btn btn-secondary text-xs py-2 px-3 text-indigo-700 font-semibold hover:border-indigo-300"
-            >
-              👑 {t('loginAsAdmin')}
-            </button>
-            <button
-              type="button"
-              onClick={() => quickLogin('user')}
-              className="btn btn-secondary text-xs py-2 px-3 text-slate-700 font-semibold hover:border-slate-300"
-            >
-              👤 {t('loginAsUser')}
-            </button>
-          </div>
-        </div>
-
         {/* Social Logins */}
         <div className="mt-6 pt-5 border-t border-slate-200">
           <span className="text-xs text-slate-500 font-medium block mb-3 text-center">
@@ -165,14 +142,13 @@ export const LoginView = ({ onShowToast }) => {
             >
               <IconFacebook size={18} />
             </a>
-            <button
-              type="button"
-              onClick={() => quickLogin('user')}
+            <a
+              href="/oauth2/authorization/telegram"
               className="p-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl flex items-center justify-center transition shadow-sm hover:shadow text-sky-500"
               title="Sign in with Telegram"
             >
               <IconTelegram size={18} />
-            </button>
+            </a>
           </div>
         </div>
 
@@ -180,6 +156,7 @@ export const LoginView = ({ onShowToast }) => {
         <div className="mt-6 text-center text-xs text-slate-500">
           {t('dontHaveAccount')}{' '}
           <button
+            type="button"
             onClick={() => setAuthView('register')}
             className="text-indigo-600 hover:underline font-semibold"
           >
