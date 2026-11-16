@@ -109,15 +109,35 @@ public class SecurityConfig {
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/login", "/register", "/error", "/oauth2/**", "/login/oauth2/code/**", "/.well-known/**", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers(
+                                "/",
+                                "/index.html",
+                                "/assets/**",
+                                "/favicon.svg",
+                                "/icons.svg",
+                                "/login",
+                                "/register",
+                                "/error",
+                                "/oauth2/**",
+                                "/login/oauth2/code/**",
+                                "/.well-known/**",
+                                "/css/**",
+                                "/js/**",
+                                "/images/**",
+                                "/web-api/**",
+                                "/jte/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/login", "/web-api/**"))
                 .formLogin(form -> form
                         .loginPage("/login")
+                        .defaultSuccessUrl("/", true)
                         .permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/login")
+                        .defaultSuccessUrl("/", true)
                         .successHandler(oAuth2LoginSuccessHandler)
                 )
                 .logout(logout -> logout
