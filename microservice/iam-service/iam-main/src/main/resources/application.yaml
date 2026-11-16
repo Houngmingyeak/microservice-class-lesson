@@ -45,7 +45,7 @@ spring:
             # Telegram ទាមទារ Basic Authorization (client_id:client_secret) ពេលប្តូរ code ជា token
             client-authentication-method: client_secret_basic
             # openid ចាំបាច់ profile ផ្តល់ឈ្មោះ username រូបភាព
-#            scope: openid, profile
+            scope: openid, profile
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
 
         provider:
@@ -91,7 +91,9 @@ gg:
 
 logging:
   level:
-    org.springframework.security: TRACE
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: TRACE
+    org.springframework.web.client: DEBUG
 
 telegram:
   bot-token: ${TELEGRAM_BOT_TOKEN:mock-telegram-token}
