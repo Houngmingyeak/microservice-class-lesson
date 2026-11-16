@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useI18n } from '../../context/I18nContext';
 import { api } from '../../services/api';
-import { IconUser, IconCheck, IconEdit, IconShieldCheck, IconGlobe } from '../common/Icons';
+import { IconUser, IconCheck, IconEdit, IconShieldCheck, IconGlobe, IconCamera, IconTrash, IconUpload } from '../common/Icons';
 import { Badge } from '../common/Badge';
 
 export const ProfileView = ({ onShowToast }) => {
   const { user, updateProfileState } = useAuth();
   const { t } = useI18n();
+  const fileInputRef = useRef(null);
 
   const [formData, setFormData] = useState({
     username: '',
@@ -42,7 +43,7 @@ export const ProfileView = ({ onShowToast }) => {
         addressLocality: user.addressLocality || '',
         addressCountry: user.addressCountry || 'KH',
         locale: user.locale || 'en',
-        pictureUrl: user.pictureUrl || user.avatar || ''
+        pictureUrl: user.pictureUrl || ''
       });
     }
   }, [user]);
@@ -52,8 +53,39 @@ export const ProfileView = ({ onShowToast }) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleAvatarChange = (avatarUrl) => {
-    setFormData(prev => ({ ...prev, pictureUrl: avatarUrl }));
+  const handleFileSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 3 * 1024 * 1024) {
+      onShowToast("Image size must be less than 3MB", 'error');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const base64Data = reader.result;
+      setFormData(prev => ({ ...prev, pictureUrl: base64Data }));
+      try {
+        await api.updateProfile({ pictureUrl: base64Data });
+        updateProfileState({ pictureUrl: base64Data });
+        onShowToast("Profile picture uploaded successfully!", 'success');
+      } catch (err) {
+        onShowToast("Failed to save picture", 'error');
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemovePhoto = async () => {
+    setFormData(prev => ({ ...prev, pictureUrl: '' }));
+    try {
+      await api.updateProfile({ pictureUrl: null });
+      updateProfileState({ pictureUrl: null });
+      onShowToast("Profile picture removed", 'info');
+    } catch (err) {
+      onShowToast(err.message, 'error');
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -70,14 +102,6 @@ export const ProfileView = ({ onShowToast }) => {
     }
   };
 
-  const avatarOptions = [
-    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=256",
-    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=256",
-    "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=256",
-    "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=256",
-    "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=256"
-  ];
-
   return (
     <div className="view-container">
       <div className="view-header">
@@ -88,20 +112,58 @@ export const ProfileView = ({ onShowToast }) => {
       </div>
 
       <div className="grid-2-cols">
-        {/* Left Card: Summary & Avatar */}
+        {/* Left Card: Summary & Uploadable Avatar */}
         <div className="glass-card flex-col items-center text-center p-6">
-          <div className="relative group">
-            <img
-              src={formData.pictureUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=256"}
-              alt="Profile Avatar"
-              className="w-32 h-32 rounded-full object-cover border-4 border-indigo-500/40 shadow-xl"
-            />
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileSelect}
+            accept="image/*"
+            className="hidden"
+          />
+
+          {formData.pictureUrl ? (
+            <div className="relative group mx-auto w-28 h-28">
+              <img
+                src={formData.pictureUrl}
+                alt="Profile Avatar"
+                className="w-28 h-28 rounded-full object-cover border-4 border-indigo-100 shadow"
+              />
+              <button
+                type="button"
+                onClick={handleRemovePhoto}
+                className="absolute -top-1 -right-1 p-1.5 bg-rose-500 text-white rounded-full hover:bg-rose-600 transition shadow"
+                title="Remove photo"
+              >
+                <IconTrash size={14} />
+              </button>
+            </div>
+          ) : (
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className="w-28 h-28 rounded-full bg-slate-100 border-2 border-dashed border-slate-300 text-slate-400 hover:border-indigo-400 hover:text-indigo-600 transition cursor-pointer flex flex-col items-center justify-center mx-auto group shadow-inner"
+              title="Click to upload profile photo"
+            >
+              <IconUser size={36} className="text-slate-400 group-hover:text-indigo-500 transition" />
+              <span className="text-[10px] text-slate-400 group-hover:text-indigo-600 font-medium mt-1">No Picture</span>
+            </div>
+          )}
+
+          <div className="mt-3 flex justify-center gap-2">
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="btn btn-secondary text-xs py-1.5 px-3 flex items-center gap-1.5 text-slate-700"
+            >
+              <IconCamera size={14} />
+              <span>{formData.pictureUrl ? "Change Photo" : "Upload Photo"}</span>
+            </button>
           </div>
 
-          <h3 className="mt-4 text-xl font-bold text-white">
+          <h3 className="mt-4 text-xl font-bold text-slate-900">
             {formData.givenName} {formData.familyName}
           </h3>
-          <p className="text-slate-400 text-sm">@{formData.username}</p>
+          <p className="text-slate-500 text-sm">@{formData.username}</p>
 
           <div className="mt-3 flex flex-wrap gap-1.5 justify-center">
             {user?.roles?.map(r => (
@@ -109,35 +171,17 @@ export const ProfileView = ({ onShowToast }) => {
             ))}
           </div>
 
-          <div className="mt-6 w-full border-t border-slate-800 pt-5 text-left">
-            <span className="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-3 block">
-              {t('changeAvatar')}
-            </span>
-            <div className="flex gap-2 justify-center">
-              {avatarOptions.map((opt, i) => (
-                <button
-                  key={i}
-                  type="button"
-                  onClick={() => handleAvatarChange(opt)}
-                  className={`avatar-choice-btn ${formData.pictureUrl === opt ? 'ring-2 ring-indigo-500' : ''}`}
-                >
-                  <img src={opt} alt="Choice" className="w-10 h-10 rounded-full object-cover" />
-                </button>
-              ))}
-            </div>
-          </div>
-
           {/* OIDC Claims preview */}
-          <div className="mt-6 w-full border-t border-slate-800 pt-4 text-left">
-            <span className="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2 block flex items-center gap-1.5">
-              <IconShieldCheck size={14} className="text-emerald-400" />
+          <div className="mt-6 w-full border-t border-slate-200 pt-4 text-left">
+            <span className="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-2 flex items-center gap-1.5">
+              <IconShieldCheck size={14} className="text-emerald-500" />
               OIDC Token Claims
             </span>
-            <div className="bg-slate-950/70 p-3 rounded-lg text-xs font-mono text-slate-300 space-y-1 overflow-x-auto">
-              <div><span className="text-indigo-400">sub:</span> {user?.uuid}</div>
-              <div><span className="text-indigo-400">email_verified:</span> true</div>
-              <div><span className="text-indigo-400">zoneinfo:</span> Asia/Phnom_Penh</div>
-              <div><span className="text-indigo-400">auth_time:</span> {new Date().toLocaleTimeString()}</div>
+            <div className="bg-slate-50 border border-slate-200 p-3 rounded-lg text-xs font-mono text-slate-700 space-y-1 overflow-x-auto">
+              <div><span className="text-indigo-600 font-semibold">sub:</span> {user?.uuid}</div>
+              <div><span className="text-indigo-600 font-semibold">email_verified:</span> true</div>
+              <div><span className="text-indigo-600 font-semibold">zoneinfo:</span> Asia/Phnom_Penh</div>
+              <div><span className="text-indigo-600 font-semibold">auth_time:</span> {new Date().toLocaleTimeString()}</div>
             </div>
           </div>
         </div>
