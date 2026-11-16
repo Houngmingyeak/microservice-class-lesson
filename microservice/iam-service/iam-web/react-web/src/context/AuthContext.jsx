@@ -14,12 +14,105 @@ export const AuthProvider = ({ children }) => {
   const [currentMode, setCurrentMode] = useState('account'); // 'account' | 'management'
   const [authView, setAuthView] = useState(null); // null = authenticated, 'login' | 'register'
 
+  // Sync session with Spring Boot backend if running
   useEffect(() => {
-    store.set('current_user', user);
+    const checkSpringSession = async () => {
+      try {
+        const res = await fetch('/web-api/me');
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.authenticated) {
+            const isAdminUser = data.roles && data.roles.includes('ADMIN');
+            const springUser = {
+              ...initialCurrentUser,
+              username: data.username,
+              email: data.email,
+              givenName: data.givenName || data.username,
+              familyName: data.familyName || '',
+              nickname: data.nickname || '',
+              phoneNumber: data.phoneNumber || '',
+              roles: data.roles || ['USER'],
+              effectivePermissions: data.permissions && data.permissions.length > 0
+                ? data.permissions
+                : (isAdminUser ? initialCurrentUser.effectivePermissions : ["user:read", "profile:read", "profile:update", "session:read"]),
+              claims: data.claims || {}
+            };
+            setUser(springUser);
+            setAuthView(null);
+            setCurrentMode(isAdminUser ? 'management' : 'account');
+            setActiveTab(isAdminUser ? 'overview' : 'profile');
+            return;
+          }
+        }
+      } catch (e) {
+        // Fallback silently if offline or running standalone
+      }
+
+      // Check URL query parameters for logout
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('logout')) {
+        setUser(null);
+        setAuthView('login');
+      }
+    };
+
+    checkSpringSession();
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      store.set('current_user', user);
+    }
   }, [user]);
 
   const login = async (username, password) => {
-    // Check against seeded users
+    // 1. Try real Spring Boot form login
+    try {
+      const formData = new URLSearchParams();
+      formData.append('username', username);
+      formData.append('password', password);
+
+      const response = await fetch('/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData,
+        redirect: 'follow'
+      });
+
+      if (response.ok) {
+        const meRes = await fetch('/web-api/me');
+        if (meRes.ok) {
+          const data = await meRes.json();
+          if (data && data.authenticated) {
+            const isAdminUser = data.roles && data.roles.includes('ADMIN');
+            const springUser = {
+              ...initialCurrentUser,
+              username: data.username,
+              email: data.email,
+              givenName: data.givenName || data.username,
+              familyName: data.familyName || '',
+              nickname: data.nickname || '',
+              phoneNumber: data.phoneNumber || '',
+              roles: data.roles || ['USER'],
+              effectivePermissions: data.permissions && data.permissions.length > 0
+                ? data.permissions
+                : (isAdminUser ? initialCurrentUser.effectivePermissions : ["user:read", "profile:read", "profile:update"]),
+              claims: data.claims || {}
+            };
+            setUser(springUser);
+            setAuthView(null);
+            setCurrentMode(isAdminUser ? 'management' : 'account');
+            setActiveTab(isAdminUser ? 'overview' : 'profile');
+            api.logActivity("LOGIN_SUCCESS", `Authenticated via Spring Security session (${springUser.username})`);
+            return springUser;
+          }
+        }
+      }
+    } catch (e) {
+      // Backend not running or blocked, fallback to client-side state
+    }
+
+    // 2. Client-side fallback authentication
     const users = store.get('users') || [];
     const matched = users.find(u => u.username.toLowerCase() === username.toLowerCase() || u.email.toLowerCase() === username.toLowerCase());
 
@@ -43,7 +136,7 @@ export const AuthProvider = ({ children }) => {
       setCurrentMode(fullUser.roles.includes('ADMIN') ? 'management' : 'account');
       setActiveTab(fullUser.roles.includes('ADMIN') ? 'overview' : 'profile');
 
-      api.logActivity("LOGIN_SUCCESS", `Signed in via credentials from web portal (${fullUser.username})`);
+      api.logActivity("LOGIN_SUCCESS", `Signed in via credentials (${fullUser.username})`);
       return fullUser;
     }
 
@@ -95,8 +188,14 @@ export const AuthProvider = ({ children }) => {
     return newUser;
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await fetch('/logout', { method: 'POST' });
+    } catch (e) {
+      // Ignore network errors
+    }
     setUser(null);
+    store.set('current_user', null);
     setAuthView('login');
   };
 
