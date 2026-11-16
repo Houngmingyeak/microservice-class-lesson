@@ -1,122 +1,150 @@
-import { useState } from 'react'
-import heroImg from '../../../iam-main/src/main/resources/static/assets/hero.png'
-import reactLogo from '../../../iam-main/src/main/resources/static/assets/react.svg'
-import viteLogo from '../../../iam-main/src/main/resources/static/assets/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { I18nProvider, useI18n } from './context/I18nContext';
+import { Navbar } from './components/common/Navbar';
+import { Sidebar } from './components/common/Sidebar';
+import { Toast } from './components/common/Toast';
 
-function App() {
-  const [count, setCount] = useState(0)
+// Auth Views
+import { LoginView } from './components/auth/LoginView';
+import { RegisterView } from './components/auth/RegisterView';
+
+// Account Views
+import { ProfileView } from './components/account/ProfileView';
+import { SecurityView } from './components/account/SecurityView';
+import { LinkedAccountsView } from './components/account/LinkedAccountsView';
+import { ActiveSessionsView } from './components/account/ActiveSessionsView';
+import { LoginHistoryView } from './components/account/LoginHistoryView';
+import { AccountActivityView } from './components/account/AccountActivityView';
+import { DeactivationView } from './components/account/DeactivationView';
+
+// Management Views
+import { AdminOverviewView } from './components/management/AdminOverviewView';
+import { UserManagementView } from './components/management/UserManagementView';
+import { UserSessionsView } from './components/management/UserSessionsView';
+import { UserLoginHistoryView } from './components/management/UserLoginHistoryView';
+import { RoleManagementView } from './components/management/RoleManagementView';
+import { PermissionManagementView } from './components/management/PermissionManagementView';
+import { ClientManagementView } from './components/management/ClientManagementView';
+import { SecurityManagementView } from './components/management/SecurityManagementView';
+import { AuditLogsView } from './components/management/AuditLogsView';
+import { SystemConfigView } from './components/management/SystemConfigView';
+
+function MainApp() {
+  const { user, activeTab, authView } = useAuth();
+  const [toast, setToast] = useState({ message: '', type: 'success' });
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => {
+      setToast({ message: '', type: 'success' });
+    }, 4000);
+  };
+
+  // If user navigated to login or register
+  if (!user || authView === 'login') {
+    return (
+      <>
+        <LoginView onShowToast={showToast} />
+        {toast.message && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast({ message: '', type: 'success' })}
+          />
+        )}
+      </>
+    );
+  }
+
+  if (authView === 'register') {
+    return (
+      <>
+        <RegisterView onShowToast={showToast} />
+        {toast.message && (
+          <Toast
+            message={toast.message}
+            type={toast.type}
+            onClose={() => setToast({ message: '', type: 'success' })}
+          />
+        )}
+      </>
+    );
+  }
+
+  // Render view by active tab
+  const renderActiveView = () => {
+    switch (activeTab) {
+      // Account tabs
+      case 'profile':
+        return <ProfileView onShowToast={showToast} />;
+      case 'security':
+        return <SecurityView onShowToast={showToast} />;
+      case 'linkedAccounts':
+        return <LinkedAccountsView onShowToast={showToast} />;
+      case 'activeSessions':
+        return <ActiveSessionsView onShowToast={showToast} />;
+      case 'loginHistory':
+        return <LoginHistoryView onShowToast={showToast} />;
+      case 'accountActivity':
+        return <AccountActivityView onShowToast={showToast} />;
+      case 'deactivation':
+        return <DeactivationView onShowToast={showToast} />;
+
+      // Management tabs
+      case 'overview':
+        return <AdminOverviewView onShowToast={showToast} />;
+      case 'users':
+        return <UserManagementView onShowToast={showToast} />;
+      case 'userSessions':
+        return <UserSessionsView onShowToast={showToast} />;
+      case 'userLoginHistory':
+        return <UserLoginHistoryView onShowToast={showToast} />;
+      case 'roles':
+        return <RoleManagementView onShowToast={showToast} />;
+      case 'permissions':
+        return <PermissionManagementView onShowToast={showToast} />;
+      case 'clients':
+        return <ClientManagementView onShowToast={showToast} />;
+      case 'securityMgmt':
+        return <SecurityManagementView onShowToast={showToast} />;
+      case 'auditLogs':
+        return <AuditLogsView onShowToast={showToast} />;
+      case 'systemConfig':
+        return <SystemConfigView onShowToast={showToast} />;
+
+      default:
+        return <ProfileView onShowToast={showToast} />;
+    }
+  };
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="app-container">
+      <Navbar />
+      <div className="main-layout">
+        <Sidebar />
+        <main className="main-content">
+          {renderActiveView()}
+        </main>
+      </div>
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      {toast.message && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={() => setToast({ message: '', type: 'success' })}
+        />
+      )}
+    </div>
+  );
 }
 
-export default App
+export default function App() {
+  return (
+    <I18nProvider>
+      <AuthProvider>
+        <MainApp />
+      </AuthProvider>
+    </I18nProvider>
+  );
+}
