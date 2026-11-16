@@ -43,13 +43,13 @@ export const LoginView = ({ onShowToast }) => {
       <div className="auth-card-container">
         {/* Top bar with language */}
         <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-2">
-            <div className="p-2 bg-indigo-500/20 text-indigo-400 rounded-xl">
-              <IconShield size={24} />
+          <div className="flex items-center gap-3">
+            <div className="brand-logo-icon">
+              <IconShield size={24} className="text-indigo-600" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-white tracking-tight">{t('appName')}</h1>
-              <p className="text-xs text-slate-400">{t('tagline')}</p>
+              <h1 className="text-lg font-bold text-slate-900 tracking-tight">{t('appName')}</h1>
+              <p className="text-xs text-slate-500">{t('tagline')}</p>
             </div>
           </div>
 
@@ -64,8 +64,8 @@ export const LoginView = ({ onShowToast }) => {
         </div>
 
         <div className="mb-6">
-          <h2 className="text-xl font-bold text-white mb-1">{t('signIn')}</h2>
-          <p className="text-sm text-slate-400">{t('signInPrompt')}</p>
+          <h2 className="text-xl font-bold text-slate-900 mb-1">{t('signIn')}</h2>
+          <p className="text-sm text-slate-500">{t('signInPrompt')}</p>
         </div>
 
         {/* Credentials Form */}
@@ -109,29 +109,29 @@ export const LoginView = ({ onShowToast }) => {
           <button
             type="submit"
             disabled={loading}
-            className="btn btn-primary w-full py-2.5 font-semibold text-sm mt-2 shadow-lg shadow-indigo-500/20"
+            className="btn btn-primary w-full py-2.5 font-semibold text-sm mt-2"
           >
             {loading ? t('loading') : t('signIn')}
           </button>
         </form>
 
         {/* Quick Demo Logins */}
-        <div className="mt-6 pt-5 border-t border-slate-800">
-          <span className="text-xs text-slate-400 font-semibold uppercase tracking-wider block mb-2.5 text-center">
+        <div className="mt-6 pt-5 border-t border-slate-200">
+          <span className="text-xs text-slate-500 font-semibold uppercase tracking-wider block mb-2.5 text-center">
             {t('quickDemoLogin')}
           </span>
           <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
               onClick={() => quickLogin('admin')}
-              className="btn btn-secondary text-xs py-2 px-3 text-indigo-300 hover:text-white"
+              className="btn btn-secondary text-xs py-2 px-3 text-indigo-700 font-semibold hover:border-indigo-300"
             >
               👑 {t('loginAsAdmin')}
             </button>
             <button
               type="button"
               onClick={() => quickLogin('user')}
-              className="btn btn-secondary text-xs py-2 px-3 text-sky-300 hover:text-white"
+              className="btn btn-secondary text-xs py-2 px-3 text-slate-700 font-semibold hover:border-slate-300"
             >
               👤 {t('loginAsUser')}
             </button>
@@ -139,15 +139,15 @@ export const LoginView = ({ onShowToast }) => {
         </div>
 
         {/* Social Logins */}
-        <div className="mt-6 pt-5 border-t border-slate-800">
-          <span className="text-xs text-slate-400 font-medium block mb-3 text-center">
+        <div className="mt-6 pt-5 border-t border-slate-200">
+          <span className="text-xs text-slate-500 font-medium block mb-3 text-center">
             {t('orContinueWith')}
           </span>
           <div className="grid grid-cols-4 gap-2">
             <button
               type="button"
               onClick={() => quickLogin('user')}
-              className="p-2.5 bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl flex items-center justify-center transition"
+              className="p-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl flex items-center justify-center transition shadow-sm hover:shadow"
               title="Sign in with Google"
             >
               <IconGoogle size={18} />
@@ -155,7 +155,7 @@ export const LoginView = ({ onShowToast }) => {
             <button
               type="button"
               onClick={() => quickLogin('user')}
-              className="p-2.5 bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl flex items-center justify-center transition text-white"
+              className="p-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl flex items-center justify-center transition shadow-sm hover:shadow text-slate-900"
               title="Sign in with GitHub"
             >
               <IconGithub size={18} />
@@ -163,7 +163,7 @@ export const LoginView = ({ onShowToast }) => {
             <button
               type="button"
               onClick={() => quickLogin('user')}
-              className="p-2.5 bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl flex items-center justify-center transition text-blue-500"
+              className="p-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl flex items-center justify-center transition shadow-sm hover:shadow text-blue-600"
               title="Sign in with Facebook"
             >
               <IconFacebook size={18} />
@@ -171,7 +171,7 @@ export const LoginView = ({ onShowToast }) => {
             <button
               type="button"
               onClick={() => quickLogin('user')}
-              className="p-2.5 bg-slate-900 border border-slate-800 hover:border-slate-700 rounded-xl flex items-center justify-center transition text-sky-400"
+              className="p-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl flex items-center justify-center transition shadow-sm hover:shadow text-sky-500"
               title="Sign in with Telegram"
             >
               <IconTelegram size={18} />
@@ -180,11 +180,11 @@ export const LoginView = ({ onShowToast }) => {
         </div>
 
         {/* Sign up link */}
-        <div className="mt-6 text-center text-xs text-slate-400">
+        <div className="mt-6 text-center text-xs text-slate-500">
           {t('dontHaveAccount')}{' '}
           <button
             onClick={() => setAuthView('register')}
-            className="text-indigo-400 hover:underline font-semibold"
+            className="text-indigo-600 hover:underline font-semibold"
           >
             {t('signUp')}
           </button>
