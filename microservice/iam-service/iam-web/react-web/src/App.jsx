@@ -41,11 +41,11 @@ function MainApp() {
     }, 4000);
   };
 
-  // If user navigated to login or register
-  if (!user || authView === 'login') {
+  // If user requested registration view
+  if (authView === 'register') {
     return (
       <>
-        <LoginView onShowToast={showToast} />
+        <RegisterView onShowToast={showToast} />
         {toast.message && (
           <Toast
             message={toast.message}
@@ -57,10 +57,11 @@ function MainApp() {
     );
   }
 
-  if (authView === 'register') {
+  // If user is unauthenticated or requested login view
+  if (!user || authView === 'login') {
     return (
       <>
-        <RegisterView onShowToast={showToast} />
+        <LoginView onShowToast={showToast} />
         {toast.message && (
           <Toast
             message={toast.message}
