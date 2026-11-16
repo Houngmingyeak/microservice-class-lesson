@@ -52,13 +52,13 @@ export const RegisterView = ({ onShowToast }) => {
       <div className="auth-card-container max-w-lg">
         {/* Top bar with language */}
         <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-2">
-            <div className="p-2 bg-indigo-500/20 text-indigo-400 rounded-xl">
-              <IconShield size={24} />
+          <div className="flex items-center gap-3">
+            <div className="brand-logo-icon">
+              <IconShield size={24} className="text-indigo-600" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-white tracking-tight">{t('appName')}</h1>
-              <p className="text-xs text-slate-400">{t('tagline')}</p>
+              <h1 className="text-lg font-bold text-slate-900 tracking-tight">{t('appName')}</h1>
+              <p className="text-xs text-slate-500">{t('tagline')}</p>
             </div>
           </div>
 
@@ -73,8 +73,8 @@ export const RegisterView = ({ onShowToast }) => {
         </div>
 
         <div className="mb-6">
-          <h2 className="text-xl font-bold text-white mb-1">{t('register.title') || "Create an account"}</h2>
-          <p className="text-sm text-slate-400">Join the enterprise identity network</p>
+          <h2 className="text-xl font-bold text-slate-900 mb-1">{t('register.title') || "Create an account"}</h2>
+          <p className="text-sm text-slate-500">Join the enterprise identity network</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -154,7 +154,7 @@ export const RegisterView = ({ onShowToast }) => {
           </div>
 
           {formData.confirmPassword && (
-            <div className={`text-xs flex items-center gap-1.5 ${passwordsMatch ? 'text-emerald-400' : 'text-rose-400'}`}>
+            <div className={`text-xs flex items-center gap-1.5 ${passwordsMatch ? 'text-emerald-600' : 'text-rose-600'}`}>
               {passwordsMatch ? <IconCheck size={14} /> : <IconX size={14} />}
               <span>{passwordsMatch ? "Passwords match" : "Passwords do not match"}</span>
             </div>
@@ -163,17 +163,17 @@ export const RegisterView = ({ onShowToast }) => {
           <button
             type="submit"
             disabled={loading}
-            className="btn btn-primary w-full py-2.5 font-semibold text-sm mt-3 shadow-lg shadow-indigo-500/20"
+            className="btn btn-primary w-full py-2.5 font-semibold text-sm mt-3"
           >
             {loading ? t('loading') : t('signUp')}
           </button>
         </form>
 
-        <div className="mt-6 text-center text-xs text-slate-400">
+        <div className="mt-6 text-center text-xs text-slate-500">
           {t('alreadyHaveAccount')}{' '}
           <button
             onClick={() => setAuthView('login')}
-            className="text-indigo-400 hover:underline font-semibold"
+            className="text-indigo-600 hover:underline font-semibold"
           >
             {t('signIn')}
           </button>
