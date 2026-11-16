@@ -210,16 +210,22 @@ export const UserManagementView = ({ onShowToast }) => {
                   <tr key={u.uuid}>
                     <td>
                       <div className="flex items-center gap-3">
-                        <img
-                          src={u.avatar || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=256"}
-                          alt={u.username}
-                          className="w-9 h-9 rounded-full object-cover border border-slate-700"
-                        />
+                        {u.pictureUrl ? (
+                          <img
+                            src={u.pictureUrl}
+                            alt={u.username}
+                            className="w-8 h-8 rounded-full object-cover border border-slate-200"
+                          />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 text-slate-600 font-bold text-xs flex items-center justify-center">
+                            {u.givenName ? u.givenName.charAt(0).toUpperCase() : (u.username ? u.username.charAt(0).toUpperCase() : 'U')}
+                          </div>
+                        )}
                         <div>
-                          <div className="font-semibold text-white text-sm">
+                          <div className="font-semibold text-slate-900 text-sm">
                             {u.givenName ? `${u.givenName} ${u.familyName}` : u.username}
                           </div>
-                          <div className="text-xs text-slate-400 font-mono">@{u.username} • {u.email}</div>
+                          <div className="text-xs text-slate-500 font-mono">@{u.username} • {u.email}</div>
                         </div>
                       </div>
                     </td>
