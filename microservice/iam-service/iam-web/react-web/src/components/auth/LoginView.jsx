@@ -144,30 +144,27 @@ export const LoginView = ({ onShowToast }) => {
             {t('orContinueWith')}
           </span>
           <div className="grid grid-cols-4 gap-2">
-            <button
-              type="button"
-              onClick={() => quickLogin('user')}
+            <a
+              href="/oauth2/authorization/google"
               className="p-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl flex items-center justify-center transition shadow-sm hover:shadow"
               title="Sign in with Google"
             >
               <IconGoogle size={18} />
-            </button>
-            <button
-              type="button"
-              onClick={() => quickLogin('user')}
+            </a>
+            <a
+              href="/oauth2/authorization/github"
               className="p-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl flex items-center justify-center transition shadow-sm hover:shadow text-slate-900"
               title="Sign in with GitHub"
             >
               <IconGithub size={18} />
-            </button>
-            <button
-              type="button"
-              onClick={() => quickLogin('user')}
+            </a>
+            <a
+              href="/oauth2/authorization/facebook"
               className="p-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl flex items-center justify-center transition shadow-sm hover:shadow text-blue-600"
               title="Sign in with Facebook"
             >
               <IconFacebook size={18} />
-            </button>
+            </a>
             <button
               type="button"
               onClick={() => quickLogin('user')}
