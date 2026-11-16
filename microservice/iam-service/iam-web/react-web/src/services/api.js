@@ -163,15 +163,67 @@ export const api = {
     };
   },
 
-  // Users Management (/api/users)
+  // User Self-Registration directly to Spring Boot & PostgreSQL
+  async registerUser(formData) {
+    try {
+      const res = await fetch('/web-api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.message || 'Registration failed');
+      }
+      return data;
+    } catch (e) {
+      if (e.message && !e.message.includes('fetch')) {
+        throw e;
+      }
+      // If offline or local dev fallback
+      return this.createUser(formData);
+    }
+  },
+
+  // Users Management (/api/users or /web-api/users)
   async getUsers() {
+    try {
+      const res = await fetch('/web-api/users');
+      if (res.ok) {
+        const users = await res.json();
+        if (Array.isArray(users) && users.length > 0) {
+          store.set('users', users);
+          return users;
+        }
+      }
+    } catch (e) {
+      // fallback to store
+    }
     return store.get('users') || [];
   },
 
   async createUser(userData) {
+    try {
+      const res = await fetch('/web-api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userData)
+      });
+      if (res.ok) {
+        const created = await res.json();
+        const users = store.get('users') || [];
+        users.unshift(created);
+        store.set('users', users);
+        this.logAdminAudit("USER_CREATE", created.username, `Admin provisioned user ${created.username} in database`);
+        return created;
+      }
+    } catch (e) {
+      // fallback
+    }
     const users = store.get('users') || [];
     const newUser = {
       uuid: "usr-" + Date.now(),
+      id: "usr-" + Date.now(),
       username: userData.username,
       email: userData.email,
       givenName: userData.givenName || "",
@@ -182,8 +234,7 @@ export const api = {
       roles: userData.roles || ["USER"],
       directPermissions: [],
       createdAt: new Date().toISOString(),
-      lastLoginAt: null,
-      avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=256"
+      lastLoginAt: null
     };
     users.unshift(newUser);
     store.set('users', users);
@@ -193,7 +244,7 @@ export const api = {
 
   async updateUser(uuid, updates) {
     const users = store.get('users') || [];
-    const idx = users.findIndex(u => u.uuid === uuid);
+    const idx = users.findIndex(u => u.uuid === uuid || u.id === uuid);
     if (idx !== -1) {
       users[idx] = { ...users[idx], ...updates };
       store.set('users', users);
@@ -204,8 +255,11 @@ export const api = {
   },
 
   async toggleUserActive(uuid) {
+    try {
+      await fetch(`/web-api/users/${uuid}/toggle-status`, { method: 'POST' });
+    } catch (e) {}
     const users = store.get('users') || [];
-    const user = users.find(u => u.uuid === uuid);
+    const user = users.find(u => u.uuid === uuid || u.id === uuid);
     if (user) {
       user.enabled = !user.enabled;
       store.set('users', users);
@@ -215,8 +269,11 @@ export const api = {
   },
 
   async toggleUserLock(uuid) {
+    try {
+      await fetch(`/web-api/users/${uuid}/toggle-lock`, { method: 'POST' });
+    } catch (e) {}
     const users = store.get('users') || [];
-    const user = users.find(u => u.uuid === uuid);
+    const user = users.find(u => u.uuid === uuid || u.id === uuid);
     if (user) {
       user.accountNonLocked = !user.accountNonLocked;
       store.set('users', users);
@@ -226,9 +283,12 @@ export const api = {
   },
 
   async deleteUser(uuid) {
+    try {
+      await fetch(`/web-api/users/${uuid}`, { method: 'DELETE' });
+    } catch (e) {}
     let users = store.get('users') || [];
-    const user = users.find(u => u.uuid === uuid);
-    users = users.filter(u => u.uuid !== uuid);
+    const user = users.find(u => u.uuid === uuid || u.id === uuid);
+    users = users.filter(u => u.uuid !== uuid && u.id !== uuid);
     store.set('users', users);
     if (user) {
       this.logAdminAudit("USER_DELETE", user.username, `Deleted user account ${user.username}`);
