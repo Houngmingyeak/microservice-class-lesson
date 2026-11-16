@@ -29,7 +29,68 @@ public class WebPageController {
     private final ListUserIdentitiesUseCase listUserIdentitiesUseCase;
     private final MessageSource messageSource;
 
-    @GetMapping("/login")
+    /**
+     * Single Page Application route handler for React frontend.
+     * Serves index.html for all frontend routes.
+     */
+    @GetMapping({"/", "/login", "/register", "/account/**", "/management/**"})
+    public String reactApp() {
+        return "forward:/index.html";
+    }
+
+    /**
+     * REST endpoint for React to retrieve currently authenticated session user.
+     */
+    @GetMapping("/web-api/me")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public Map<String, Object> currentUser(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
+            return Map.of("authenticated", false);
+        }
+
+        String username = authentication.getName();
+        Optional<User> userOpt = userRepository.findByUsernameOrEmail(username, username);
+
+        List<String> roles = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .filter(a -> a.startsWith("ROLE_"))
+                .map(a -> a.replace("ROLE_", ""))
+                .toList();
+
+        List<String> permissions = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .filter(a -> !a.startsWith("ROLE_"))
+                .toList();
+
+        Map<String, Object> res = new LinkedHashMap<>();
+        res.put("authenticated", true);
+        res.put("username", username);
+        res.put("email", userOpt.map(User::getEmail).orElse(username + "@example.com"));
+        res.put("givenName", userOpt.map(User::getGivenName).orElse(username));
+        res.put("familyName", userOpt.map(User::getFamilyName).orElse(""));
+        res.put("nickname", userOpt.map(User::getNickname).orElse(""));
+        res.put("phoneNumber", userOpt.map(User::getPhoneNumber).orElse(""));
+        res.put("roles", roles.isEmpty() ? List.of("USER") : roles);
+        res.put("permissions", permissions);
+
+        Map<String, Object> claims = new LinkedHashMap<>();
+        claims.put("sub", userOpt.map(u -> u.getUuid().toString()).orElse(username));
+        claims.put("preferred_username", username);
+        userOpt.ifPresent(u -> {
+            if (u.getEmail() != null) claims.put("email", u.getEmail());
+            if (u.getGivenName() != null) claims.put("given_name", u.getGivenName());
+            if (u.getFamilyName() != null) claims.put("family_name", u.getFamilyName());
+        });
+        res.put("claims", claims);
+
+        return res;
+    }
+
+    // ---------------------------------------------------------
+    // Legacy JTE Template Routes (Preserved under /jte)
+    // ---------------------------------------------------------
+
+    @GetMapping("/jte/login")
     public String login(
             @RequestParam(value = "error", required = false) String error,
             @RequestParam(value = "logout", required = false) String logout,
@@ -47,7 +108,7 @@ public class WebPageController {
         return "login";
     }
 
-    @GetMapping("/register")
+    @GetMapping("/jte/register")
     public String registerPage(CsrfToken csrfToken, Locale locale, Model model) {
         model.addAttribute("locale", locale.getLanguage());
         if (csrfToken != null) {
@@ -57,65 +118,10 @@ public class WebPageController {
         return "register";
     }
 
-    @PostMapping("/register")
-    public String handleRegister(
-            @RequestParam String username,
-            @RequestParam String email,
-            @RequestParam String password,
-            @RequestParam String confirmPassword,
-            @RequestParam String givenName,
-            @RequestParam String familyName,
-            CsrfToken csrfToken,
-            Locale locale,
-            Model model
-    ) {
-        if (csrfToken != null) {
-            model.addAttribute("csrfParameterName", csrfToken.getParameterName());
-            model.addAttribute("csrfToken", csrfToken.getToken());
-        }
-        model.addAttribute("locale", locale.getLanguage());
-
-        if (!password.equals(confirmPassword)) {
-            model.addAttribute("error", "Passwords do not match");
-            return "register";
-        }
-
-        try {
-            RegisterUserCommand command = new RegisterUserCommand(
-                    username,
-                    email,
-                    password,
-                    confirmPassword,
-                    givenName,
-                    familyName,
-                    locale.getLanguage()
-            );
-            registerUserUseCase.execute(command);
-            return "redirect:/login?registered=true";
-        } catch (Exception ex) {
-            model.addAttribute("error", ex.getMessage());
-            return "register";
-        }
-    }
-
-    @GetMapping("/oauth2/consent")
-    public String consent(
-            @RequestParam(value = "client_id", required = false, defaultValue = "Client Application") String clientName,
-            @RequestParam(value = "scope", required = false, defaultValue = "openid profile email") String scopes,
-            Locale locale,
-            Model model
-    ) {
-        model.addAttribute("title", "Authorization Consent");
-        model.addAttribute("clientName", clientName);
-        model.addAttribute("scopes", scopes);
-        model.addAttribute("locale", locale.getLanguage());
-        return "consent";
-    }
-
-    @GetMapping("/")
+    @GetMapping("/jte")
     public String index(Authentication authentication, CsrfToken csrfToken, Locale locale, Model model) {
         if (authentication == null || !authentication.isAuthenticated()) {
-            return "redirect:/login";
+            return "redirect:/jte/login";
         }
 
         String username = authentication.getName();
