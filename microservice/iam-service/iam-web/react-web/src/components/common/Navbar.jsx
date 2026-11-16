@@ -69,11 +69,17 @@ export const Navbar = () => {
         {/* User Card */}
         {user && (
           <div className="nav-user-profile">
-            <img
-              src={user.pictureUrl || user.avatar || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=256"}
-              alt={user.username}
-              className="nav-avatar"
-            />
+            {user.pictureUrl ? (
+              <img
+                src={user.pictureUrl}
+                alt={user.username}
+                className="w-8 h-8 rounded-full object-cover border border-slate-200"
+              />
+            ) : (
+              <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-300 text-slate-600 font-bold text-xs flex items-center justify-center">
+                {user.givenName ? user.givenName.charAt(0).toUpperCase() : (user.username ? user.username.charAt(0).toUpperCase() : 'U')}
+              </div>
+            )}
             <div className="nav-user-info">
               <span className="nav-username">{user.givenName ? `${user.givenName} ${user.familyName}` : user.username}</span>
               <div className="nav-role-badges">
