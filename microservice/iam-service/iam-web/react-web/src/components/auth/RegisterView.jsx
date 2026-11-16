@@ -172,6 +172,7 @@ export const RegisterView = ({ onShowToast }) => {
         <div className="mt-6 text-center text-xs text-slate-500">
           {t('alreadyHaveAccount')}{' '}
           <button
+            type="button"
             onClick={() => setAuthView('login')}
             className="text-indigo-600 hover:underline font-semibold"
           >
