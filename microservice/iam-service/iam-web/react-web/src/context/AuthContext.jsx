@@ -7,12 +7,17 @@ const AuthContext = createContext(null);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     const cached = store.get('current_user');
-    return cached || initialCurrentUser;
+    return cached || null;
   });
 
   const [activeTab, setActiveTab] = useState('profile');
   const [currentMode, setCurrentMode] = useState('account'); // 'account' | 'management'
-  const [authView, setAuthView] = useState(null); // null = authenticated, 'login' | 'register'
+  const [authView, setAuthView] = useState(() => {
+    if (typeof window !== 'undefined' && window.location.pathname.includes('/register')) {
+      return 'register';
+    }
+    return !store.get('current_user') ? 'login' : null;
+  }); // null = authenticated, 'login' | 'register'
 
   // Sync session with Spring Boot backend if running
   useEffect(() => {
@@ -112,9 +117,9 @@ export const AuthProvider = ({ children }) => {
       // Backend not running or blocked, fallback to client-side state
     }
 
-    // 2. Client-side fallback authentication
+    // 2. Client-side fallback authentication for database users
     const users = store.get('users') || [];
-    const matched = users.find(u => u.username.toLowerCase() === username.toLowerCase() || u.email.toLowerCase() === username.toLowerCase());
+    const matched = users.find(u => u.username?.toLowerCase() === username.toLowerCase() || u.email?.toLowerCase() === username.toLowerCase());
 
     if (matched) {
       if (!matched.enabled) {
@@ -126,66 +131,48 @@ export const AuthProvider = ({ children }) => {
 
       const fullUser = {
         ...matched,
-        effectivePermissions: matched.roles.includes('ADMIN')
+        effectivePermissions: matched.roles?.includes('ADMIN')
           ? initialCurrentUser.effectivePermissions
           : ["user:read", "profile:read", "profile:update", "session:read"]
       };
 
       setUser(fullUser);
       setAuthView(null);
-      setCurrentMode(fullUser.roles.includes('ADMIN') ? 'management' : 'account');
-      setActiveTab(fullUser.roles.includes('ADMIN') ? 'overview' : 'profile');
+      setCurrentMode(fullUser.roles?.includes('ADMIN') ? 'management' : 'account');
+      setActiveTab(fullUser.roles?.includes('ADMIN') ? 'overview' : 'profile');
 
       api.logActivity("LOGIN_SUCCESS", `Signed in via credentials (${fullUser.username})`);
       return fullUser;
     }
 
-    // Default admin fallback
-    if (username === 'houngmingyeak' || username === 'admin') {
-      setUser(initialCurrentUser);
-      setAuthView(null);
-      setCurrentMode('management');
-      setActiveTab('overview');
-      return initialCurrentUser;
-    }
-
-    throw new Error("Invalid username or password. Please verify your organizational credentials.");
-  };
-
-  const quickLogin = (role) => {
-    if (role === 'admin') {
-      setUser(initialCurrentUser);
-      setAuthView(null);
-      setCurrentMode('management');
-      setActiveTab('overview');
-    } else {
-      const users = store.get('users') || [];
-      const standard = users.find(u => u.username === 'john_doe') || {
-        ...initialCurrentUser,
-        username: "john_doe",
-        givenName: "John",
-        familyName: "Doe",
-        email: "john.doe@company.com",
-        roles: ["USER"],
-        effectivePermissions: ["user:read", "profile:read", "profile:update"]
-      };
-      setUser(standard);
-      setAuthView(null);
-      setCurrentMode('account');
-      setActiveTab('profile');
-    }
+    throw new Error("Invalid username or password. Please verify your credentials.");
   };
 
   const register = async (userData) => {
-    const newUser = await api.createUser({
-      ...userData,
-      roles: ["USER"]
-    });
-    setUser(newUser);
-    setAuthView(null);
-    setCurrentMode('account');
-    setActiveTab('profile');
-    return newUser;
+    // 1. Register directly in PostgreSQL database via backend API
+    await api.registerUser(userData);
+
+    // 2. Automatically sign in with the new credentials
+    try {
+      const loggedIn = await login(userData.username, userData.password);
+      return loggedIn;
+    } catch (e) {
+      // Fallback: set user session state
+      const newUser = {
+        ...initialCurrentUser,
+        username: userData.username,
+        email: userData.email,
+        givenName: userData.givenName || userData.username,
+        familyName: userData.familyName || "",
+        roles: ["USER"],
+        effectivePermissions: ["user:read", "profile:read", "profile:update", "session:read"]
+      };
+      setUser(newUser);
+      setAuthView(null);
+      setCurrentMode('account');
+      setActiveTab('profile');
+      return newUser;
+    }
   };
 
   const logout = async () => {
@@ -220,7 +207,6 @@ export const AuthProvider = ({ children }) => {
       authView,
       setAuthView,
       login,
-      quickLogin,
       register,
       logout,
       updateProfileState
