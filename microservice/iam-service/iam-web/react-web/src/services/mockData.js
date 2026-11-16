@@ -2,26 +2,26 @@
 
 export const initialCurrentUser = {
   uuid: "00000000-0000-0000-0000-000000000001",
-  username: "houngmingyeak",
-  email: "mingyeak@istad.edu.kh",
+  username: "admin",
+  email: "admin@istad.edu.kh",
   emailVerified: true,
-  givenName: "Mingyeak",
-  familyName: "Houng",
-  nickname: "Yeak",
-  phoneNumber: "+855 12 345 678",
-  phoneNumberVerified: true,
+  givenName: "Admin",
+  familyName: "User",
+  nickname: "Admin",
+  phoneNumber: "",
+  phoneNumberVerified: false,
   gender: "MALE",
-  birthdate: "2000-05-15",
-  pictureUrl: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=256",
-  addressStreetAddress: "#12, Street 315, Toul Kork",
-  addressLocality: "Phnom Penh",
+  birthdate: "2000-01-01",
+  pictureUrl: null,
+  addressStreetAddress: "",
+  addressLocality: "",
   addressCountry: "KH",
   locale: "en",
   enabled: true,
   accountNonLocked: true,
-  mfaEnabled: true,
-  lastLoginAt: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
-  passwordChangedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 15).toISOString(),
+  mfaEnabled: false,
+  lastLoginAt: new Date().toISOString(),
+  passwordChangedAt: new Date().toISOString(),
   roles: ["ADMIN", "USER"],
   effectivePermissions: [
     "user:create", "user:read", "user:update", "user:delete", "user:assign",
@@ -201,83 +201,7 @@ export const initialAccountActivities = [
   }
 ];
 
-export const initialUsers = [
-  {
-    uuid: "00000000-0000-0000-0000-000000000001",
-    username: "houngmingyeak",
-    email: "mingyeak@istad.edu.kh",
-    givenName: "Mingyeak",
-    familyName: "Houng",
-    phoneNumber: "+855 12 345 678",
-    enabled: true,
-    accountNonLocked: true,
-    roles: ["ADMIN", "USER"],
-    directPermissions: [],
-    createdAt: "2026-01-01T00:00:00Z",
-    lastLoginAt: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=256"
-  },
-  {
-    uuid: "00000000-0000-0000-0000-000000000002",
-    username: "john_doe",
-    email: "john.doe@company.com",
-    givenName: "John",
-    familyName: "Doe",
-    phoneNumber: "+855 98 765 432",
-    enabled: true,
-    accountNonLocked: true,
-    roles: ["USER"],
-    directPermissions: [{ name: "billing:read", effect: "ALLOW", expiresAt: null }],
-    createdAt: "2026-01-15T09:12:00Z",
-    lastLoginAt: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString(),
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=256"
-  },
-  {
-    uuid: "00000000-0000-0000-0000-000000000003",
-    username: "sokha_dev",
-    email: "sokha.tech@istad.edu.kh",
-    givenName: "Sokha",
-    familyName: "Chan",
-    phoneNumber: "+855 77 112 233",
-    enabled: true,
-    accountNonLocked: true,
-    roles: ["DEVELOPER", "USER"],
-    directPermissions: [],
-    createdAt: "2026-02-01T11:00:00Z",
-    lastLoginAt: new Date(Date.now() - 1000 * 60 * 60 * 10).toISOString(),
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=256"
-  },
-  {
-    uuid: "00000000-0000-0000-0000-000000000004",
-    username: "dararith_ops",
-    email: "dararith.ops@istad.edu.kh",
-    givenName: "Dararith",
-    familyName: "Vann",
-    phoneNumber: "+855 10 998 877",
-    enabled: true,
-    accountNonLocked: false, // Locked account for testing
-    roles: ["MANAGER"],
-    directPermissions: [],
-    createdAt: "2026-02-14T14:30:00Z",
-    lastLoginAt: new Date(Date.now() - 1000 * 60 * 60 * 50).toISOString(),
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=256"
-  },
-  {
-    uuid: "00000000-0000-0000-0000-000000000005",
-    username: "sophia_auditor",
-    email: "sophia.audit@secure.org",
-    givenName: "Sophia",
-    familyName: "Keo",
-    phoneNumber: "+855 89 445 566",
-    enabled: false, // Disabled account
-    accountNonLocked: true,
-    roles: ["AUDITOR"],
-    directPermissions: [],
-    createdAt: "2026-03-01T08:00:00Z",
-    lastLoginAt: new Date(Date.now() - 1000 * 60 * 60 * 90).toISOString(),
-    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=256"
-  }
-];
+export const initialUsers = [];
 
 export const initialRoles = [
   {
@@ -512,8 +436,14 @@ class DataStore {
   }
 
   init() {
-    if (!localStorage.getItem('iam_users')) {
-      localStorage.setItem('iam_users', JSON.stringify(initialUsers));
+    // Purge old mock users so only real database users are used
+    const existingUsers = localStorage.getItem('iam_users');
+    if (!existingUsers || existingUsers.includes('houngmingyeak') || existingUsers.includes('john_doe')) {
+      localStorage.setItem('iam_users', JSON.stringify([]));
+    }
+    const existingCurrent = localStorage.getItem('iam_current_user');
+    if (existingCurrent && (existingCurrent.includes('houngmingyeak') || existingCurrent.includes('john_doe'))) {
+      localStorage.removeItem('iam_current_user');
     }
     if (!localStorage.getItem('iam_roles')) {
       localStorage.setItem('iam_roles', JSON.stringify(initialRoles));
