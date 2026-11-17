@@ -32,174 +32,13 @@ export const initialCurrentUser = {
   ]
 };
 
-export const initialLinkedAccounts = [
-  {
-    uuid: "ident-1",
-    provider: "Google",
-    providerSubject: "109823471092837",
-    email: "mingyeak.istad@gmail.com",
-    displayName: "Houng Mingyeak (Google)",
-    linkedAt: "2026-02-10T08:30:00Z",
-    connected: true,
-  },
-  {
-    uuid: "ident-2",
-    provider: "GitHub",
-    providerSubject: "gh_7482910",
-    email: "mingyeak-dev@github.com",
-    displayName: "houngmingyeak",
-    linkedAt: "2026-03-01T14:20:00Z",
-    connected: true,
-  },
-  {
-    uuid: "ident-3",
-    provider: "Facebook",
-    providerSubject: "fb_893247923",
-    email: "mingyeak.fb@istad.edu.kh",
-    displayName: "Mingyeak H.",
-    linkedAt: "2026-05-18T10:15:00Z",
-    connected: false,
-  },
-  {
-    uuid: "ident-4",
-    provider: "Telegram",
-    providerSubject: "tg_9923841",
-    email: null,
-    displayName: "@mingyeak_it",
-    linkedAt: "2026-07-22T19:00:00Z",
-    connected: true,
-  }
-];
+export const initialLinkedAccounts = [];
 
-export const initialActiveSessions = [
-  {
-    id: "sess-01",
-    userId: "00000000-0000-0000-0000-000000000001",
-    username: "houngmingyeak",
-    deviceType: "Desktop",
-    deviceName: "Windows 11 Workstation",
-    browser: "Chrome 128.0",
-    ipAddress: "116.212.155.82",
-    location: "Phnom Penh, Cambodia",
-    startedAt: new Date(Date.now() - 1000 * 60 * 60 * 3).toISOString(),
-    lastActive: "Just now",
-    isCurrent: true
-  },
-  {
-    id: "sess-02",
-    userId: "00000000-0000-0000-0000-000000000001",
-    username: "houngmingyeak",
-    deviceType: "Mobile",
-    deviceName: "iPhone 15 Pro",
-    browser: "Mobile Safari 17.4",
-    ipAddress: "103.243.140.21",
-    location: "Phnom Penh, Cambodia",
-    startedAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-    lastActive: "2 hours ago",
-    isCurrent: false
-  },
-  {
-    id: "sess-03",
-    userId: "00000000-0000-0000-0000-000000000001",
-    username: "houngmingyeak",
-    deviceType: "Laptop",
-    deviceName: "MacBook Pro M3 Max",
-    browser: "Safari 17.5",
-    ipAddress: "175.100.12.94",
-    location: "Siem Reap, Cambodia",
-    startedAt: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
-    lastActive: "Yesterday",
-    isCurrent: false
-  }
-];
+export const initialActiveSessions = [];
 
-export const initialLoginHistory = [
-  {
-    id: "log-1",
-    timestamp: new Date(Date.now() - 1000 * 60 * 12).toISOString(),
-    username: "houngmingyeak",
-    ipAddress: "116.212.155.82",
-    device: "Windows 11 / Chrome 128",
-    location: "Phnom Penh, Cambodia",
-    status: "SUCCESS",
-    reason: "OAuth2 Password / MFA verified"
-  },
-  {
-    id: "log-2",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5).toISOString(),
-    username: "houngmingyeak",
-    ipAddress: "103.243.140.21",
-    device: "iOS 17.4 / Mobile Safari",
-    location: "Phnom Penh, Cambodia",
-    status: "SUCCESS",
-    reason: "Google OAuth2 SSO"
-  },
-  {
-    id: "log-3",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
-    username: "houngmingyeak",
-    ipAddress: "185.220.101.5",
-    device: "Linux / Firefox 120",
-    location: "Frankfurt, Germany",
-    status: "FAILED",
-    reason: "Invalid password attempt (Blocked by geo-fence)"
-  },
-  {
-    id: "log-4",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 36).toISOString(),
-    username: "houngmingyeak",
-    ipAddress: "116.212.155.82",
-    device: "Windows 11 / Chrome 128",
-    location: "Phnom Penh, Cambodia",
-    status: "SUCCESS",
-    reason: "Session refresh"
-  },
-  {
-    id: "log-5",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 72).toISOString(),
-    username: "houngmingyeak",
-    ipAddress: "175.100.12.94",
-    device: "macOS 14.2 / Safari",
-    location: "Siem Reap, Cambodia",
-    status: "SUCCESS",
-    reason: "Standard Authorization Code Flow"
-  }
-];
+export const initialLoginHistory = [];
 
-export const initialAccountActivities = [
-  {
-    id: "act-1",
-    timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
-    action: "PROFILE_UPDATE",
-    description: "Updated telephone number and locale preference to Khmer",
-    actor: "houngmingyeak",
-    ip: "116.212.155.82"
-  },
-  {
-    id: "act-2",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 14).toISOString(),
-    action: "SECURITY_2FA_ENABLED",
-    description: "Enabled TOTP Authenticator App for two-factor authentication",
-    actor: "houngmingyeak",
-    ip: "116.212.155.82"
-  },
-  {
-    id: "act-3",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 48).toISOString(),
-    action: "IDENTITY_LINKED",
-    description: "Linked Telegram social account (@mingyeak_it)",
-    actor: "houngmingyeak",
-    ip: "103.243.140.21"
-  },
-  {
-    id: "act-4",
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 15).toISOString(),
-    action: "PASSWORD_CHANGED",
-    description: "User successfully modified self-service password",
-    actor: "houngmingyeak",
-    ip: "116.212.155.82"
-  }
-];
+export const initialAccountActivities = [];
 
 export const initialUsers = [];
 
@@ -436,7 +275,7 @@ class DataStore {
   }
 
   init() {
-    // Purge old mock users so only real database users are used
+    // Purge old mock data so only real database and live session records exist
     const existingUsers = localStorage.getItem('iam_users');
     if (!existingUsers || existingUsers.includes('houngmingyeak') || existingUsers.includes('john_doe')) {
       localStorage.setItem('iam_users', JSON.stringify([]));
@@ -444,6 +283,26 @@ class DataStore {
     const existingCurrent = localStorage.getItem('iam_current_user');
     if (existingCurrent && (existingCurrent.includes('houngmingyeak') || existingCurrent.includes('john_doe'))) {
       localStorage.removeItem('iam_current_user');
+    }
+    const existingSessions = localStorage.getItem('iam_active_sessions');
+    if (existingSessions && (existingSessions.includes('iPhone') || existingSessions.includes('MacBook') || existingSessions.includes('103.243') || existingSessions.includes('175.100') || existingSessions.includes('sess-02'))) {
+      localStorage.removeItem('iam_active_sessions');
+    }
+    const existingHistory = localStorage.getItem('iam_login_history');
+    if (existingHistory && (existingHistory.includes('Frankfurt') || existingHistory.includes('185.220') || existingHistory.includes('Siem Reap') || existingHistory.includes('iOS 17.4') || existingHistory.includes('log-2'))) {
+      localStorage.removeItem('iam_login_history');
+    }
+    const existingAccounts = localStorage.getItem('iam_linked_accounts');
+    if (existingAccounts && (existingAccounts.includes('ident-1') || existingAccounts.includes('mingyeak'))) {
+      localStorage.removeItem('iam_linked_accounts');
+    }
+    const existingActivities = localStorage.getItem('iam_account_activities');
+    if (existingActivities && (existingActivities.includes('Telegram') || existingActivities.includes('dararith') || existingActivities.includes('act-1'))) {
+      localStorage.removeItem('iam_account_activities');
+    }
+    const existingAudit = localStorage.getItem('iam_audit_logs');
+    if (existingAudit && (existingAudit.includes('aud-01') || existingAudit.includes('dararith'))) {
+      localStorage.removeItem('iam_audit_logs');
     }
     if (!localStorage.getItem('iam_roles')) {
       localStorage.setItem('iam_roles', JSON.stringify(initialRoles));
