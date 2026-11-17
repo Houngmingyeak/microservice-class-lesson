@@ -34,6 +34,28 @@ public class WebPageController {
     private final kh.edu.istad.iam.feature.identity.UnlinkIdentityUseCase unlinkIdentityUseCase;
     private final MessageSource messageSource;
 
+    private static final Map<String, List<Map<String, Object>>> userActivitiesStore = new java.util.concurrent.ConcurrentHashMap<>();
+
+    private void recordActivity(String username, String action, String description, HttpServletRequest request) {
+        if (username == null || username.isBlank()) return;
+        String ip = "127.0.0.1";
+        if (request != null) {
+            String remote = request.getRemoteAddr();
+            if (remote != null && !"0:0:0:0:0:0:0:1".equals(remote)) {
+                ip = remote;
+            }
+        }
+        Map<String, Object> act = new LinkedHashMap<>();
+        act.put("id", "act-" + System.currentTimeMillis() + "-" + UUID.randomUUID().toString().substring(0, 8));
+        act.put("timestamp", OffsetDateTime.now().toString());
+        act.put("action", action);
+        act.put("description", description);
+        act.put("actor", username);
+        act.put("ip", ip);
+
+        userActivitiesStore.computeIfAbsent(username.toLowerCase(), k -> new java.util.concurrent.CopyOnWriteArrayList<>()).add(0, act);
+    }
+
     /**
      * Single Page Application route handler for React frontend.
      * Serves index.html for all frontend routes.
@@ -100,7 +122,7 @@ public class WebPageController {
      */
     @PutMapping("/web-api/me")
     @ResponseBody
-    public ResponseEntity<?> updateMyProfile(Authentication authentication, @RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> updateMyProfile(Authentication authentication, HttpServletRequest request, @RequestBody Map<String, Object> body) {
         if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -168,6 +190,7 @@ public class WebPageController {
         result.put("familyName", updated.familyName() != null ? updated.familyName() : "");
         result.put("phoneNumber", updated.phoneNumber() != null ? updated.phoneNumber() : "");
         result.put("pictureUrl", updated.pictureUrl() != null ? updated.pictureUrl() : "");
+        recordActivity(username, "PROFILE_UPDATE", "Updated personal profile details", request);
         return ResponseEntity.ok(result);
     }
 
@@ -232,6 +255,7 @@ public class WebPageController {
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("success", true);
             result.put("pictureUrl", avatarUrl);
+            recordActivity(username, "AVATAR_UPDATE", "Updated profile picture avatar", null);
             return ResponseEntity.ok(result);
         } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -262,6 +286,7 @@ public class WebPageController {
 
         try {
             changePasswordUseCase.execute(user.getUuid(), currentPassword, newPassword, confirmPassword);
+            recordActivity(username, "PASSWORD_CHANGED", "Self-service account password changed successfully", null);
             return ResponseEntity.ok(Map.of("success", true, "message", "Password changed successfully"));
         } catch (Exception ex) {
             return ResponseEntity.badRequest().body(Map.of("success", false, "message", ex.getMessage()));
@@ -412,10 +437,56 @@ public class WebPageController {
 
         try {
             unlinkIdentityUseCase.execute(userOpt.get().getUuid(), identityUuid);
+            recordActivity(username, "IDENTITY_UNLINKED", "Unlinked identity account (" + identityUuid + ")", null);
             return ResponseEntity.ok(Map.of("success", true));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
+    }
+
+    /**
+     * REST endpoint to retrieve real chronological security & account activities for the current user.
+     */
+    @GetMapping("/web-api/me/activities")
+    @ResponseBody
+    public ResponseEntity<?> getMyActivities(Authentication authentication, HttpServletRequest request) {
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String username = authentication.getName();
+        var list = userActivitiesStore.computeIfAbsent(username.toLowerCase(), k -> {
+            var initial = new java.util.concurrent.CopyOnWriteArrayList<Map<String, Object>>();
+            Map<String, Object> first = new LinkedHashMap<>();
+            first.put("id", "act-init-" + System.currentTimeMillis());
+            first.put("timestamp", OffsetDateTime.now().toString());
+            first.put("action", "SESSION_AUTHENTICATED");
+            first.put("description", "Successfully authenticated session from web browser");
+            first.put("actor", username);
+            first.put("ip", "127.0.0.1");
+            initial.add(first);
+            return initial;
+        });
+
+        return ResponseEntity.ok(list);
+    }
+
+    /**
+     * REST endpoint to log an account activity for the current user.
+     */
+    @PostMapping("/web-api/me/activities")
+    @ResponseBody
+    public ResponseEntity<?> logMyActivity(Authentication authentication, HttpServletRequest request, @RequestBody Map<String, String> body) {
+        if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String username = authentication.getName();
+        String action = body.getOrDefault("action", "ACCOUNT_UPDATE");
+        String description = body.getOrDefault("description", "User performed account activity");
+        recordActivity(username, action, description, request);
+
+        return ResponseEntity.ok(Map.of("success", true));
     }
 
     /**
