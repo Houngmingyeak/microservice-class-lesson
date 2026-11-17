@@ -63,7 +63,8 @@ export const LinkedAccountsView = ({ onShowToast }) => {
   const handleConfirmUnlink = async () => {
     if (!selectedForUnlink) return;
     try {
-      const updated = await api.unlinkAccount(selectedForUnlink.uuid);
+      const targetIdentifier = selectedForUnlink.uuid || selectedForUnlink.provider;
+      const updated = await api.unlinkAccount(targetIdentifier);
       setIdentities(updated || []);
       onShowToast(t('unlinkSuccess') || 'Account unlinked successfully', 'success');
       setSelectedForUnlink(null);
