@@ -68,30 +68,48 @@ export const Navbar = () => {
 
         {/* User Card */}
         {user && (
-          <div className="nav-user-profile">
+          <div className="flex items-center gap-3.5 bg-white border border-slate-200/90 rounded-full pl-2 pr-3.5 py-1.5 shadow-xs hover:shadow-sm hover:border-slate-300 transition">
+            {/* Avatar */}
             {user.pictureUrl ? (
               <img
                 src={user.pictureUrl}
                 alt={user.username}
-                className="w-8 h-8 rounded-full object-cover border border-slate-200"
+                className="w-11 h-11 rounded-full object-cover ring-2 ring-indigo-500/20 shadow-xs"
               />
             ) : (
-              <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-300 text-slate-600 font-bold text-xs flex items-center justify-center">
+              <div className="w-11 h-11 rounded-full bg-gradient-to-tr from-indigo-600 via-indigo-500 to-indigo-400 text-white font-bold text-xl flex items-center justify-center shadow-xs select-none">
                 {user.givenName ? user.givenName.charAt(0).toUpperCase() : (user.username ? user.username.charAt(0).toUpperCase() : 'U')}
               </div>
             )}
-            <div className="nav-user-info">
-              <span className="nav-username">{user.givenName ? `${user.givenName} ${user.familyName}` : user.username}</span>
-              <div className="nav-role-badges">
+
+            {/* Name and Role */}
+            <div className="flex flex-col justify-center">
+              <span className="font-bold text-slate-900 text-lg leading-tight">
+                {user.givenName ? `${user.givenName} ${user.familyName}` : user.username}
+              </span>
+              <div className="flex items-center gap-1.5 mt-1">
                 {user.roles?.map(r => (
-                  <Badge key={r} variant={r === 'ADMIN' ? 'danger' : 'primary'} size="sm">
+                  <span
+                    key={r}
+                    className={`inline-flex items-center px-3 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider ${
+                      r === 'ADMIN'
+                        ? 'bg-rose-50 text-rose-700 border border-rose-200'
+                        : 'bg-indigo-50 text-indigo-700 border border-indigo-200'
+                    }`}
+                  >
                     {r}
-                  </Badge>
+                  </span>
                 ))}
               </div>
             </div>
-            <button onClick={logout} className="logout-btn" title={t('common.logout') || "Sign out"}>
-              <IconLogOut size={16} />
+
+            {/* Logout button */}
+            <button
+              onClick={logout}
+              className="w-9 h-9 rounded-full flex items-center justify-center text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition border border-transparent hover:border-rose-100 ml-1"
+              title={t('common.logout') || "Sign out"}
+            >
+              <IconLogOut size={18} />
             </button>
           </div>
         )}
