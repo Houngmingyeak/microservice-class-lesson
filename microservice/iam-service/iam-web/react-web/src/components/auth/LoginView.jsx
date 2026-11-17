@@ -10,7 +10,9 @@ import {
   IconFacebook,
   IconTelegram,
   IconGlobe,
-  IconCheck
+  IconCheck,
+  IconEye,
+  IconEyeOff
 } from '../common/Icons';
 
 export const LoginView = ({ onShowToast }) => {
@@ -19,6 +21,7 @@ export const LoginView = ({ onShowToast }) => {
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -91,18 +94,28 @@ export const LoginView = ({ onShowToast }) => {
             <div className="flex justify-between items-center mb-1">
               <label className="form-label mb-0">{t('password')}</label>
             </div>
-            <div className="relative">
+            <div className="relative flex items-center">
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="••••••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="form-input pl-9"
+                className="form-input pl-9 pr-12 w-full"
                 required
               />
-              <span className="absolute left-3 top-2.5 text-slate-400">
-                <IconLock size={16} />
+              <span className="absolute left-3.5 text-slate-400 pointer-events-none flex items-center" style={{ top: '50%', transform: 'translateY(-50%)' }}>
+                <IconLock size={18} />
               </span>
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3.5 p-1.5 text-slate-400 hover:text-indigo-600 rounded-full transition flex items-center justify-center cursor-pointer bg-transparent border-0"
+                style={{ top: '50%', transform: 'translateY(-50%)' }}
+                title={showPassword ? "Hide password" : "Show password"}
+                tabIndex="-1"
+              >
+                {showPassword ? <IconEyeOff size={20} /> : <IconEye size={20} />}
+              </button>
             </div>
           </div>
 
