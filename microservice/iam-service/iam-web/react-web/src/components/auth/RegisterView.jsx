@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useI18n } from '../../context/I18nContext';
-import { IconShield, IconLock, IconUser, IconGlobe, IconCheck, IconX } from '../common/Icons';
+import { IconShield, IconLock, IconUser, IconGlobe, IconCheck, IconX, IconEye, IconEyeOff } from '../common/Icons';
 
 export const RegisterView = ({ onShowToast }) => {
   const { register, setAuthView } = useAuth();
@@ -16,6 +16,8 @@ export const RegisterView = ({ onShowToast }) => {
     confirmPassword: ''
   });
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -131,25 +133,49 @@ export const RegisterView = ({ onShowToast }) => {
           <div className="form-grid-2">
             <div className="form-group">
               <label className="form-label">{t('password')}</label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className="form-input"
-                required
-              />
+              <div className="relative flex items-center">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className="form-input pr-11 w-full"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 p-1 text-slate-400 hover:text-indigo-600 rounded-full transition flex items-center justify-center cursor-pointer bg-transparent border-0"
+                  style={{ top: '50%', transform: 'translateY(-50%)' }}
+                  title={showPassword ? "Hide password" : "Show password"}
+                  tabIndex="-1"
+                >
+                  {showPassword ? <IconEyeOff size={18} /> : <IconEye size={18} />}
+                </button>
+              </div>
             </div>
             <div className="form-group">
               <label className="form-label">{t('confirmNewPassword')}</label>
-              <input
-                type="password"
-                name="confirmPassword"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                className="form-input"
-                required
-              />
+              <div className="relative flex items-center">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  name="confirmPassword"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className="form-input pr-11 w-full"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 p-1 text-slate-400 hover:text-indigo-600 rounded-full transition flex items-center justify-center cursor-pointer bg-transparent border-0"
+                  style={{ top: '50%', transform: 'translateY(-50%)' }}
+                  title={showConfirmPassword ? "Hide password" : "Show password"}
+                  tabIndex="-1"
+                >
+                  {showConfirmPassword ? <IconEyeOff size={18} /> : <IconEye size={18} />}
+                </button>
+              </div>
             </div>
           </div>
 
