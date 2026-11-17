@@ -266,24 +266,6 @@ export const UserManagementView = ({ onShowToast }) => {
 
                     <td className="text-right">
                       <div className="flex items-center justify-end gap-1">
-                        {/* Role Assign button */}
-                        <button
-                          onClick={() => setRoleAssignUser(u)}
-                          className="action-icon-btn text-indigo-400 hover:bg-indigo-500/10"
-                          title={t('assignRoles')}
-                        >
-                          <IconKey size={15} />
-                        </button>
-
-                        {/* Permission Assign button */}
-                        <button
-                          onClick={() => setPermAssignUser(u)}
-                          className="action-icon-btn text-emerald-400 hover:bg-emerald-500/10"
-                          title={t('grantPermissions')}
-                        >
-                          <IconShieldCheck size={15} />
-                        </button>
-
                         {/* Lock / Unlock button */}
                         <button
                           onClick={() => handleToggleLock(u)}
