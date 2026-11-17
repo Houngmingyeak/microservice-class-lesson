@@ -52,7 +52,6 @@ export const LoginView = ({ onShowToast }) => {
             </div>
             <div>
               <h1 className="text-lg font-bold text-slate-900 tracking-tight">{t('appName')}</h1>
-              <p className="text-xs text-slate-500">{t('tagline')}</p>
             </div>
           </div>
 
@@ -67,8 +66,7 @@ export const LoginView = ({ onShowToast }) => {
         </div>
 
         <div className="mb-6">
-          <h2 className="text-xl font-bold text-slate-900 mb-1">{t('signIn')}</h2>
-          <p className="text-sm text-slate-500">{t('signInPrompt')}</p>
+          <h2 className="text-xl font-bold text-slate-900">{t('signIn')}</h2>
         </div>
 
         {/* Credentials Form */}
