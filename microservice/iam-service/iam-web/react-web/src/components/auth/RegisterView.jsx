@@ -51,7 +51,7 @@ export const RegisterView = ({ onShowToast }) => {
 
   return (
     <div className="auth-page-root">
-      <div className="auth-card-container max-w-lg">
+      <div className="auth-card-container max-w-xl">
         {/* Top bar with language */}
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-3">
@@ -60,7 +60,6 @@ export const RegisterView = ({ onShowToast }) => {
             </div>
             <div>
               <h1 className="text-lg font-bold text-slate-900 tracking-tight">{t('appName')}</h1>
-              <p className="text-xs text-slate-500">{t('tagline')}</p>
             </div>
           </div>
 
@@ -75,8 +74,7 @@ export const RegisterView = ({ onShowToast }) => {
         </div>
 
         <div className="mb-6">
-          <h2 className="text-xl font-bold text-slate-900 mb-1">{t('register.title') || "Create an account"}</h2>
-          <p className="text-sm text-slate-500">Join the enterprise identity network</p>
+          <h2 className="text-xl font-bold text-slate-900">{t('registerTitle')}</h2>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -132,7 +130,7 @@ export const RegisterView = ({ onShowToast }) => {
 
           <div className="form-grid-2">
             <div className="form-group">
-              <label className="form-label">{t('password')}</label>
+              <label className="form-label whitespace-nowrap">{t('password')}</label>
               <div className="relative flex items-center">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -155,7 +153,7 @@ export const RegisterView = ({ onShowToast }) => {
               </div>
             </div>
             <div className="form-group">
-              <label className="form-label">{t('confirmNewPassword')}</label>
+              <label className="form-label whitespace-nowrap">{t('confirmPassword')}</label>
               <div className="relative flex items-center">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
