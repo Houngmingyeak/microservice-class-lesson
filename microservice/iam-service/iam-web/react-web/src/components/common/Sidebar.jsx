@@ -25,8 +25,8 @@ export const Sidebar = () => {
   const accountNavItems = [
     { id: 'profile', label: t('tabProfile'), icon: IconUser, badge: null },
     { id: 'security', label: t('tabSecurity'), icon: IconLock, badge: null },
-    { id: 'linkedAccounts', label: t('tabLinkedAccounts'), icon: IconGlobe, badge: '4' },
-    { id: 'activeSessions', label: t('tabActiveSessions'), icon: IconLaptop, badge: '3' },
+    { id: 'linkedAccounts', label: t('tabLinkedAccounts'), icon: IconGlobe, badge: null },
+    { id: 'activeSessions', label: t('tabActiveSessions'), icon: IconLaptop, badge: null },
     { id: 'loginHistory', label: t('tabLoginHistory'), icon: IconClock, badge: null },
     { id: 'accountActivity', label: t('tabAccountActivity'), icon: IconActivity, badge: null },
     { id: 'deactivation', label: t('tabDeactivation'), icon: IconShieldAlert, badge: null, danger: true },
