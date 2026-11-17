@@ -118,9 +118,10 @@ export const api = {
     return [];
   },
 
-  async unlinkAccount(uuid) {
+  async unlinkAccount(uuidOrProvider) {
+    const targetKey = String(uuidOrProvider || '').trim();
     try {
-      const res = await fetch(`/web-api/me/identities/${uuid}`, { method: 'DELETE' });
+      const res = await fetch(`/web-api/me/identities/${encodeURIComponent(targetKey)}`, { method: 'DELETE' });
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
         throw new Error(errorData.message || "Failed to unlink account");
@@ -130,9 +131,13 @@ export const api = {
         throw e;
       }
     }
-    const list = (store.get('linked_accounts') || []).filter(i => i.uuid !== uuid);
+
+    // Filter out of local store by uuid or provider name
+    const list = (store.get('linked_accounts') || []).filter(
+      i => i.uuid !== targetKey && (i.provider || '').toLowerCase() !== targetKey.toLowerCase()
+    );
     store.set('linked_accounts', list);
-    this.logActivity("IDENTITY_UNLINKED", "Unlinked identity account");
+    this.logActivity("IDENTITY_UNLINKED", `Unlinked ${targetKey} account`);
     return this.getLinkedAccounts();
   },
 
