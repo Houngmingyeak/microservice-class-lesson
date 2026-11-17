@@ -27,7 +27,9 @@ public class UpdateUserProfileUseCase {
         if (command.gender() != null) user.setGender(command.gender());
         if (command.birthdate() != null) user.setBirthdate(command.birthdate());
         if (command.phoneNumber() != null) user.setPhoneNumber(command.phoneNumber());
-        if (command.pictureUrl() != null) user.setPictureUrl(command.pictureUrl());
+        if (command.pictureUrl() != null) {
+            user.setPictureUrl("".equals(command.pictureUrl()) ? null : command.pictureUrl());
+        }
         if (command.profileUrl() != null) user.setProfileUrl(command.profileUrl());
         if (command.websiteUrl() != null) user.setWebsiteUrl(command.websiteUrl());
         if (command.zoneinfo() != null) user.setZoneinfo(command.zoneinfo());
