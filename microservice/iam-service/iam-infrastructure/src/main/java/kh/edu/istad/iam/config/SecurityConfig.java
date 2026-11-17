@@ -129,6 +129,7 @@ public class SecurityConfig {
                                 "/css/**",
                                 "/js/**",
                                 "/images/**",
+                                "/avatars/**",
                                 "/web-api/**",
                                 "/jte/**"
                         ).permitAll()
