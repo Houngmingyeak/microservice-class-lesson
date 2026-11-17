@@ -36,6 +36,9 @@ export const AuthProvider = ({ children }) => {
               familyName: data.familyName || '',
               nickname: data.nickname || '',
               phoneNumber: data.phoneNumber || '',
+              pictureUrl: data.pictureUrl || cached?.pictureUrl || '',
+              gender: data.gender || 'MALE',
+              locale: data.locale || 'en',
               roles: data.roles || ['USER'],
               effectivePermissions: data.permissions && data.permissions.length > 0
                 ? data.permissions
@@ -43,6 +46,7 @@ export const AuthProvider = ({ children }) => {
               claims: data.claims || {}
             };
             setUser(springUser);
+            store.set('current_user', springUser);
             setAuthView(null);
             setCurrentMode(isAdminUser ? 'management' : 'account');
             setActiveTab(isAdminUser ? 'overview' : 'profile');
@@ -71,81 +75,69 @@ export const AuthProvider = ({ children }) => {
   }, [user]);
 
   const login = async (username, password) => {
-    // 1. Try real Spring Boot form login
-    try {
-      const formData = new URLSearchParams();
-      formData.append('username', username);
-      formData.append('password', password);
+    // Authenticate securely against Spring Security with BCrypt verification
+    const formData = new URLSearchParams();
+    formData.append('username', username);
+    formData.append('password', password);
 
-      const response = await fetch('/login', {
+    let response;
+    try {
+      response = await fetch('/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
         body: formData,
         redirect: 'follow'
       });
-
-      if (response.ok) {
-        const meRes = await fetch('/web-api/me');
-        if (meRes.ok) {
-          const data = await meRes.json();
-          if (data && data.authenticated) {
-            const isAdminUser = data.roles && data.roles.includes('ADMIN');
-            const springUser = {
-              ...initialCurrentUser,
-              username: data.username,
-              email: data.email,
-              givenName: data.givenName || data.username,
-              familyName: data.familyName || '',
-              nickname: data.nickname || '',
-              phoneNumber: data.phoneNumber || '',
-              roles: data.roles || ['USER'],
-              effectivePermissions: data.permissions && data.permissions.length > 0
-                ? data.permissions
-                : (isAdminUser ? initialCurrentUser.effectivePermissions : ["user:read", "profile:read", "profile:update"]),
-              claims: data.claims || {}
-            };
-            setUser(springUser);
-            setAuthView(null);
-            setCurrentMode(isAdminUser ? 'management' : 'account');
-            setActiveTab(isAdminUser ? 'overview' : 'profile');
-            api.logActivity("LOGIN_SUCCESS", `Authenticated via Spring Security session (${springUser.username})`);
-            return springUser;
-          }
-        }
-      }
-    } catch (e) {
-      // Backend not running or blocked, fallback to client-side state
+    } catch (networkError) {
+      throw new Error("Unable to connect to authentication server. Please check your network connection.");
     }
 
-    // 2. Client-side fallback authentication for database users
-    const users = store.get('users') || [];
-    const matched = users.find(u => u.username?.toLowerCase() === username.toLowerCase() || u.email?.toLowerCase() === username.toLowerCase());
-
-    if (matched) {
-      if (!matched.enabled) {
-        throw new Error("This account is currently disabled. Please contact an administrator.");
-      }
-      if (!matched.accountNonLocked) {
-        throw new Error("This account is currently locked due to security policy violations.");
-      }
-
-      const fullUser = {
-        ...matched,
-        effectivePermissions: matched.roles?.includes('ADMIN')
-          ? initialCurrentUser.effectivePermissions
-          : ["user:read", "profile:read", "profile:update", "session:read"]
-      };
-
-      setUser(fullUser);
-      setAuthView(null);
-      setCurrentMode(fullUser.roles?.includes('ADMIN') ? 'management' : 'account');
-      setActiveTab(fullUser.roles?.includes('ADMIN') ? 'overview' : 'profile');
-
-      api.logActivity("LOGIN_SUCCESS", `Signed in via credentials (${fullUser.username})`);
-      return fullUser;
+    // 1. If backend rejected credentials (HTTP 401 Unauthorized or redirected to login?error)
+    if (response.status === 401 || (response.url && response.url.includes('error')) || !response.ok) {
+      throw new Error("Invalid username or password. Please verify your credentials.");
     }
 
-    throw new Error("Invalid username or password. Please verify your credentials.");
+    // 2. Fetch authenticated session details from /web-api/me
+    const meRes = await fetch('/web-api/me');
+    if (!meRes.ok) {
+      throw new Error("Authentication failed. Please verify your credentials.");
+    }
+
+    const data = await meRes.json();
+    if (!data || !data.authenticated) {
+      throw new Error("Invalid username or password. Please verify your credentials.");
+    }
+
+    // 3. User is securely authenticated by Spring Security
+    const isAdminUser = data.roles && data.roles.includes('ADMIN');
+    const springUser = {
+      ...initialCurrentUser,
+      username: data.username,
+      email: data.email,
+      givenName: data.givenName || data.username,
+      familyName: data.familyName || '',
+      nickname: data.nickname || '',
+      phoneNumber: data.phoneNumber || '',
+      pictureUrl: data.pictureUrl || '',
+      gender: data.gender || 'MALE',
+      locale: data.locale || 'en',
+      roles: data.roles || ['USER'],
+      effectivePermissions: data.permissions && data.permissions.length > 0
+        ? data.permissions
+        : (isAdminUser ? initialCurrentUser.effectivePermissions : ["user:read", "profile:read", "profile:update", "session:read"]),
+      claims: data.claims || {}
+    };
+
+    setUser(springUser);
+    setAuthView(null);
+    setCurrentMode(isAdminUser ? 'management' : 'account');
+    setActiveTab(isAdminUser ? 'overview' : 'profile');
+    api.logActivity("LOGIN_SUCCESS", `Authenticated via Spring Security session (${springUser.username})`);
+    return springUser;
   };
 
   const register = async (userData) => {
