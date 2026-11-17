@@ -35,26 +35,28 @@ export const AccountActivityView = () => {
         </div>
       </div>
 
-      <div className="glass-card p-6">
-        <div className="relative pl-6 space-y-8 before:absolute before:left-2.5 before:top-3 before:bottom-3 before:w-0.5 before:bg-slate-800">
+      <div className="bg-white border border-slate-200 rounded-3xl shadow-sm p-6 md:p-8">
+        <div className="relative pl-7 space-y-8 before:absolute before:left-3 before:top-3 before:bottom-3 before:w-0.5 before:bg-slate-200">
           {activities.map((act) => (
             <div key={act.id} className="relative group">
-              <div className="absolute -left-6 top-1 w-6 h-6 rounded-full bg-slate-900 border border-slate-700 flex items-center justify-center shadow">
+              <div className="absolute -left-7 top-1 w-7 h-7 rounded-full bg-white border-2 border-indigo-500 flex items-center justify-center shadow-xs">
                 {getActivityIcon(act.action)}
               </div>
-              <div className="bg-slate-950/60 border border-slate-800/80 rounded-xl p-4 hover:border-slate-700 transition">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold text-white text-sm">{act.action}</span>
-                    <Badge variant="default" size="sm">{act.actor}</Badge>
+              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 hover:border-slate-300 transition">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-2.5">
+                    <span className="font-bold text-slate-900 text-base">{act.action}</span>
+                    <span className="px-3 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                      {act.actor}
+                    </span>
                   </div>
-                  <span className="text-xs text-slate-500 font-mono">
+                  <span className="text-sm text-slate-400 font-mono">
                     {new Date(act.timestamp).toLocaleString()}
                   </span>
                 </div>
-                <p className="text-sm text-slate-300">{act.description}</p>
+                <p className="text-base text-slate-700">{act.description}</p>
                 {act.ip && (
-                  <div className="mt-2 text-xs font-mono text-slate-500">
+                  <div className="mt-2 text-sm font-mono text-slate-400">
                     Originated from IP: {act.ip}
                   </div>
                 )}
@@ -63,7 +65,7 @@ export const AccountActivityView = () => {
           ))}
 
           {activities.length === 0 && (
-            <div className="text-center py-8 text-slate-500">
+            <div className="text-center py-12 text-slate-400 text-lg">
               {t('noData')}
             </div>
           )}
