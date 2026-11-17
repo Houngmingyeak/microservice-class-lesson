@@ -107,6 +107,11 @@ public class SecurityConfig {
     @Bean
     @Order(3)
     public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+        var defaultSuccessHandler = new org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler();
+        defaultSuccessHandler.setDefaultTargetUrl("/");
+
+        var defaultFailureHandler = new org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler("/login?error");
+
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(
@@ -132,7 +137,28 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/login", "/web-api/**"))
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/", true)
+                        .successHandler((request, response, authentication) -> {
+                            String accept = request.getHeader("Accept");
+                            String xRequestedWith = request.getHeader("X-Requested-With");
+                            if ("XMLHttpRequest".equalsIgnoreCase(xRequestedWith) || (accept != null && accept.contains("application/json"))) {
+                                response.setStatus(jakarta.servlet.http.HttpServletResponse.SC_OK);
+                                response.setContentType("application/json");
+                                response.getWriter().write("{\"success\":true}");
+                            } else {
+                                defaultSuccessHandler.onAuthenticationSuccess(request, response, authentication);
+                            }
+                        })
+                        .failureHandler((request, response, exception) -> {
+                            String accept = request.getHeader("Accept");
+                            String xRequestedWith = request.getHeader("X-Requested-With");
+                            if ("XMLHttpRequest".equalsIgnoreCase(xRequestedWith) || (accept != null && accept.contains("application/json"))) {
+                                response.setStatus(jakarta.servlet.http.HttpServletResponse.SC_UNAUTHORIZED);
+                                response.setContentType("application/json");
+                                response.getWriter().write("{\"error\":\"Invalid username or password\"}");
+                            } else {
+                                defaultFailureHandler.onAuthenticationFailure(request, response, exception);
+                            }
+                        })
                         .permitAll()
                 )
                 .oauth2Login(oauth2 -> oauth2
