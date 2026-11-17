@@ -2,160 +2,379 @@ import React, { useState, useEffect } from 'react';
 import { useI18n } from '../../context/I18nContext';
 import { api } from '../../services/api';
 import { Badge } from '../common/Badge';
-import { IconCheck, IconX, IconAlertTriangle, IconSearch } from '../common/Icons';
+import {
+  IconCheck,
+  IconX,
+  IconAlertTriangle,
+  IconSearch,
+  IconRefresh,
+  IconShield,
+  IconShieldCheck,
+  IconShieldAlert,
+  IconGlobe,
+  IconLaptop,
+  IconSmartphone
+} from '../common/Icons';
 
 export const UserLoginHistoryView = () => {
   const { t } = useI18n();
   const [history, setHistory] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('ALL');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     loadHistory();
   }, []);
 
   const loadHistory = async () => {
-    // Generate combined rich directory login telemetry
-    const base = await api.getLoginHistory();
-    const directoryHistory = [
-      ...base,
-      {
-        id: "sys-log-1",
-        timestamp: new Date(Date.now() - 1000 * 60 * 4).toISOString(),
-        username: "sokha_dev",
-        ipAddress: "103.243.140.90",
-        device: "macOS 14.3 / Chrome 128",
-        location: "Phnom Penh, Cambodia",
-        status: "SUCCESS",
-        risk: "Low",
-        reason: "OIDC Authorization Code Flow"
-      },
-      {
-        id: "sys-log-2",
-        timestamp: new Date(Date.now() - 1000 * 60 * 20).toISOString(),
-        username: "dararith_ops",
-        ipAddress: "185.220.101.5",
-        device: "Tor Browser / Linux",
-        location: "Frankfurt, Germany",
-        status: "FAILED",
-        risk: "High / Suspicious",
-        reason: "5 consecutive failed credentials - Account Locked"
-      },
-      {
-        id: "sys-log-3",
-        timestamp: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
-        username: "john_doe",
-        ipAddress: "116.212.155.10",
-        device: "Windows 11 / Edge 126",
-        location: "Siem Reap, Cambodia",
-        status: "SUCCESS",
-        risk: "Low",
-        reason: "Username/Password login with PKCE"
-      }
-    ];
-    setHistory(directoryHistory);
+    setLoading(true);
+    try {
+      const realTelemetry = await api.getAdminLoginHistory();
+      setHistory(realTelemetry || []);
+    } catch (e) {
+      console.error('Failed to load admin login telemetry:', e);
+      setHistory([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const filtered = history.filter(item => {
-    const term = searchTerm.toLowerCase();
+    const term = searchTerm.toLowerCase().trim();
+    if (!term) {
+      return statusFilter === 'ALL' || item.status === statusFilter;
+    }
     const matchesSearch =
-      item.username.toLowerCase().includes(term) ||
-      item.ipAddress.includes(term) ||
-      item.location.toLowerCase().includes(term) ||
-      item.device.toLowerCase().includes(term);
+      (item.username && item.username.toLowerCase().includes(term)) ||
+      (item.ipAddress && item.ipAddress.includes(term)) ||
+      (item.location && item.location.toLowerCase().includes(term)) ||
+      (item.device && item.device.toLowerCase().includes(term)) ||
+      (item.reason && item.reason.toLowerCase().includes(term));
 
     const matchesStatus = statusFilter === 'ALL' || item.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
+  const totalCount = history.length;
+  const successCount = history.filter(h => h.status === 'SUCCESS').length;
+  const failedCount = history.filter(h => h.status === 'FAILED').length;
+  const uniqueUsersCount = new Set(history.map(h => h.username)).size;
+
+  const getDeviceIcon = (deviceStr = '', status = 'SUCCESS') => {
+    if (status === 'FAILED') {
+      return <IconShieldAlert size={18} className="text-rose-600 flex-shrink-0" />;
+    }
+    const d = (deviceStr || '').toLowerCase();
+    if (d.includes('iphone') || d.includes('android') || d.includes('mobile')) {
+      return <IconSmartphone size={18} className="text-sky-600 flex-shrink-0" />;
+    }
+    return <IconLaptop size={18} className="text-indigo-600 flex-shrink-0" />;
+  };
+
   return (
     <div className="view-container">
-      <div className="view-header">
+      {/* View Header with live refresh button */}
+      <div className="view-header flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="view-title">{t('adminLoginHistoryTitle')}</h2>
-          <p className="view-subtitle">{t('adminLoginHistorySubtitle')}</p>
+          <h2 className="view-title text-2xl font-bold text-slate-900 tracking-tight">
+            {t('adminLoginHistoryTitle')}
+          </h2>
+          <p className="view-subtitle text-slate-500 text-base mt-1">
+            {t('adminLoginHistorySubtitle')}
+          </p>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={loadHistory}
+            disabled={loading}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-sm shadow-sm transition disabled:opacity-60"
+            title="Refresh database telemetry"
+          >
+            <IconRefresh size={16} className={loading ? "animate-spin text-indigo-600" : "text-slate-500"} />
+            <span>{loading ? 'Refreshing...' : 'Refresh Telemetry'}</span>
+          </button>
         </div>
       </div>
 
-      <div className="glass-card p-6">
-        <div className="flex flex-col sm:flex-row gap-3 mb-6 justify-between">
-          <div className="relative w-full sm:w-80">
-            <input
-              type="text"
-              placeholder={t('search')}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="form-input pl-9"
-            />
-            <span className="absolute left-3 top-2.5 text-slate-400">
-              <IconSearch size={16} />
-            </span>
+      {/* Real Directory Telemetry Summary Metric Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="stat-card p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex items-center justify-between">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">
+              Total Monitored Sign-ins
+            </p>
+            <h3 className="text-2xl font-black text-slate-900">{totalCount}</h3>
+            <span className="text-xs text-slate-500 font-medium mt-1 inline-block">Real directory events</span>
           </div>
-
-          <div className="flex gap-2">
-            {['ALL', 'SUCCESS', 'FAILED'].map(st => (
-              <button
-                key={st}
-                onClick={() => setStatusFilter(st)}
-                className={`filter-pill-btn ${statusFilter === st ? 'filter-pill-active' : ''}`}
-              >
-                {st === 'ALL' ? t('all') : st === 'SUCCESS' ? t('success') : t('failed')}
-              </button>
-            ))}
+          <div className="w-12 h-12 rounded-full bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600">
+            <IconShield size={24} />
           </div>
         </div>
 
-        <div className="table-wrapper">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>{t('time')}</th>
-                <th>Target User</th>
-                <th>{t('status')}</th>
-                <th>{t('riskLevel')}</th>
-                <th>IP Address</th>
-                <th>{t('location')}</th>
-                <th>{t('details')}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((item) => {
-                const isSuspicious = item.risk?.includes('Suspicious') || item.status === 'FAILED';
-                return (
-                  <tr key={item.id} className={isSuspicious ? 'bg-rose-500/5' : ''}>
-                    <td className="font-mono text-xs text-slate-300">
-                      {new Date(item.timestamp).toLocaleString()}
-                    </td>
-                    <td>
-                      <span className="font-semibold text-white">@{item.username}</span>
-                    </td>
-                    <td>
-                      <Badge variant={item.status === 'SUCCESS' ? 'success' : 'danger'}>
-                        {item.status === 'SUCCESS' ? <IconCheck size={12} /> : <IconX size={12} />}
-                        <span>{item.status}</span>
-                      </Badge>
-                    </td>
-                    <td>
-                      <Badge variant={isSuspicious ? 'danger' : 'default'} size="sm">
-                        {isSuspicious && <IconAlertTriangle size={12} />}
-                        <span>{item.risk || (item.status === 'SUCCESS' ? 'Low' : 'Medium')}</span>
-                      </Badge>
-                    </td>
-                    <td className="font-mono text-xs text-indigo-400">{item.ipAddress}</td>
-                    <td className="text-slate-300">{item.location}</td>
-                    <td className="text-xs text-slate-400">{item.reason}</td>
-                  </tr>
-                );
-              })}
-              {filtered.length === 0 && (
-                <tr>
-                  <td colSpan="7" className="text-center py-8 text-slate-500">
-                    {t('noData')}
-                  </td>
+        <div className="stat-card p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex items-center justify-between">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-wider text-emerald-600 mb-1">
+              Authorized Sign-ins
+            </p>
+            <h3 className="text-2xl font-black text-emerald-700">{successCount}</h3>
+            <span className="text-xs text-emerald-600 font-medium mt-1 inline-block">Verified authentications</span>
+          </div>
+          <div className="w-12 h-12 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600">
+            <IconShieldCheck size={24} />
+          </div>
+        </div>
+
+        <div className="stat-card p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex items-center justify-between">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-wider text-rose-600 mb-1">
+              Failed / Locked Anomalies
+            </p>
+            <h3 className="text-2xl font-black text-rose-700">{failedCount}</h3>
+            <span className="text-xs text-rose-600 font-medium mt-1 inline-block">Locked or disabled accounts</span>
+          </div>
+          <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600">
+            <IconShieldAlert size={24} />
+          </div>
+        </div>
+
+        <div className="stat-card p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm flex items-center justify-between">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">
+              Tracked Accounts
+            </p>
+            <h3 className="text-2xl font-black text-slate-900">{uniqueUsersCount}</h3>
+            <div className="flex items-center gap-1.5 mt-1">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+              <span className="text-xs text-emerald-600 font-medium">PostgreSQL live sync</span>
+            </div>
+          </div>
+          <div className="w-12 h-12 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600">
+            <IconGlobe size={24} />
+          </div>
+        </div>
+      </div>
+
+      {/* Main Table Card */}
+      <div className="glass-card p-6 bg-white rounded-2xl border border-slate-200/80 shadow-sm">
+        {/* Search & Filter Toolbar */}
+        <div className="flex flex-col lg:flex-row gap-4 mb-6 justify-between items-stretch lg:items-center">
+          {/* Search Input with generous padding & clear button */}
+          <div className="relative w-full lg:w-96">
+            <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+              <IconSearch size={18} />
+            </span>
+            <input
+              type="text"
+              placeholder="Search by user, IP, device, location..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="form-input w-full pl-11 pr-10 py-2.5 rounded-full border border-slate-200 bg-white text-slate-800 text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition shadow-sm"
+            />
+            {searchTerm && (
+              <button
+                type="button"
+                onClick={() => setSearchTerm('')}
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
+                title="Clear search"
+              >
+                <IconX size={14} />
+              </button>
+            )}
+          </div>
+
+          {/* Filter Pills with explicit non-squashable container */}
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setStatusFilter('ALL')}
+              className={`filter-pill-btn px-4 py-2 text-sm font-semibold rounded-full border transition flex items-center gap-2 ${
+                statusFilter === 'ALL'
+                  ? 'filter-pill-active bg-indigo-600 border-indigo-600 text-white shadow-sm'
+                  : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+              }`}
+              style={{ minWidth: 'fit-content', whiteSpace: 'nowrap' }}
+            >
+              <span>{t('all')}</span>
+              <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
+                statusFilter === 'ALL' ? 'bg-indigo-500 text-white' : 'bg-slate-100 text-slate-600'
+              }`}>
+                {totalCount}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setStatusFilter('SUCCESS')}
+              className={`filter-pill-btn px-4 py-2 text-sm font-semibold rounded-full border transition flex items-center gap-2 ${
+                statusFilter === 'SUCCESS'
+                  ? 'filter-pill-active bg-emerald-600 border-emerald-600 text-white shadow-sm'
+                  : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+              }`}
+              style={{ minWidth: 'fit-content', whiteSpace: 'nowrap' }}
+            >
+              <span>{t('success')}</span>
+              <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
+                statusFilter === 'SUCCESS' ? 'bg-emerald-500 text-white' : 'bg-slate-100 text-slate-600'
+              }`}>
+                {successCount}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setStatusFilter('FAILED')}
+              className={`filter-pill-btn px-4 py-2 text-sm font-semibold rounded-full border transition flex items-center gap-2 ${
+                statusFilter === 'FAILED'
+                  ? 'filter-pill-active bg-rose-600 border-rose-600 text-white shadow-sm'
+                  : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+              }`}
+              style={{ minWidth: 'fit-content', whiteSpace: 'nowrap' }}
+            >
+              <span>{t('failed')}</span>
+              <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
+                statusFilter === 'FAILED' ? 'bg-rose-500 text-white' : 'bg-slate-100 text-slate-600'
+              }`}>
+                {failedCount}
+              </span>
+            </button>
+          </div>
+        </div>
+
+        {/* Telemetry Table */}
+        <div className="table-wrapper border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm">
+          <div className="overflow-x-auto w-full">
+            <table className="data-table w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50/80 border-b border-slate-200">
+                  <th className="py-3.5 px-4 text-xs font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap min-w-[170px]">
+                    {t('time')}
+                  </th>
+                  <th className="py-3.5 px-4 text-xs font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap min-w-[190px]">
+                    Target User
+                  </th>
+                  <th className="py-3.5 px-4 text-xs font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap min-w-[120px]">
+                    {t('status')}
+                  </th>
+                  <th className="py-3.5 px-4 text-xs font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap min-w-[140px]">
+                    {t('riskLevel')}
+                  </th>
+                  <th className="py-3.5 px-4 text-xs font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap min-w-[150px]">
+                    IP Address
+                  </th>
+                  <th className="py-3.5 px-4 text-xs font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap min-w-[180px]">
+                    {t('location')}
+                  </th>
+                  <th className="py-3.5 px-4 text-xs font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap min-w-[220px]">
+                    {t('details')}
+                  </th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filtered.map((item) => {
+                  const isSuspicious = item.risk?.includes('Suspicious') || item.risk?.includes('Locked') || item.status === 'FAILED';
+                  const initialChar = (item.username || 'U').charAt(0).toUpperCase();
+
+                  return (
+                    <tr
+                      key={item.id}
+                      className={`hover:bg-slate-50/70 transition-colors ${
+                        isSuspicious ? 'bg-rose-50/30' : ''
+                      }`}
+                    >
+                      {/* Timestamp */}
+                      <td className="py-3 px-4 font-mono text-xs text-slate-600 whitespace-nowrap">
+                        {item.timestamp ? new Date(item.timestamp).toLocaleString() : 'Just now'}
+                      </td>
+
+                      {/* Real User Identity with Avatar */}
+                      <td className="py-3 px-4 whitespace-nowrap">
+                        <div className="flex items-center gap-3">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs shadow-sm flex-shrink-0 ${
+                            isSuspicious
+                              ? 'bg-rose-100 text-rose-700 border border-rose-200'
+                              : 'bg-indigo-100 text-indigo-700 border border-indigo-200'
+                          }`}>
+                            {initialChar}
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="font-semibold text-slate-900 text-sm">
+                              @{item.username}
+                            </span>
+                            <span className="text-[11px] text-slate-400 flex items-center gap-1">
+                              {getDeviceIcon(item.device, item.status)}
+                              <span>{item.device || 'Web Browser'}</span>
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Status */}
+                      <td className="py-3 px-4 whitespace-nowrap">
+                        <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
+                          item.status === 'SUCCESS'
+                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                            : 'bg-rose-50 text-rose-700 border border-rose-200'
+                        }`}>
+                          {item.status === 'SUCCESS' ? (
+                            <IconCheck size={12} className="stroke-[3]" />
+                          ) : (
+                            <IconX size={12} className="stroke-[3]" />
+                          )}
+                          <span>{item.status}</span>
+                        </span>
+                      </td>
+
+                      {/* Risk Level */}
+                      <td className="py-3 px-4 whitespace-nowrap">
+                        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
+                          isSuspicious
+                            ? 'bg-rose-100 text-rose-800 border border-rose-200'
+                            : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        }`}>
+                          {isSuspicious && <IconAlertTriangle size={12} />}
+                          <span>{item.risk || (item.status === 'SUCCESS' ? 'Low' : 'High')}</span>
+                        </span>
+                      </td>
+
+                      {/* IP Address - Separate column with monospace chip */}
+                      <td className="py-3 px-4 whitespace-nowrap">
+                        <span className="font-mono text-xs font-medium text-indigo-700 bg-indigo-50/80 px-2.5 py-1 rounded-md border border-indigo-100/80 inline-block">
+                          {item.ipAddress || '127.0.0.1'}
+                        </span>
+                      </td>
+
+                      {/* Location - Separate column with clear spacing */}
+                      <td className="py-3 px-4 text-xs font-medium text-slate-700 whitespace-nowrap">
+                        <div className="flex items-center gap-1.5">
+                          <IconGlobe size={14} className="text-slate-400 flex-shrink-0" />
+                          <span>{item.location || 'Localhost (Current Session)'}</span>
+                        </div>
+                      </td>
+
+                      {/* Details / Reason */}
+                      <td className="py-3 px-4 text-xs text-slate-500 min-w-[200px]">
+                        <span>{item.reason || 'Authenticated Form Login'}</span>
+                      </td>
+                    </tr>
+                  );
+                })}
+
+                {filtered.length === 0 && (
+                  <tr>
+                    <td colSpan="7" className="text-center py-12 text-slate-400">
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <IconShield size={32} className="text-slate-300" />
+                        <p className="text-sm font-medium text-slate-500">
+                          {searchTerm ? `No login events matching "${searchTerm}"` : t('noData')}
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
