@@ -1,7 +1,9 @@
 package kh.edu.istad.iam.web;
 
 import jakarta.servlet.http.HttpServletRequest;
+import kh.edu.istad.iam.domain.model.Identity;
 import kh.edu.istad.iam.domain.model.User;
+import kh.edu.istad.iam.feature.identity.IdentityRepository;
 import kh.edu.istad.iam.feature.identity.IdentityResult;
 import kh.edu.istad.iam.feature.identity.ListUserIdentitiesUseCase;
 import kh.edu.istad.iam.feature.role.RoleRepository;
@@ -32,6 +34,7 @@ public class WebPageController {
     private final ChangePasswordUseCase changePasswordUseCase;
     private final ListUserIdentitiesUseCase listUserIdentitiesUseCase;
     private final kh.edu.istad.iam.feature.identity.UnlinkIdentityUseCase unlinkIdentityUseCase;
+    private final IdentityRepository identityRepository;
     private final MessageSource messageSource;
 
     private static final Map<String, List<Map<String, Object>>> userActivitiesStore = new java.util.concurrent.ConcurrentHashMap<>();
@@ -421,10 +424,11 @@ public class WebPageController {
 
     /**
      * REST endpoint to unlink a social identity / OAuth2 account for current user.
+     * Supports unlinking by UUID or by provider name (e.g., "google", "github").
      */
-    @DeleteMapping("/web-api/me/identities/{identityUuid}")
+    @DeleteMapping("/web-api/me/identities/{identifier}")
     @ResponseBody
-    public ResponseEntity<?> unlinkMyIdentity(Authentication authentication, @PathVariable UUID identityUuid) {
+    public ResponseEntity<?> unlinkMyIdentity(Authentication authentication, @PathVariable String identifier) {
         if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
@@ -435,10 +439,33 @@ public class WebPageController {
             return ResponseEntity.notFound().build();
         }
 
+        User user = userOpt.get();
         try {
-            unlinkIdentityUseCase.execute(userOpt.get().getUuid(), identityUuid);
-            recordActivity(username, "IDENTITY_UNLINKED", "Unlinked identity account (" + identityUuid + ")", null);
-            return ResponseEntity.ok(Map.of("success", true));
+            Identity identity = null;
+            // 1. Try parsing as UUID
+            try {
+                UUID idUuid = UUID.fromString(identifier);
+                identity = identityRepository.findByUuid(idUuid).orElse(null);
+            } catch (IllegalArgumentException ignored) {}
+
+            // 2. Try looking up by provider name for this user
+            if (identity == null) {
+                var userIdentities = identityRepository.findByUserId(user.getId());
+                identity = userIdentities.stream()
+                        .filter(i -> i.getProvider() != null && i.getProvider().equalsIgnoreCase(identifier))
+                        .findFirst()
+                        .orElse(null);
+            }
+
+            if (identity != null) {
+                if (!identity.getUserId().equals(user.getId())) {
+                    return ResponseEntity.badRequest().body(Map.of("message", "Identity does not belong to this user"));
+                }
+                identityRepository.delete(identity);
+                recordActivity(username, "IDENTITY_UNLINKED", "Unlinked identity account (" + identity.getProvider() + ")", null);
+            }
+
+            return ResponseEntity.ok(Map.of("success", true, "message", "Identity unlinked successfully"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
