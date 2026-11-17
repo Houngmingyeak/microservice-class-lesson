@@ -296,10 +296,7 @@ class DataStore {
     if (existingAccounts && (existingAccounts.includes('ident-1') || existingAccounts.includes('mingyeak'))) {
       localStorage.removeItem('iam_linked_accounts');
     }
-    const existingActivities = localStorage.getItem('iam_account_activities');
-    if (existingActivities && (existingActivities.includes('Telegram') || existingActivities.includes('dararith') || existingActivities.includes('act-1'))) {
-      localStorage.removeItem('iam_account_activities');
-    }
+    // Keep valid user activities intact across sessions
     const existingAudit = localStorage.getItem('iam_audit_logs');
     if (existingAudit && (existingAudit.includes('aud-01') || existingAudit.includes('dararith'))) {
       localStorage.removeItem('iam_audit_logs');
