@@ -1,9 +1,13 @@
-import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    tailwindcss(),
+    react()
+  ],
   build: {
     outDir: 'dist',
     emptyOutDir: true,
@@ -16,6 +20,10 @@ export default defineConfig({
         changeOrigin: true,
       },
       '/oauth2': {
+        target: 'http://localhost:39000',
+        changeOrigin: true,
+      },
+      '/web-api': {
         target: 'http://localhost:39000',
         changeOrigin: true,
       },
