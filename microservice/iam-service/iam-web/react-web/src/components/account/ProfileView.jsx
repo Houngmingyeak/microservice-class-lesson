@@ -53,22 +53,36 @@ export const ProfileView = ({ onShowToast }) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleFileSelect = (e) => {
+  const handleFileSelect = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    if (file.size > 3 * 1024 * 1024) {
-      onShowToast("Image size must be less than 3MB", 'error');
+    if (file.size > 5 * 1024 * 1024) {
+      onShowToast("Image size must be less than 5MB", 'error');
       return;
     }
 
+    try {
+      // 1. Try uploading the file directly to server backend
+      const result = await api.uploadAvatar(file);
+      if (result && result.pictureUrl) {
+        setFormData(prev => ({ ...prev, pictureUrl: result.pictureUrl }));
+        updateProfileState({ pictureUrl: result.pictureUrl });
+        onShowToast("Profile picture uploaded and saved successfully!", 'success');
+        return;
+      }
+    } catch (err) {
+      // fallback to base64
+    }
+
+    // 2. Fallback to base64 encoding
     const reader = new FileReader();
     reader.onload = async () => {
       const base64Data = reader.result;
       setFormData(prev => ({ ...prev, pictureUrl: base64Data }));
       try {
-        await api.updateProfile({ pictureUrl: base64Data });
-        updateProfileState({ pictureUrl: base64Data });
+        const updated = await api.updateProfile({ pictureUrl: base64Data });
+        updateProfileState(updated);
         onShowToast("Profile picture uploaded successfully!", 'success');
       } catch (err) {
         onShowToast("Failed to save picture", 'error');
@@ -80,8 +94,8 @@ export const ProfileView = ({ onShowToast }) => {
   const handleRemovePhoto = async () => {
     setFormData(prev => ({ ...prev, pictureUrl: '' }));
     try {
-      await api.updateProfile({ pictureUrl: null });
-      updateProfileState({ pictureUrl: null });
+      const updated = await api.updateProfile({ pictureUrl: '' });
+      updateProfileState(updated);
       onShowToast("Profile picture removed", 'info');
     } catch (err) {
       onShowToast(err.message, 'error');
@@ -174,11 +188,10 @@ export const ProfileView = ({ onShowToast }) => {
           {/* OIDC Claims preview */}
           <div className="mt-6 w-full border-t border-slate-200 pt-4 text-left">
             <span className="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-2 flex items-center gap-1.5">
-              <IconShieldCheck size={14} className="text-emerald-500" />
+              <IconShieldCheck size={16} className="text-emerald-500" />
               OIDC Token Claims
             </span>
-            <div className="bg-slate-50 border border-slate-200 p-3 rounded-lg text-xs font-mono text-slate-700 space-y-1 overflow-x-auto">
-              <div><span className="text-indigo-600 font-semibold">sub:</span> {user?.uuid}</div>
+            <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-2xl font-mono text-slate-700 space-y-1.5 overflow-x-auto">
               <div><span className="text-indigo-600 font-semibold">email_verified:</span> true</div>
               <div><span className="text-indigo-600 font-semibold">zoneinfo:</span> Asia/Phnom_Penh</div>
               <div><span className="text-indigo-600 font-semibold">auth_time:</span> {new Date().toLocaleTimeString()}</div>
@@ -187,9 +200,9 @@ export const ProfileView = ({ onShowToast }) => {
         </div>
 
         {/* Right Card: Edit Form */}
-        <div className="glass-card p-6">
+        <div className="glass-card p-6 md:p-8">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <h4 className="text-base font-semibold text-white border-b border-slate-800 pb-2 mb-4">
+            <h4 className="text-xl font-bold text-slate-900 border-b border-slate-200 pb-3 mb-5">
               {t('personalDetails')}
             </h4>
 
