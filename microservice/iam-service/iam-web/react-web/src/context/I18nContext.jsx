@@ -4,7 +4,7 @@ const translations = {
   en: {
     // General
     appName: "ISTAD IAM Platform",
-    tagline: "Enterprise Identity & Access Management",
+    // tagline: "Enterprise Identity & Access Management",
     welcome: "Welcome back",
     search: "Search...",
     filter: "Filter",
@@ -53,7 +53,7 @@ const translations = {
     tabLoginHistory: "Login History",
     tabAccountActivity: "Account Activity",
     tabDeactivation: "Deactivate Account",
-    
+
     tabOverview: "Overview",
     tabUsers: "User Management",
     tabUserSessions: "User Sessions",
@@ -91,6 +91,7 @@ const translations = {
     changePassword: "Change Password",
     currentPassword: "Current Password",
     newPassword: "New Password",
+    confirmPassword: "Confirm Password",
     confirmNewPassword: "Confirm New Password",
     passwordStrength: "Password Strength",
     weak: "Weak",
@@ -275,7 +276,9 @@ const translations = {
     resetDefaults: "Reset to System Defaults",
 
     // Auth Pages
-    signInPrompt: "Sign in with your organizational identity",
+    registerTitle: "Sign Up",
+    'register.title': "Sign Up",
+    createAccount: "Create an Account",
     dontHaveAccount: "Don't have an account?",
     alreadyHaveAccount: "Already have an account?",
     signUp: "Sign Up",
@@ -338,7 +341,7 @@ const translations = {
     tabLoginHistory: "ប្រវត្តិការចូល",
     tabAccountActivity: "សកម្មភាពគណនី",
     tabDeactivation: "បិទដំណើរការគណនី",
-    
+
     tabOverview: "ផ្ទាំងទូទៅ",
     tabUsers: "គ្រប់គ្រងអ្នកប្រើប្រាស់",
     tabUserSessions: "សម័យអ្នកប្រើប្រាស់",
@@ -376,6 +379,7 @@ const translations = {
     changePassword: "ផ្លាស់ប្តូរពាក្យសម្ងាត់",
     currentPassword: "ពាក្យសម្ងាត់បច្ចុប្បន្ន",
     newPassword: "ពាក្យសម្ងាត់ថ្មី",
+    confirmPassword: "បញ្ជាក់ពាក្យសម្ងាត់",
     confirmNewPassword: "បញ្ជាក់ពាក្យសម្ងាត់ថ្មី",
     passwordStrength: "កម្រិតភាពរឹងមាំនៃពាក្យសម្ងាត់",
     weak: "ខ្សោយ",
@@ -560,6 +564,9 @@ const translations = {
     resetDefaults: "កំណត់ទៅតម្លៃលំនាំដើម",
 
     // Auth Pages
+    registerTitle: "ចុះឈ្មោះ",
+    'register.title': "ចុះឈ្មោះ",
+    createAccount: "បង្កើតគណនី",
     signInPrompt: "ចូលប្រើប្រាស់ជាមួយគណនីស្ថាប័នរបស់អ្នក",
     dontHaveAccount: "មិនទាន់មានគណនីមែនទេ?",
     alreadyHaveAccount: "មានគណនីរួចហើយ?",
