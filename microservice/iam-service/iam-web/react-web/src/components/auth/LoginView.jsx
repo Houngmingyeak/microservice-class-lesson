@@ -45,7 +45,7 @@ export const LoginView = ({ onShowToast }) => {
     <div className="auth-page-root">
       <div className="auth-card-container">
         {/* Top bar with language */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-3">
             <div className="brand-logo-icon">
               <IconShield size={24} className="text-indigo-600" />
@@ -65,12 +65,12 @@ export const LoginView = ({ onShowToast }) => {
           </button>
         </div>
 
-        <div className="mb-6">
+        <div className="mb-4">
           <h2 className="text-xl font-bold text-slate-900">{t('signIn')}</h2>
         </div>
 
         {/* Credentials Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
           <div className="form-group">
             <label className="form-label">{t('username')}</label>
             <div className="relative">
@@ -120,42 +120,42 @@ export const LoginView = ({ onShowToast }) => {
           <button
             type="submit"
             disabled={loading}
-            className="btn btn-primary w-full py-2.5 font-semibold text-sm mt-2"
+            className="btn btn-primary w-full py-2.5 font-semibold text-sm mt-1"
           >
             {loading ? t('loading') : t('signIn')}
           </button>
         </form>
 
-        {/* Social Logins */}
-        <div className="mt-6 pt-5 border-t border-slate-200">
-          <span className="text-xs text-slate-500 font-medium block mb-3 text-center">
+        {/* Social Logins - Rounded Full */}
+        <div className="mt-4 pt-3.5 border-t border-slate-200">
+          <span className="text-xs text-slate-500 font-medium block mb-2 text-center">
             {t('orContinueWith')}
           </span>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-4 gap-2.5">
             <a
               href="/oauth2/authorization/google"
-              className="p-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl flex items-center justify-center transition shadow-sm hover:shadow"
+              className="py-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-full flex items-center justify-center transition shadow-sm hover:shadow hover:bg-slate-50"
               title="Sign in with Google"
             >
               <IconGoogle size={18} />
             </a>
             <a
               href="/oauth2/authorization/github"
-              className="p-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl flex items-center justify-center transition shadow-sm hover:shadow text-slate-900"
+              className="py-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-full flex items-center justify-center transition shadow-sm hover:shadow hover:bg-slate-50 text-slate-900"
               title="Sign in with GitHub"
             >
               <IconGithub size={18} />
             </a>
             <a
               href="/oauth2/authorization/facebook"
-              className="p-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl flex items-center justify-center transition shadow-sm hover:shadow text-blue-600"
+              className="py-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-full flex items-center justify-center transition shadow-sm hover:shadow hover:bg-slate-50 text-blue-600"
               title="Sign in with Facebook"
             >
               <IconFacebook size={18} />
             </a>
             <a
               href="/oauth2/authorization/telegram"
-              className="p-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl flex items-center justify-center transition shadow-sm hover:shadow text-sky-500"
+              className="py-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-full flex items-center justify-center transition shadow-sm hover:shadow hover:bg-slate-50 text-sky-500"
               title="Sign in with Telegram"
             >
               <IconTelegram size={18} />
@@ -164,7 +164,7 @@ export const LoginView = ({ onShowToast }) => {
         </div>
 
         {/* Sign up link */}
-        <div className="mt-6 text-center text-xs text-slate-500">
+        <div className="mt-4 text-center text-xs text-slate-500">
           {t('dontHaveAccount')}{' '}
           <button
             type="button"
