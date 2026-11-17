@@ -257,15 +257,22 @@ export const api = {
 
   // Account Activities
   async getAccountActivities() {
-    const local = store.get('account_activities');
-    if (local && Array.isArray(local) && !JSON.stringify(local).includes('116.212')) {
-      return local;
+    try {
+      const res = await fetch('/web-api/me/activities');
+      if (res.ok) {
+        const activities = await res.json();
+        if (Array.isArray(activities) && activities.length > 0) {
+          store.set('account_activities', activities);
+          return activities;
+        }
+      }
+    } catch (e) {
+      // offline fallback
     }
-    return [];
+    return store.get('account_activities') || [];
   },
 
   logActivity(action, description) {
-    const list = store.get('account_activities') || [];
     const current = store.get('current_user') || initialCurrentUser;
     const newAct = {
       id: "act-" + Date.now(),
@@ -275,8 +282,17 @@ export const api = {
       actor: current.username,
       ip: "127.0.0.1"
     };
+
+    const list = store.get('account_activities') || [];
     list.unshift(newAct);
     store.set('account_activities', list);
+
+    // Also persist to backend
+    fetch('/web-api/me/activities', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action, description })
+    }).catch(() => {});
 
     // Also add to global audit logs
     const auditLogs = store.get('audit_logs') || [];
