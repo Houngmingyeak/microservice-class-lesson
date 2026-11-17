@@ -11,3 +11,5 @@ databaseChangeLog:
       file: db/changelog/ddl/005-update-table-user.sql
   - include:
       file: db/changelog/ddl/006-rebuild-core-tables.sql
+  - include:
+      file: db/changelog/ddl/007-alter-picture-url-to-text.sql
