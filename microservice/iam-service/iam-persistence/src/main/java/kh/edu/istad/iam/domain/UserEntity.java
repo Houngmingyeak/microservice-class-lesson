@@ -56,7 +56,7 @@ public class UserEntity extends BaseAudit {
     @Column(name = "profile_url", length = 500)
     private String profileUrl;
 
-    @Column(name = "picture_url", length = 500)
+    @Column(name = "picture_url", columnDefinition = "TEXT")
     private String pictureUrl;
 
     @Column(name = "website_url", length = 500)
