@@ -9,6 +9,9 @@ spring:
   application:
     name: iam-service
 
+  main:
+    allow-bean-definition-overriding: true
+
   security:
     oauth2:
       client:
