@@ -90,9 +90,9 @@ export const SecurityView = ({ onShowToast }) => {
       <div className="grid-2-cols">
         {/* Left: Password Form */}
         <div className="glass-card p-6">
-          <div className="flex items-center gap-2 mb-4 border-b border-slate-800 pb-3">
-            <IconLock size={20} className="text-indigo-400" />
-            <h3 className="text-lg font-bold text-white">{t('changePassword')}</h3>
+          <div className="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
+            <IconLock size={20} className="text-indigo-600" />
+            <h3 className="text-lg font-bold text-slate-900">{t('changePassword')}</h3>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -109,7 +109,7 @@ export const SecurityView = ({ onShowToast }) => {
                 <button
                   type="button"
                   onClick={() => setShowCurrent(!showCurrent)}
-                  className="absolute right-3 top-3 text-slate-400 hover:text-white"
+                  className="absolute right-3 top-3 text-slate-400 hover:text-indigo-600"
                 >
                   {showCurrent ? <IconEyeOff size={16} /> : <IconEye size={16} />}
                 </button>
@@ -129,7 +129,7 @@ export const SecurityView = ({ onShowToast }) => {
                 <button
                   type="button"
                   onClick={() => setShowNew(!showNew)}
-                  className="absolute right-3 top-3 text-slate-400 hover:text-white"
+                  className="absolute right-3 top-3 text-slate-400 hover:text-indigo-600"
                 >
                   {showNew ? <IconEyeOff size={16} /> : <IconEye size={16} />}
                 </button>
@@ -138,11 +138,11 @@ export const SecurityView = ({ onShowToast }) => {
               {/* Strength Meter */}
               {newPassword && (
                 <div className="mt-2 space-y-1">
-                  <div className="flex justify-between text-xs text-slate-400">
+                  <div className="flex justify-between text-xs text-slate-500">
                     <span>{t('passwordStrength')}</span>
-                    <span className="font-semibold text-slate-200">{strengthLabel}</span>
+                    <span className="font-semibold text-slate-800">{strengthLabel}</span>
                   </div>
-                  <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                  <div className="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
                     <div
                       className={`h-full transition-all duration-300 ${strengthColor}`}
                       style={{ width: strengthPercent }}
@@ -164,20 +164,20 @@ export const SecurityView = ({ onShowToast }) => {
             </div>
 
             {/* Rules Checklist */}
-            <div className="p-3 bg-slate-950/50 rounded-lg space-y-1.5 text-xs">
-              <div className={`flex items-center gap-2 ${hasLength ? 'text-emerald-400' : 'text-slate-400'}`}>
+            <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2 text-xs">
+              <div className={`flex items-center gap-2 ${hasLength ? 'text-emerald-600 font-semibold' : 'text-slate-400'}`}>
                 {hasLength ? <IconCheck size={14} /> : <IconX size={14} />}
                 <span>{t('passReqLength')}</span>
               </div>
-              <div className={`flex items-center gap-2 ${hasUpper ? 'text-emerald-400' : 'text-slate-400'}`}>
+              <div className={`flex items-center gap-2 ${hasUpper ? 'text-emerald-600 font-semibold' : 'text-slate-400'}`}>
                 {hasUpper ? <IconCheck size={14} /> : <IconX size={14} />}
                 <span>{t('passReqUpper')}</span>
               </div>
-              <div className={`flex items-center gap-2 ${hasNumber ? 'text-emerald-400' : 'text-slate-400'}`}>
+              <div className={`flex items-center gap-2 ${hasNumber ? 'text-emerald-600 font-semibold' : 'text-slate-400'}`}>
                 {hasNumber ? <IconCheck size={14} /> : <IconX size={14} />}
                 <span>{t('passReqNumber')}</span>
               </div>
-              <div className={`flex items-center gap-2 ${hasSpecial ? 'text-emerald-400' : 'text-slate-400'}`}>
+              <div className={`flex items-center gap-2 ${hasSpecial ? 'text-emerald-600 font-semibold' : 'text-slate-400'}`}>
                 {hasSpecial ? <IconCheck size={14} /> : <IconX size={14} />}
                 <span>{t('passReqSpecial')}</span>
               </div>
@@ -199,24 +199,24 @@ export const SecurityView = ({ onShowToast }) => {
         <div className="space-y-6">
           {/* 2FA Card */}
           <div className="glass-card p-6">
-            <div className="flex items-center justify-between mb-3 border-b border-slate-800 pb-3">
+            <div className="flex items-center justify-between mb-3 border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
-                <IconShieldCheck size={20} className="text-emerald-400" />
-                <h3 className="text-lg font-bold text-white">{t('mfaHeading')}</h3>
+                <IconShieldCheck size={20} className="text-emerald-600" />
+                <h3 className="text-lg font-bold text-slate-900">{t('mfaHeading')}</h3>
               </div>
               <Badge variant={user?.mfaEnabled ? 'success' : 'warning'}>
                 {user?.mfaEnabled ? t('enabled') : t('disabled')}
               </Badge>
             </div>
 
-            <p className="text-sm text-slate-300 mb-4">
+            <p className="text-sm text-slate-600 mb-4 leading-relaxed">
               {user?.mfaEnabled ? t('mfaEnabled') : t('mfaDisabled')}
             </p>
 
             <button
               onClick={toggleMfa}
               disabled={mfaLoading}
-              className={`btn ${user?.mfaEnabled ? 'btn-secondary text-rose-400' : 'btn-success'}`}
+              className={`btn ${user?.mfaEnabled ? 'btn-secondary text-rose-600 hover:bg-rose-50' : 'btn-success'}`}
             >
               {user?.mfaEnabled ? t('disableMfa') : t('enableMfa')}
             </button>
@@ -224,23 +224,23 @@ export const SecurityView = ({ onShowToast }) => {
 
           {/* Security Advisory */}
           <div className="glass-card p-6">
-            <h4 className="text-sm uppercase tracking-wider text-slate-400 font-semibold mb-3">
+            <h4 className="text-xs uppercase tracking-wider text-slate-500 font-bold mb-3">
               Account Security Status
             </h4>
-            <div className="space-y-3 text-sm text-slate-300">
-              <div className="flex justify-between items-center py-2 border-b border-slate-800/60">
+            <div className="space-y-3 text-sm text-slate-600">
+              <div className="flex justify-between items-center py-2 border-b border-slate-100">
                 <span>Last password change:</span>
-                <span className="font-mono text-xs text-indigo-300">
+                <span className="font-mono text-xs text-indigo-700 font-semibold">
                   {user?.passwordChangedAt ? new Date(user.passwordChangedAt).toLocaleDateString() : 'Never'}
                 </span>
               </div>
-              <div className="flex justify-between items-center py-2 border-b border-slate-800/60">
+              <div className="flex justify-between items-center py-2 border-b border-slate-100">
                 <span>Account Lockout Policy:</span>
-                <span className="text-emerald-400 text-xs font-semibold">Protected (5 Max Tries)</span>
+                <span className="text-emerald-600 text-xs font-bold">Protected (5 Max Tries)</span>
               </div>
               <div className="flex justify-between items-center py-2">
                 <span>Active Credentials:</span>
-                <span className="text-xs text-slate-400">OAuth2.1 / Argon2id / OpenID Connect</span>
+                <span className="text-xs text-slate-500 font-medium">OAuth2.1 / Argon2id / OpenID Connect</span>
               </div>
             </div>
           </div>
