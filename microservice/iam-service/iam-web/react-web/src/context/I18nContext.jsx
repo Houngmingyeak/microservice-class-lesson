@@ -56,6 +56,8 @@ const translations = {
 
     tabOverview: "Overview",
     tabUsers: "User Management",
+    tabUserRoles: "User Role Assignment",
+    tabUserPermissions: "User Permission Assignment",
     tabUserSessions: "User Sessions",
     tabUserLoginHistory: "User Login History",
     tabRoles: "Role Management",
@@ -344,6 +346,8 @@ const translations = {
 
     tabOverview: "ផ្ទាំងទូទៅ",
     tabUsers: "គ្រប់គ្រងអ្នកប្រើប្រាស់",
+    tabUserRoles: "ការចាត់តាំងតួនាទី",
+    tabUserPermissions: "ការចាត់តាំងសិទ្ធិ",
     tabUserSessions: "សម័យអ្នកប្រើប្រាស់",
     tabUserLoginHistory: "ប្រវត្តិការចូលរបស់អ្នកប្រើប្រាស់",
     tabRoles: "គ្រប់គ្រងតួនាទី",

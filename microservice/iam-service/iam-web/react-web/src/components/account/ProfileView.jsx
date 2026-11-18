@@ -174,24 +174,24 @@ export const ProfileView = ({ onShowToast }) => {
             </button>
           </div>
 
-          <h3 className="mt-4 text-xl font-bold text-slate-900">
+          <h3 className="mt-3 text-base font-bold text-slate-900">
             {formData.givenName} {formData.familyName}
           </h3>
-          <p className="text-slate-500 text-sm">@{formData.username}</p>
+          <p className="text-slate-500 text-xs">@{formData.username}</p>
 
-          <div className="mt-3 flex flex-wrap gap-1.5 justify-center">
+          <div className="mt-2.5 flex flex-wrap gap-1 justify-center">
             {user?.roles?.map(r => (
               <Badge key={r} variant="primary">{r}</Badge>
             ))}
           </div>
 
           {/* OIDC Claims preview */}
-          <div className="mt-6 w-full border-t border-slate-200 pt-4 text-left">
-            <span className="text-xs uppercase tracking-wider text-slate-500 font-semibold mb-2 flex items-center gap-1.5">
-              <IconShieldCheck size={16} className="text-emerald-500" />
+          <div className="mt-5 w-full border-t border-slate-200/80 pt-3 text-left">
+            <span className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold mb-2 flex items-center gap-1.5">
+              <IconShieldCheck size={14} className="text-emerald-500" />
               OIDC Token Claims
             </span>
-            <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-2xl font-mono text-slate-700 space-y-1.5 overflow-x-auto">
+            <div className="bg-slate-50 border border-slate-200/80 p-3 rounded-xl font-mono text-xs text-slate-700 space-y-1 overflow-x-auto">
               <div><span className="text-indigo-600 font-semibold">email_verified:</span> true</div>
               <div><span className="text-indigo-600 font-semibold">zoneinfo:</span> Asia/Phnom_Penh</div>
               <div><span className="text-indigo-600 font-semibold">auth_time:</span> {new Date().toLocaleTimeString()}</div>
@@ -200,9 +200,9 @@ export const ProfileView = ({ onShowToast }) => {
         </div>
 
         {/* Right Card: Edit Form */}
-        <div className="glass-card p-6 md:p-8">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <h4 className="text-xl font-bold text-slate-900 border-b border-slate-200 pb-3 mb-5">
+        <div className="glass-card p-5 md:p-6">
+          <form onSubmit={handleSubmit} className="space-y-3.5">
+            <h4 className="text-sm font-bold text-slate-900 border-b border-slate-200/80 pb-2.5 mb-4">
               {t('personalDetails')}
             </h4>
 
@@ -240,7 +240,7 @@ export const ProfileView = ({ onShowToast }) => {
                   name="username"
                   value={formData.username}
                   onChange={handleChange}
-                  className="form-input bg-slate-950/40 text-slate-400 cursor-not-allowed"
+                  className="form-input bg-slate-100 text-slate-500 cursor-not-allowed"
                   disabled
                 />
               </div>

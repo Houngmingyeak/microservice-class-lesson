@@ -40,12 +40,12 @@ export const AdminOverviewView = () => {
   };
 
   const statCards = [
-    { title: t('metricTotalUsers'), value: metrics.totalUsers, icon: IconUsers, color: 'text-indigo-400', bg: 'bg-indigo-500/10', target: 'users' },
-    { title: t('metricActiveUsers'), value: metrics.activeUsers, icon: IconShieldCheck, color: 'text-emerald-400', bg: 'bg-emerald-500/10', target: 'users' },
-    { title: t('metricTotalRoles'), value: metrics.totalRoles, icon: IconKey, color: 'text-purple-400', bg: 'bg-purple-500/10', target: 'roles' },
-    { title: t('metricTotalPerms'), value: metrics.totalPermissions, icon: IconShield, color: 'text-cyan-400', bg: 'bg-cyan-500/10', target: 'permissions' },
-    { title: t('metricClients'), value: metrics.totalClients, icon: IconTerminal, color: 'text-amber-400', bg: 'bg-amber-500/10', target: 'clients' },
-    { title: t('metricActiveSessions'), value: metrics.activeSessions, icon: IconLaptop, color: 'text-sky-400', bg: 'bg-sky-500/10', target: 'userSessions' },
+    { title: t('metricTotalUsers'), value: metrics.totalUsers, icon: IconUsers, color: 'text-indigo-600', bg: 'bg-indigo-50 border border-indigo-100', target: 'users' },
+    { title: t('metricActiveUsers'), value: metrics.activeUsers, icon: IconShieldCheck, color: 'text-emerald-600', bg: 'bg-emerald-50 border border-emerald-100', target: 'users' },
+    { title: t('metricTotalRoles'), value: metrics.totalRoles, icon: IconKey, color: 'text-purple-600', bg: 'bg-purple-50 border border-purple-100', target: 'roles' },
+    { title: t('metricTotalPerms'), value: metrics.totalPermissions, icon: IconShield, color: 'text-cyan-600', bg: 'bg-cyan-50 border border-cyan-100', target: 'permissions' },
+    { title: t('metricClients'), value: metrics.totalClients, icon: IconTerminal, color: 'text-amber-600', bg: 'bg-amber-50 border border-amber-100', target: 'clients' },
+    { title: t('metricActiveSessions'), value: metrics.activeSessions, icon: IconLaptop, color: 'text-sky-600', bg: 'bg-sky-50 border border-sky-100', target: 'userSessions' },
   ];
 
   // Visual authentication traffic bars
@@ -79,22 +79,24 @@ export const AdminOverviewView = () => {
       </div>
 
       {/* KPI Cards Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3.5">
         {statCards.map((card, i) => {
           const Icon = card.icon;
           return (
             <div
               key={i}
               onClick={() => setActiveTab(card.target)}
-              className="glass-card p-5 cursor-pointer hover:border-indigo-500/50 transition group flex flex-col justify-between"
+              className="glass-card p-4 cursor-pointer hover:border-indigo-400 hover:shadow-sm transition group flex flex-col justify-between min-w-0"
             >
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs text-slate-400 font-medium">{card.title}</span>
-                <div className={`p-2 rounded-lg ${card.bg}`}>
-                  <Icon size={18} className={card.color} />
+              <div className="flex items-center justify-between gap-2 mb-2 min-w-0">
+                <span className="text-xs text-slate-500 font-semibold truncate whitespace-nowrap" title={card.title}>
+                  {card.title}
+                </span>
+                <div className={`p-1.5 rounded-lg shrink-0 ${card.bg}`}>
+                  <Icon size={16} className={card.color} />
                 </div>
               </div>
-              <div className="text-2xl font-bold text-white group-hover:text-indigo-300 transition">
+              <div className="text-xl font-bold text-slate-900 group-hover:text-indigo-600 transition">
                 {card.value}
               </div>
             </div>
@@ -105,9 +107,9 @@ export const AdminOverviewView = () => {
       <div className="grid-2-cols mt-6">
         {/* Traffic Chart */}
         <div className="glass-card p-6">
-          <div className="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
-              <IconActivity size={18} className="text-indigo-400" />
+          <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <IconActivity size={18} className="text-indigo-600" />
               {t('loginTraffic')}
             </h3>
             <Badge variant="primary" size="sm">Last 7 Days</Badge>
@@ -118,14 +120,14 @@ export const AdminOverviewView = () => {
               const heightPercent = (d.count / maxTraffic) * 100;
               return (
                 <div key={i} className="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
-                  <span className="text-[10px] font-mono text-slate-400 opacity-0 group-hover:opacity-100 transition">
+                  <span className="text-xs font-mono text-slate-600 opacity-0 group-hover:opacity-100 transition font-semibold">
                     {d.count}
                   </span>
                   <div
-                    className="w-full max-w-[36px] bg-indigo-500/40 rounded-t group-hover:bg-indigo-400 transition"
+                    className="w-full max-w-[36px] bg-indigo-100 rounded-t-md group-hover:bg-indigo-600 transition"
                     style={{ height: `${heightPercent}%` }}
                   />
-                  <span className="text-xs text-slate-400 font-medium">{d.day}</span>
+                  <span className="text-xs text-slate-500 font-semibold">{d.day}</span>
                 </div>
               );
             })}
@@ -134,14 +136,14 @@ export const AdminOverviewView = () => {
 
         {/* Recent System Activity Stream */}
         <div className="glass-card p-6">
-          <div className="flex items-center justify-between mb-4 border-b border-slate-800 pb-3">
-            <h3 className="text-base font-bold text-white flex items-center gap-2">
-              <IconClock size={18} className="text-emerald-400" />
+          <div className="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <IconClock size={18} className="text-emerald-600" />
               {t('recentSystemActivity')}
             </h3>
             <button
               onClick={() => setActiveTab('auditLogs')}
-              className="text-xs text-indigo-400 hover:underline"
+              className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 hover:underline"
             >
               View all logs →
             </button>
@@ -149,16 +151,16 @@ export const AdminOverviewView = () => {
 
           <div className="space-y-3">
             {metrics.recentActivities.map((act) => (
-              <div key={act.id} className="p-3 bg-slate-950/60 rounded-lg border border-slate-800/80 flex items-start justify-between gap-3 text-xs">
+              <div key={act.id} className="p-3 bg-slate-50/80 rounded-xl border border-slate-200/80 flex items-start justify-between gap-3 text-xs hover:bg-indigo-50/30 transition">
                 <div>
                   <div className="flex items-center gap-1.5 mb-1">
-                    <span className="font-semibold text-white">{act.event}</span>
+                    <span className="font-bold text-slate-900">{act.event}</span>
                     <span className="text-slate-400">by</span>
-                    <span className="text-indigo-300 font-medium">{act.actor}</span>
+                    <span className="text-indigo-600 font-semibold">{act.actor}</span>
                   </div>
-                  <p className="text-slate-400">{act.details}</p>
+                  <p className="text-slate-600">{act.details}</p>
                 </div>
-                <span className="font-mono text-[10px] text-slate-500 shrink-0">
+                <span className="font-mono text-xs text-slate-400 shrink-0">
                   {new Date(act.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>

@@ -97,48 +97,48 @@ export const AccountActivityView = () => {
       </div>
 
       {/* Top Stat Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
-        <div className="p-6 bg-white border border-slate-200 rounded-3xl shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-base font-semibold text-slate-500 uppercase tracking-wider block mb-1">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div className="p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-xs flex items-center justify-between">
+          <div className="min-w-0">
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1 whitespace-nowrap truncate">
               Total Logged Events
             </span>
-            <span className="text-3xl font-extrabold text-slate-900">{totalCount}</span>
+            <span className="text-xl font-bold text-slate-900">{totalCount}</span>
           </div>
-          <div className="w-14 h-14 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700">
-            <IconActivity size={26} />
+          <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700 shrink-0 ml-3">
+            <IconActivity size={18} />
           </div>
         </div>
 
-        <div className="p-6 bg-white border border-slate-200 rounded-3xl shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-base font-semibold text-sky-600 uppercase tracking-wider block mb-1">
+        <div className="p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-xs flex items-center justify-between">
+          <div className="min-w-0">
+            <span className="text-xs font-semibold text-sky-600 uppercase tracking-wider block mb-1 whitespace-nowrap truncate">
               Profile Modifications
             </span>
-            <span className="text-3xl font-extrabold text-sky-700">{profileCount}</span>
+            <span className="text-xl font-bold text-sky-700">{profileCount}</span>
           </div>
-          <div className="w-14 h-14 rounded-full bg-sky-50 border border-sky-200 flex items-center justify-center text-sky-600">
-            <IconUser size={26} />
+          <div className="w-10 h-10 rounded-xl bg-sky-50 border border-sky-200 flex items-center justify-center text-sky-600 shrink-0 ml-3">
+            <IconUser size={18} />
           </div>
         </div>
 
-        <div className="p-6 bg-white border border-slate-200 rounded-3xl shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-base font-semibold text-amber-600 uppercase tracking-wider block mb-1">
+        <div className="p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-xs flex items-center justify-between">
+          <div className="min-w-0">
+            <span className="text-xs font-semibold text-amber-600 uppercase tracking-wider block mb-1 whitespace-nowrap truncate">
               Security Updates
             </span>
-            <span className="text-3xl font-extrabold text-amber-700">{securityCount}</span>
+            <span className="text-xl font-bold text-amber-700">{securityCount}</span>
           </div>
-          <div className="w-14 h-14 rounded-full bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600">
-            <IconShield size={26} />
+          <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 shrink-0 ml-3">
+            <IconShield size={18} />
           </div>
         </div>
       </div>
 
       {/* Main Activity Log Card */}
-      <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-xs overflow-hidden">
         {/* Search & Filter Toolbar */}
-        <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-slate-50/50">
+        <div className="p-4 border-b border-slate-200/80 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-slate-50/60">
           {/* Search Box */}
           <div className="relative flex-1 max-w-md">
             <input
@@ -146,29 +146,29 @@ export const AccountActivityView = () => {
               placeholder="Search activity by keyword, action, or IP..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-6 py-3 rounded-full bg-white border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-600 text-base transition shadow-2xs"
+              className="w-full pl-9 pr-8 py-2 rounded-lg bg-white border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-xs transition shadow-2xs"
             />
             <span
-              className="absolute left-4 text-slate-400 pointer-events-none flex items-center justify-center"
+              className="absolute left-3 text-slate-400 pointer-events-none flex items-center justify-center"
               style={{ top: '50%', transform: 'translateY(-50%)' }}
             >
-              <IconSearch size={20} />
+              <IconSearch size={15} />
             </span>
             {searchTerm && (
               <button
                 type="button"
                 onClick={() => setSearchTerm('')}
-                className="absolute right-4 text-slate-400 hover:text-slate-600 p-1 rounded-full cursor-pointer"
+                className="absolute right-2.5 text-slate-400 hover:text-slate-600 p-1 rounded cursor-pointer"
                 style={{ top: '50%', transform: 'translateY(-50%)' }}
                 title="Clear search"
               >
-                <IconX size={16} />
+                <IconX size={14} />
               </button>
             )}
           </div>
 
           {/* Filter Pills */}
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5 flex-wrap">
             {[
               { key: 'ALL', label: 'All Activities' },
               { key: 'PROFILE', label: 'Profile' },
@@ -179,9 +179,9 @@ export const AccountActivityView = () => {
                 key={cat.key}
                 type="button"
                 onClick={() => setCategoryFilter(cat.key)}
-                className={`px-5 py-2.5 rounded-full font-bold text-base transition cursor-pointer whitespace-nowrap ${
+                className={`px-3 py-1.5 rounded-lg font-semibold text-xs transition cursor-pointer whitespace-nowrap ${
                   categoryFilter === cat.key
-                    ? 'bg-indigo-600 text-white shadow-sm'
+                    ? 'bg-indigo-600 text-white shadow-xs'
                     : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
                 }`}
               >
@@ -196,28 +196,28 @@ export const AccountActivityView = () => {
           {filtered.map((act) => (
             <div
               key={act.id}
-              className="p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 hover:bg-slate-50/70 transition"
+              className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:bg-slate-50/70 transition"
             >
-              <div className="flex items-start gap-4.5">
+              <div className="flex items-start gap-3.5 min-w-0">
                 <div
-                  className={`w-14 h-14 rounded-full border flex items-center justify-center shrink-0 mt-0.5 shadow-2xs ${getActivityBg(
+                  className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 mt-0.5 shadow-2xs ${getActivityBg(
                     act.action
                   )}`}
                 >
                   {getActivityIcon(act.action)}
                 </div>
 
-                <div>
-                  <div className="flex flex-wrap items-center gap-2.5">
-                    <h4 className="text-xl font-bold text-slate-900">{act.action}</h4>
-                    <span className="px-3 py-0.5 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h4 className="text-sm font-bold text-slate-900 whitespace-nowrap">{act.action}</h4>
+                    <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200 whitespace-nowrap">
                       {act.actor}
                     </span>
                   </div>
 
-                  <p className="text-base text-slate-700 mt-1 font-medium">{act.description}</p>
+                  <p className="text-xs text-slate-600 mt-0.5 font-normal">{act.description}</p>
 
-                  <div className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-1 text-sm text-slate-400 font-mono">
+                  <div className="mt-1.5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-400 font-mono whitespace-nowrap">
                     <span>
                       🕒 {new Date(act.timestamp).toLocaleString(undefined, {
                         dateStyle: 'medium',
@@ -230,8 +230,8 @@ export const AccountActivityView = () => {
               </div>
 
               <div className="self-end sm:self-center shrink-0">
-                <span className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-sm font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                  <IconCheck size={14} className="text-emerald-600" />
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap">
+                  <IconCheck size={12} className="text-emerald-600" />
                   <span>Recorded</span>
                 </span>
               </div>
@@ -239,14 +239,14 @@ export const AccountActivityView = () => {
           ))}
 
           {filtered.length === 0 && (
-            <div className="py-16 text-center">
-              <div className="w-16 h-16 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 mx-auto mb-4">
-                <IconActivity size={28} />
+            <div className="py-12 text-center">
+              <div className="w-12 h-12 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400 mx-auto mb-3">
+                <IconActivity size={22} />
               </div>
-              <h4 className="text-xl font-bold text-slate-800 mb-1">
+              <h4 className="text-base font-bold text-slate-800 mb-1">
                 {t('noResultsFound') || 'No account activities recorded yet'}
               </h4>
-              <p className="text-base text-slate-500">
+              <p className="text-xs text-slate-500 max-w-sm mx-auto">
                 {searchTerm
                   ? 'No activities matched your search. Try another keyword.'
                   : 'Any changes made to your profile, avatar, credentials, or sessions will be automatically logged here.'}

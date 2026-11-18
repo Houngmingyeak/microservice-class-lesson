@@ -9,6 +9,9 @@ spring:
   application:
     name: iam-service
 
+  main:
+    allow-bean-definition-overriding: true
+
   security:
     oauth2:
       client:
@@ -67,6 +70,12 @@ spring:
     username: iteuser
     password: postgre
     driver-class-name: org.postgresql.Driver
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      timeout: 3000ms
 
   jpa:
     hibernate:

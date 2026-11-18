@@ -142,18 +142,18 @@ export const ClientManagementView = ({ onShowToast }) => {
           const isSecretRevealed = !!revealedSecrets[client.id];
           return (
             <div key={client.id} className="glass-card p-6">
-              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-800 pb-4 mb-4">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-100 pb-4 mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="p-3 bg-amber-500/10 border border-amber-500/30 text-amber-400 rounded-xl">
+                  <div className="p-3 bg-amber-50 border border-amber-200 text-amber-600 rounded-2xl">
                     <IconTerminal size={22} />
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-white">{client.clientName}</h3>
-                    <div className="flex items-center gap-2 text-xs font-mono text-slate-400 mt-0.5">
+                    <h3 className="text-lg font-bold text-slate-900">{client.clientName}</h3>
+                    <div className="flex items-center gap-2 text-xs font-mono text-slate-500 mt-0.5">
                       <span>ID: <strong>{client.clientId}</strong></span>
                       <button
                         onClick={() => copyToClipboard(client.clientId, 'Client ID')}
-                        className="text-slate-500 hover:text-indigo-400"
+                        className="text-slate-400 hover:text-indigo-600"
                         title="Copy Client ID"
                       >
                         <IconCopy size={13} />
@@ -183,7 +183,7 @@ export const ClientManagementView = ({ onShowToast }) => {
                   </button>
                   <button
                     onClick={() => setDeletingClient(client)}
-                    className="btn btn-secondary text-xs text-rose-400 flex items-center gap-1 hover:border-rose-500/40"
+                    className="btn btn-secondary text-xs text-rose-600 flex items-center gap-1 hover:border-rose-300 hover:bg-rose-50"
                   >
                     <IconTrash size={13} />
                     <span>{t('delete')}</span>
@@ -194,20 +194,20 @@ export const ClientManagementView = ({ onShowToast }) => {
               {/* Client Specs Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
                 {/* Credentials */}
-                <div className="p-3 bg-slate-950/70 rounded-lg border border-slate-850">
-                  <span className="text-slate-400 font-semibold block mb-1.5">{t('clientSecret')}</span>
-                  <div className="flex items-center justify-between font-mono bg-slate-900 px-2.5 py-1.5 rounded text-indigo-300">
+                <div className="p-4 bg-slate-50/80 rounded-2xl border border-slate-200/80">
+                  <span className="text-slate-500 font-semibold block mb-1.5">{t('clientSecret')}</span>
+                  <div className="flex items-center justify-between font-mono bg-white border border-slate-200 px-3 py-2 rounded-xl text-indigo-700 font-semibold">
                     <span>{isSecretRevealed ? client.clientSecret : '••••••••••••••••••••'}</span>
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => toggleRevealSecret(client.id)}
-                        className="text-slate-400 hover:text-white"
+                        className="text-slate-400 hover:text-indigo-600"
                       >
                         {isSecretRevealed ? <IconEyeOff size={14} /> : <IconEye size={14} />}
                       </button>
                       <button
                         onClick={() => copyToClipboard(client.clientSecret, 'Client Secret')}
-                        className="text-slate-400 hover:text-white"
+                        className="text-slate-400 hover:text-indigo-600"
                       >
                         <IconCopy size={14} />
                       </button>
@@ -216,9 +216,9 @@ export const ClientManagementView = ({ onShowToast }) => {
                 </div>
 
                 {/* Grant Types */}
-                <div className="p-3 bg-slate-950/70 rounded-lg border border-slate-850">
-                  <span className="text-slate-400 font-semibold block mb-1.5">{t('grantTypes')}</span>
-                  <div className="flex flex-wrap gap-1">
+                <div className="p-4 bg-slate-50/80 rounded-2xl border border-slate-200/80">
+                  <span className="text-slate-500 font-semibold block mb-1.5">{t('grantTypes')}</span>
+                  <div className="flex flex-wrap gap-1.5">
                     {client.authorizationGrantTypes?.map(g => (
                       <Badge key={g} variant="primary" size="sm">{g}</Badge>
                     ))}
@@ -226,9 +226,9 @@ export const ClientManagementView = ({ onShowToast }) => {
                 </div>
 
                 {/* Scopes */}
-                <div className="p-3 bg-slate-950/70 rounded-lg border border-slate-850">
-                  <span className="text-slate-400 font-semibold block mb-1.5">{t('scopes')}</span>
-                  <div className="flex flex-wrap gap-1">
+                <div className="p-4 bg-slate-50/80 rounded-2xl border border-slate-200/80">
+                  <span className="text-slate-500 font-semibold block mb-1.5">{t('scopes')}</span>
+                  <div className="flex flex-wrap gap-1.5">
                     {client.scopes?.map(s => (
                       <Badge key={s} variant="success" size="sm">{s}</Badge>
                     ))}
@@ -238,11 +238,11 @@ export const ClientManagementView = ({ onShowToast }) => {
 
               {/* Redirect URIs */}
               {client.redirectUris && client.redirectUris.length > 0 && (
-                <div className="mt-3 pt-3 border-t border-slate-850 text-xs">
-                  <span className="text-slate-400 font-semibold block mb-1">Redirect URIs:</span>
-                  <div className="space-y-1 font-mono text-slate-300">
+                <div className="mt-4 pt-3.5 border-t border-slate-100 text-xs">
+                  <span className="text-slate-500 font-semibold block mb-1.5">Redirect URIs:</span>
+                  <div className="flex flex-wrap gap-2 font-mono text-slate-700">
                     {(Array.isArray(client.redirectUris) ? client.redirectUris : [client.redirectUris]).map((uri, idx) => (
-                      <div key={idx} className="bg-slate-950/50 px-2.5 py-1 rounded border border-slate-900 inline-block mr-2">
+                      <div key={idx} className="bg-slate-100 px-3 py-1 rounded-lg border border-slate-200 text-xs font-semibold">
                         {uri}
                       </div>
                     ))}
@@ -301,11 +301,11 @@ export const ClientManagementView = ({ onShowToast }) => {
 
           <div className="form-group">
             <label className="form-label mb-2 block">{t('grantTypes')}</label>
-            <div className="flex flex-wrap gap-4 text-xs text-slate-300">
+            <div className="flex flex-wrap gap-4 text-xs text-slate-700 font-medium">
               {allAvailableGrants.map(grant => {
                 const checked = newClient.authorizationGrantTypes.includes(grant);
                 return (
-                  <label key={grant} className="flex items-center gap-1.5 cursor-pointer">
+                  <label key={grant} className="flex items-center gap-1.5 cursor-pointer hover:text-indigo-600">
                     <input
                       type="checkbox"
                       checked={checked}
@@ -315,7 +315,7 @@ export const ClientManagementView = ({ onShowToast }) => {
                           : [...newClient.authorizationGrantTypes, grant];
                         setNewClient({ ...newClient, authorizationGrantTypes: updated });
                       }}
-                      className="rounded border-slate-700 text-indigo-600 focus:ring-0"
+                      className="rounded border-slate-300 text-indigo-600 focus:ring-0"
                     />
                     <span className="font-mono">{grant}</span>
                   </label>
@@ -326,11 +326,11 @@ export const ClientManagementView = ({ onShowToast }) => {
 
           <div className="form-group">
             <label className="form-label mb-2 block">{t('scopes')}</label>
-            <div className="flex flex-wrap gap-4 text-xs text-slate-300">
+            <div className="flex flex-wrap gap-4 text-xs text-slate-700 font-medium">
               {allAvailableScopes.map(scope => {
                 const checked = newClient.scopes.includes(scope);
                 return (
-                  <label key={scope} className="flex items-center gap-1.5 cursor-pointer">
+                  <label key={scope} className="flex items-center gap-1.5 cursor-pointer hover:text-indigo-600">
                     <input
                       type="checkbox"
                       checked={checked}
@@ -340,7 +340,7 @@ export const ClientManagementView = ({ onShowToast }) => {
                           : [...newClient.scopes, scope];
                         setNewClient({ ...newClient, scopes: updated });
                       }}
-                      className="rounded border-slate-700 text-indigo-600 focus:ring-0"
+                      className="rounded border-slate-300 text-indigo-600 focus:ring-0"
                     />
                     <span className="font-mono">{scope}</span>
                   </label>
@@ -420,7 +420,7 @@ export const ClientManagementView = ({ onShowToast }) => {
         title={t('delete')}
       >
         <div className="space-y-4">
-          <p className="text-sm text-slate-300">
+          <p className="text-sm text-slate-600">
             Deregister client <strong>{deletingClient?.clientName}</strong> ({deletingClient?.clientId})? All access tokens and authorization codes tied to this client will be invalidated.
           </p>
           <div className="flex justify-end gap-2 pt-2">

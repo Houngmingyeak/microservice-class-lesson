@@ -36,6 +36,7 @@ public class WebPageController {
     private final kh.edu.istad.iam.feature.identity.UnlinkIdentityUseCase unlinkIdentityUseCase;
     private final IdentityRepository identityRepository;
     private final MessageSource messageSource;
+    private final kh.edu.istad.iam.web.service.UserImageRedisService userImageRedisService;
 
     private static final Map<String, List<Map<String, Object>>> userActivitiesStore = new java.util.concurrent.ConcurrentHashMap<>();
 
@@ -160,6 +161,7 @@ public class WebPageController {
                         if (!uploadDir.exists()) uploadDir.mkdirs();
                         String filename = username + "_" + System.currentTimeMillis() + ".png";
                         java.nio.file.Files.write(new java.io.File(uploadDir, filename).toPath(), bytes);
+                        userImageRedisService.storeUserAvatar(username, filename, "image/png", bytes);
                         pictureUrl = "/avatars/" + filename;
                     } catch (Exception ignored) {
                         pictureUrl = pic;
@@ -233,9 +235,12 @@ public class WebPageController {
                 ext = originalFilename.substring(originalFilename.lastIndexOf(".")).toLowerCase();
             }
 
+            byte[] bytes = file.getBytes();
             String filename = username + "_" + System.currentTimeMillis() + ext;
             java.io.File dest = new java.io.File(uploadDir, filename);
             file.transferTo(dest);
+
+            userImageRedisService.storeUserAvatar(username, filename, file.getContentType(), bytes);
 
             String avatarUrl = "/avatars/" + filename;
 
@@ -264,6 +269,61 @@ public class WebPageController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("message", "Failed to upload avatar: " + ex.getMessage()));
         }
+    }
+
+    /**
+     * Endpoint to serve user avatars directly from Redis in-memory cache,
+     * falling back to disk and auto-populating Redis on cache-miss.
+     */
+    @GetMapping("/avatars/{filename:.+}")
+    @ResponseBody
+    public ResponseEntity<byte[]> getAvatarImage(@PathVariable String filename) {
+        // 1. Try to fetch from Redis memory first
+        var cached = userImageRedisService.getAvatarBytes(filename);
+        if (cached.isPresent()) {
+            String mime = userImageRedisService.getAvatarMimeType(filename);
+            return ResponseEntity.ok()
+                    .header("X-Image-Source", "Redis-Cache")
+                    .header(org.springframework.http.HttpHeaders.CACHE_CONTROL, "max-age=86400")
+                    .contentType(org.springframework.http.MediaType.parseMediaType(mime))
+                    .body(cached.get());
+        }
+
+        // 2. Fallback to disk storage & cache back into Redis
+        try {
+            java.io.File file = new java.io.File("uploads/avatars", filename);
+            if (!file.exists()) {
+                return ResponseEntity.notFound().build();
+            }
+            byte[] bytes = java.nio.file.Files.readAllBytes(file.toPath());
+            String mime = filename.endsWith(".png") ? "image/png"
+                    : (filename.endsWith(".jpg") || filename.endsWith(".jpeg") ? "image/jpeg" : "application/octet-stream");
+
+            // Cache into Redis for future instant access
+            userImageRedisService.storeUserAvatar(null, filename, mime, bytes);
+
+            return ResponseEntity.ok()
+                    .header("X-Image-Source", "Disk-Storage")
+                    .header(org.springframework.http.HttpHeaders.CACHE_CONTROL, "max-age=86400")
+                    .contentType(org.springframework.http.MediaType.parseMediaType(mime))
+                    .body(bytes);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /**
+     * Diagnostic endpoint for Redis user image storage status.
+     */
+    @GetMapping("/web-api/redis/avatar-status")
+    @ResponseBody
+    public ResponseEntity<?> getRedisAvatarStatus() {
+        boolean available = userImageRedisService.isRedisAvailable();
+        return ResponseEntity.ok(Map.of(
+                "redisConnected", available,
+                "storageRole", "User Avatar In-Memory Cache & Storage",
+                "status", available ? "ACTIVE (Connected to Redis on port 6379)" : "OFFLINE"
+        ));
     }
 
     /**

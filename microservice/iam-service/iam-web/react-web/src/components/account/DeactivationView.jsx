@@ -45,15 +45,15 @@ export const DeactivationView = ({ onShowToast }) => {
     <div className="view-container">
       <div className="view-header">
         <div>
-          <h2 className="view-title text-rose-400">{t('deactivationTitle')}</h2>
+          <h2 className="view-title text-rose-600">{t('deactivationTitle')}</h2>
           <p className="view-subtitle">{t('deactivationSubtitle')}</p>
         </div>
       </div>
 
       <div className="space-y-6 max-w-3xl">
         {/* Warning Banner */}
-        <div className="p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl flex items-start gap-3 text-rose-300 text-sm">
-          <IconAlertTriangle size={20} className="shrink-0 mt-0.5" />
+        <div className="p-4 bg-rose-50 border border-rose-200 rounded-2xl flex items-start gap-3 text-rose-800 text-sm">
+          <IconAlertTriangle size={20} className="shrink-0 mt-0.5 text-rose-600" />
           <div>{t('deactivationWarning')}</div>
         </div>
 
@@ -106,7 +106,7 @@ export const DeactivationView = ({ onShowToast }) => {
         title={t('deactivationTitle')}
       >
         <div className="space-y-4">
-          <p className="text-sm text-slate-300">
+          <p className="text-sm text-slate-600">
             {t('confirmDeactivationText')}
           </p>
 

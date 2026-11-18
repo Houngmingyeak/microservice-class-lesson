@@ -142,15 +142,15 @@ export const RoleManagementView = ({ onShowToast }) => {
               {filteredRoles.map((role) => (
                 <tr key={role.uuid}>
                   <td>
-                    <div className="flex items-center gap-2">
-                      <div className="p-1.5 bg-indigo-500/10 rounded border border-indigo-500/30 text-indigo-400">
-                        <IconKey size={14} />
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-2 bg-indigo-50 rounded-xl border border-indigo-100 text-indigo-600">
+                        <IconKey size={15} />
                       </div>
-                      <span className="font-bold text-white text-sm">{role.name}</span>
+                      <span className="font-bold text-slate-900 text-sm">{role.name}</span>
                     </div>
                   </td>
 
-                  <td className="text-sm text-slate-300 max-w-xs">{role.description}</td>
+                  <td className="text-sm text-slate-600 max-w-xs">{role.description}</td>
 
                   <td>
                     {role.isSystem ? (
@@ -160,10 +160,10 @@ export const RoleManagementView = ({ onShowToast }) => {
                     )}
                   </td>
 
-                  <td className="text-sm text-slate-300">{role.userCount || 0} users</td>
+                  <td className="text-sm text-slate-600 font-medium">{role.userCount || 0} users</td>
 
                   <td>
-                    <span className="font-mono text-xs text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded">
+                    <span className="font-mono text-xs font-semibold text-indigo-700 bg-indigo-50 border border-indigo-100 px-2.5 py-1 rounded-full">
                       {role.permissions?.length || 0} permissions
                     </span>
                   </td>
@@ -172,7 +172,7 @@ export const RoleManagementView = ({ onShowToast }) => {
                     <div className="flex items-center justify-end gap-1">
                       <button
                         onClick={() => setEditingRole({ ...role })}
-                        className="action-icon-btn text-slate-400 hover:text-white"
+                        className="action-icon-btn text-slate-400 hover:text-indigo-600 hover:bg-indigo-50"
                         title={t('edit')}
                       >
                         <IconEdit size={15} />
@@ -181,7 +181,7 @@ export const RoleManagementView = ({ onShowToast }) => {
                       {!role.isSystem && (
                         <button
                           onClick={() => setDeletingRole(role)}
-                          className="action-icon-btn text-slate-400 hover:text-rose-400"
+                          className="action-icon-btn text-slate-400 hover:text-rose-600 hover:bg-rose-50"
                           title={t('delete')}
                         >
                           <IconTrash size={15} />
@@ -230,16 +230,16 @@ export const RoleManagementView = ({ onShowToast }) => {
 
           <div>
             <label className="form-label mb-2 block">{t('assignedPerms')}</label>
-            <div className="max-h-48 overflow-y-auto p-3 bg-slate-950 rounded-lg border border-slate-800 grid grid-cols-2 gap-2 text-xs">
+            <div className="max-h-48 overflow-y-auto p-3 bg-slate-50 rounded-xl border border-slate-200 grid grid-cols-2 gap-2 text-xs">
               {allPermissions.map((p) => {
                 const checked = newRole.permissions?.includes(p.name);
                 return (
-                  <label key={p.uuid} className="flex items-center gap-2 cursor-pointer hover:text-white text-slate-300">
+                  <label key={p.uuid} className="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-indigo-600">
                     <input
                       type="checkbox"
                       checked={checked}
                       onChange={() => handleTogglePerm(p.name, false)}
-                      className="rounded border-slate-700 text-indigo-600 focus:ring-0"
+                      className="rounded border-slate-300 text-indigo-600 focus:ring-0"
                     />
                     <span className="font-mono">{p.name}</span>
                   </label>
@@ -281,16 +281,16 @@ export const RoleManagementView = ({ onShowToast }) => {
 
             <div>
               <label className="form-label mb-2 block">{t('assignedPerms')}</label>
-              <div className="max-h-60 overflow-y-auto p-3 bg-slate-950 rounded-lg border border-slate-800 grid grid-cols-2 gap-2 text-xs">
+              <div className="max-h-60 overflow-y-auto p-3 bg-slate-50 rounded-xl border border-slate-200 grid grid-cols-2 gap-2 text-xs">
                 {allPermissions.map((p) => {
                   const checked = editingRole.permissions?.includes(p.name);
                   return (
-                    <label key={p.uuid} className="flex items-center gap-2 cursor-pointer hover:text-white text-slate-300">
+                    <label key={p.uuid} className="flex items-center gap-2 cursor-pointer text-slate-700 hover:text-indigo-600">
                       <input
                         type="checkbox"
                         checked={checked}
                         onChange={() => handleTogglePerm(p.name, true)}
-                        className="rounded border-slate-700 text-indigo-600 focus:ring-0"
+                        className="rounded border-slate-300 text-indigo-600 focus:ring-0"
                       />
                       <span className="font-mono">{p.name}</span>
                     </label>
@@ -318,7 +318,7 @@ export const RoleManagementView = ({ onShowToast }) => {
         title={t('delete')}
       >
         <div className="space-y-4">
-          <p className="text-sm text-slate-300">
+          <p className="text-sm text-slate-600">
             Permanently delete role <strong>{deletingRole?.name}</strong>? All privileges associated with this role will be revoked from users.
           </p>
           <div className="flex justify-end gap-2 pt-2">

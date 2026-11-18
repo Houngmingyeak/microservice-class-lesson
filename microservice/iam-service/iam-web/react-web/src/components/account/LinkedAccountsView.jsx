@@ -82,7 +82,7 @@ export const LinkedAccountsView = ({ onShowToast }) => {
         </div>
       </div>
 
-      <div className="bg-white border border-slate-200 rounded-3xl shadow-sm divide-y divide-slate-100 overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-xs divide-y divide-slate-100 overflow-hidden">
         {SOCIAL_PROVIDERS.map((provider) => {
           const linkedIdentity = identities.find(
             i => (i.provider || '').toLowerCase() === provider.key.toLowerCase()
@@ -92,17 +92,17 @@ export const LinkedAccountsView = ({ onShowToast }) => {
           return (
             <div
               key={provider.key}
-              className="p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 hover:bg-slate-50/60 transition"
+              className="p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:bg-slate-50/60 transition"
             >
-              <div className="flex items-center gap-4.5">
-                <div className={`w-14 h-14 rounded-full border flex items-center justify-center shrink-0 shadow-xs ${provider.iconBg}`}>
-                  {provider.icon(28)}
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 shadow-2xs ${provider.iconBg}`}>
+                  {provider.icon(20)}
                 </div>
-                <div>
-                  <div className="flex items-center gap-3">
-                    <h4 className="text-xl font-bold text-slate-900">{provider.name}</h4>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2.5">
+                    <h4 className="text-sm font-bold text-slate-900 whitespace-nowrap">{provider.name}</h4>
                     <span
-                      className={`inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-sm font-semibold border ${
+                      className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border whitespace-nowrap ${
                         isConnected
                           ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                           : 'bg-slate-100 text-slate-600 border-slate-200'
@@ -110,7 +110,7 @@ export const LinkedAccountsView = ({ onShowToast }) => {
                     >
                       {isConnected ? (
                         <>
-                          <IconCheck size={14} className="text-emerald-600" />
+                          <IconCheck size={12} className="text-emerald-600" />
                           <span>{t('connected') || 'Connected'}</span>
                         </>
                       ) : (
@@ -118,32 +118,32 @@ export const LinkedAccountsView = ({ onShowToast }) => {
                       )}
                     </span>
                   </div>
-                  <p className="text-base text-slate-600 mt-1">
+                  <p className="text-xs text-slate-600 mt-0.5">
                     {isConnected
                       ? (linkedIdentity.displayName || linkedIdentity.email || linkedIdentity.providerSubject || `Connected via ${provider.name}`)
                       : provider.description}
                   </p>
                   {isConnected && linkedIdentity.linkedAt && (
-                    <span className="text-sm text-slate-400 block mt-1">
+                    <span className="text-[11px] text-slate-400 block mt-0.5">
                       Linked on {new Date(linkedIdentity.linkedAt).toLocaleDateString()}
                     </span>
                   )}
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 self-end sm:self-center shrink-0">
+              <div className="flex items-center gap-2.5 self-end sm:self-center shrink-0">
                 {isConnected ? (
                   <button
                     type="button"
                     onClick={() => setSelectedForUnlink(linkedIdentity)}
-                    className="px-6 py-2.5 rounded-full bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-600 hover:text-white font-semibold text-base transition shadow-xs cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-lg bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-600 hover:text-white font-semibold text-xs transition shadow-2xs cursor-pointer whitespace-nowrap"
                   >
                     {t('unlinkAccount') || 'Unlink Account'}
                   </button>
                 ) : (
                   <a
                     href={provider.authUrl}
-                    className="px-6 py-2.5 rounded-full bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold text-base transition shadow-sm hover:shadow flex items-center gap-2 cursor-pointer text-decoration-none"
+                    className="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 text-white font-semibold text-xs transition shadow-2xs flex items-center gap-1.5 cursor-pointer text-decoration-none whitespace-nowrap"
                     title={`Connect with ${provider.name}`}
                   >
                     <span>{t('linkAccount') || 'Link Account'}</span>
@@ -161,37 +161,37 @@ export const LinkedAccountsView = ({ onShowToast }) => {
         onClose={() => setSelectedForUnlink(null)}
         title={t('unlinkAccount') || 'Unlink Account'}
       >
-        <div className="space-y-5">
-          <p className="text-base text-slate-600">
+        <div className="space-y-4">
+          <p className="text-xs text-slate-600">
             {t('unlinkConfirm') || 'Are you sure you want to unlink this social account? You will no longer be able to use it for single sign-on.'}
           </p>
-          <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-white border border-slate-200 flex items-center justify-center">
+          <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center gap-3">
+            <div className="w-9 h-9 rounded-lg bg-white border border-slate-200 flex items-center justify-center shrink-0">
               {selectedForUnlink && (
-                selectedForUnlink.provider?.toLowerCase() === 'google' ? <IconGoogle size={24} /> :
-                selectedForUnlink.provider?.toLowerCase() === 'github' ? <IconGithub size={24} /> :
-                selectedForUnlink.provider?.toLowerCase() === 'facebook' ? <IconFacebook size={24} /> :
-                selectedForUnlink.provider?.toLowerCase() === 'telegram' ? <IconTelegram size={24} /> :
-                <IconGlobe size={24} />
+                selectedForUnlink.provider?.toLowerCase() === 'google' ? <IconGoogle size={18} /> :
+                selectedForUnlink.provider?.toLowerCase() === 'github' ? <IconGithub size={18} /> :
+                selectedForUnlink.provider?.toLowerCase() === 'facebook' ? <IconFacebook size={18} /> :
+                selectedForUnlink.provider?.toLowerCase() === 'telegram' ? <IconTelegram size={18} /> :
+                <IconGlobe size={18} />
               )}
             </div>
-            <div>
-              <div className="font-bold text-slate-900 text-lg capitalize">{selectedForUnlink?.provider}</div>
-              <div className="text-base text-slate-500">{selectedForUnlink?.displayName || selectedForUnlink?.email || selectedForUnlink?.providerSubject}</div>
+            <div className="min-w-0">
+              <div className="font-bold text-slate-900 text-xs capitalize whitespace-nowrap">{selectedForUnlink?.provider}</div>
+              <div className="text-[11px] text-slate-500 truncate">{selectedForUnlink?.displayName || selectedForUnlink?.email || selectedForUnlink?.providerSubject}</div>
             </div>
           </div>
-          <div className="flex justify-end gap-3 pt-2">
+          <div className="flex justify-end gap-2.5 pt-1">
             <button
               type="button"
               onClick={() => setSelectedForUnlink(null)}
-              className="px-6 py-2.5 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-base transition cursor-pointer"
+              className="px-4 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition cursor-pointer whitespace-nowrap"
             >
               {t('cancel') || 'Cancel'}
             </button>
             <button
               type="button"
               onClick={handleConfirmUnlink}
-              className="px-6 py-2.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white font-semibold text-base shadow-sm transition cursor-pointer"
+              className="px-4 py-2 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs shadow-2xs transition cursor-pointer whitespace-nowrap"
             >
               {t('confirm') || 'Confirm'}
             </button>

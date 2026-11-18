@@ -53,7 +53,7 @@ export const RegisterView = ({ onShowToast }) => {
     <div className="auth-page-root">
       <div className="auth-card-container max-w-xl">
         {/* Top bar with language */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-3">
           <div className="flex items-center gap-3">
             <div className="brand-logo-icon">
               <IconShield size={24} className="text-indigo-600" />
@@ -73,11 +73,11 @@ export const RegisterView = ({ onShowToast }) => {
           </button>
         </div>
 
-        <div className="mb-6">
+        <div className="mb-3">
           <h2 className="text-xl font-bold text-slate-900">{t('registerTitle')}</h2>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-2.5">
           <div className="form-grid-2">
             <div className="form-group">
               <label className="form-label">{t('givenName')}</label>
@@ -187,13 +187,13 @@ export const RegisterView = ({ onShowToast }) => {
           <button
             type="submit"
             disabled={loading}
-            className="btn btn-primary w-full py-2.5 font-semibold text-sm mt-3"
+            className="btn btn-primary w-full py-2.5 font-semibold text-sm mt-2"
           >
             {loading ? t('loading') : t('signUp')}
           </button>
         </form>
 
-        <div className="mt-6 text-center text-xs text-slate-500">
+        <div className="mt-3 text-center text-xs text-slate-500">
           {t('alreadyHaveAccount')}{' '}
           <button
             type="button"

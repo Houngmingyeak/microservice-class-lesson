@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useI18n } from '../../context/I18nContext';
 import {
@@ -24,12 +24,27 @@ export const LoginView = ({ onShowToast }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('error')) {
+      const errType = params.get('error');
+      if (errType === 'oauth2') {
+        onShowToast('Social login provider rejected the request. Use the social buttons below for demo login.', 'warning');
+      } else if (errType === 'telegram') {
+        onShowToast('Telegram authentication failed. Use the Telegram button for demo login.', 'warning');
+      } else {
+        onShowToast('Invalid username or password. Please verify your credentials.', 'error');
+      }
+    }
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    const cleanUsername = username.trim();
     try {
-      await login(username, password);
-      onShowToast(`Welcome back, ${username}!`, 'success');
+      await login(cleanUsername, password);
+      onShowToast(`Welcome back, ${cleanUsername}!`, 'success');
     } catch (err) {
       onShowToast(err.message, 'error');
     } finally {
@@ -45,7 +60,7 @@ export const LoginView = ({ onShowToast }) => {
     <div className="auth-page-root">
       <div className="auth-card-container">
         {/* Top bar with language */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-4">
           <div className="flex items-center gap-3">
             <div className="brand-logo-icon">
               <IconShield size={24} className="text-indigo-600" />
@@ -65,12 +80,12 @@ export const LoginView = ({ onShowToast }) => {
           </button>
         </div>
 
-        <div className="mb-6">
+        <div className="mb-4">
           <h2 className="text-xl font-bold text-slate-900">{t('signIn')}</h2>
         </div>
 
         {/* Credentials Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
           <div className="form-group">
             <label className="form-label">{t('username')}</label>
             <div className="relative">
@@ -120,51 +135,70 @@ export const LoginView = ({ onShowToast }) => {
           <button
             type="submit"
             disabled={loading}
-            className="btn btn-primary w-full py-2.5 font-semibold text-sm mt-2"
+            className="btn btn-primary w-full py-2.5 font-semibold text-sm mt-1"
           >
             {loading ? t('loading') : t('signIn')}
           </button>
         </form>
 
-        {/* Social Logins */}
-        <div className="mt-6 pt-5 border-t border-slate-200">
-          <span className="text-xs text-slate-500 font-medium block mb-3 text-center">
+        {/* Social Logins - Rounded Full */}
+        <div className="mt-4 pt-3.5 border-t border-slate-200">
+          <span className="text-xs text-slate-500 font-medium block mb-2 text-center">
             {t('orContinueWith')}
           </span>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-4 gap-2.5">
+            {/* Google — demo bypass when no real credentials configured */}
             <a
-              href="/oauth2/authorization/google"
-              className="p-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl flex items-center justify-center transition shadow-sm hover:shadow"
-              title="Sign in with Google"
+              href="/login/social/google"
+              className="py-2.5 bg-white border border-slate-200 hover:border-red-300 rounded-full flex items-center justify-center transition shadow-sm hover:shadow hover:bg-red-50"
+              title="Sign in with Google / Gmail"
             >
               <IconGoogle size={18} />
             </a>
+            {/* GitHub — demo bypass when no real credentials configured */}
             <a
-              href="/oauth2/authorization/github"
-              className="p-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl flex items-center justify-center transition shadow-sm hover:shadow text-slate-900"
+              href="/login/social/github"
+              className="py-2.5 bg-white border border-slate-200 hover:border-slate-400 rounded-full flex items-center justify-center transition shadow-sm hover:shadow hover:bg-slate-100 text-slate-900"
               title="Sign in with GitHub"
             >
               <IconGithub size={18} />
             </a>
+            {/* Facebook — demo bypass when no real credentials configured */}
             <a
-              href="/oauth2/authorization/facebook"
-              className="p-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl flex items-center justify-center transition shadow-sm hover:shadow text-blue-600"
+              href="/login/social/facebook"
+              className="py-2.5 bg-white border border-slate-200 hover:border-blue-300 rounded-full flex items-center justify-center transition shadow-sm hover:shadow hover:bg-blue-50 text-blue-600"
               title="Sign in with Facebook"
             >
               <IconFacebook size={18} />
             </a>
+            {/* Telegram — demo bypass when no real credentials configured */}
             <a
-              href="/oauth2/authorization/telegram"
-              className="p-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-xl flex items-center justify-center transition shadow-sm hover:shadow text-sky-500"
+              href="/login/social/telegram"
+              className="py-2.5 bg-white border border-slate-200 hover:border-sky-300 rounded-full flex items-center justify-center transition shadow-sm hover:shadow hover:bg-sky-50 text-sky-500"
               title="Sign in with Telegram"
             >
               <IconTelegram size={18} />
             </a>
           </div>
+
+          {/* Quick Demo Fill Helper */}
+          <div className="mt-3 text-center space-y-1">
+            <p className="text-xs text-slate-400">Social icons use demo login when no credentials are set</p>
+            <button
+              type="button"
+              onClick={() => {
+                setUsername('houngmingyeak@gmail.com');
+                setPassword('supersecret');
+              }}
+              className="text-xs text-indigo-600 hover:text-indigo-800 transition underline cursor-pointer bg-transparent border-0 font-medium"
+            >
+              Fill Demo Admin (houngmingyeak@gmail.com / supersecret)
+            </button>
+          </div>
         </div>
 
         {/* Sign up link */}
-        <div className="mt-6 text-center text-xs text-slate-500">
+        <div className="mt-4 text-center text-xs text-slate-500">
           {t('dontHaveAccount')}{' '}
           <button
             type="button"

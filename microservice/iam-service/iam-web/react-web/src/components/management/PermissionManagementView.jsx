@@ -143,8 +143,8 @@ export const PermissionManagementView = ({ onShowToast }) => {
                 <tr key={p.uuid}>
                   <td>
                     <div className="flex items-center gap-2">
-                      <IconShieldCheck size={16} className="text-emerald-400" />
-                      <span className="font-mono text-xs font-bold text-white">{p.name}</span>
+                      <IconShieldCheck size={16} className="text-emerald-600" />
+                      <span className="font-mono text-xs font-bold text-slate-900">{p.name}</span>
                     </div>
                   </td>
                   <td>
@@ -153,7 +153,7 @@ export const PermissionManagementView = ({ onShowToast }) => {
                   <td>
                     <Badge variant="default" size="sm">{p.action}</Badge>
                   </td>
-                  <td className="text-sm text-slate-300">{p.description}</td>
+                  <td className="text-sm text-slate-600">{p.description}</td>
                   <td>
                     <Badge variant="success" size="sm">
                       <IconCheck size={11} />
@@ -164,14 +164,14 @@ export const PermissionManagementView = ({ onShowToast }) => {
                     <div className="flex items-center justify-end gap-1">
                       <button
                         onClick={() => setEditingPerm({ ...p })}
-                        className="action-icon-btn text-slate-400 hover:text-white"
+                        className="action-icon-btn text-slate-400 hover:text-indigo-600 hover:bg-indigo-50"
                         title={t('edit')}
                       >
                         <IconEdit size={15} />
                       </button>
                       <button
                         onClick={() => setDeletingPerm(p)}
-                        className="action-icon-btn text-slate-400 hover:text-rose-400"
+                        className="action-icon-btn text-slate-400 hover:text-rose-600 hover:bg-rose-50"
                         title={t('delete')}
                       >
                         <IconTrash size={15} />
@@ -220,7 +220,7 @@ export const PermissionManagementView = ({ onShowToast }) => {
 
           <div className="form-group">
             <label className="form-label">Full Identifier Preview</label>
-            <div className="p-2.5 bg-slate-950 font-mono text-xs text-indigo-400 rounded-lg border border-slate-800">
+            <div className="p-3 bg-slate-50 font-mono text-xs text-indigo-700 font-semibold rounded-xl border border-slate-200">
               {newPerm.resource || 'resource'}:{newPerm.action || 'action'}
             </div>
           </div>
@@ -286,7 +286,7 @@ export const PermissionManagementView = ({ onShowToast }) => {
         title={t('delete')}
       >
         <div className="space-y-4">
-          <p className="text-sm text-slate-300">
+          <p className="text-sm text-slate-600">
             Remove permission <strong>{deletingPerm?.name}</strong> from directory catalog? Roles holding this permission will lose associated access.
           </p>
           <div className="flex justify-end gap-2 pt-2">

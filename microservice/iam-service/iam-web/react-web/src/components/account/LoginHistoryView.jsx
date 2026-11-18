@@ -83,48 +83,48 @@ export const LoginHistoryView = () => {
       </div>
 
       {/* Top Stat Summary Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
-        <div className="p-6 bg-white border border-slate-200 rounded-3xl shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-base font-semibold text-slate-500 uppercase tracking-wider block mb-1">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 mb-5">
+        <div className="p-4 bg-white border border-slate-200 rounded-2xl shadow-sm flex items-center justify-between">
+          <div className="min-w-0 mr-2">
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-0.5 whitespace-nowrap truncate">
               {t('totalAttempts') || 'Total Attempts'}
             </span>
-            <span className="text-3xl font-extrabold text-slate-900">{totalCount}</span>
+            <span className="text-xl font-bold text-slate-900">{totalCount}</span>
           </div>
-          <div className="w-14 h-14 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700">
-            <IconActivity size={26} />
+          <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700 shrink-0">
+            <IconActivity size={18} />
           </div>
         </div>
 
-        <div className="p-6 bg-white border border-slate-200 rounded-3xl shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-base font-semibold text-emerald-600 uppercase tracking-wider block mb-1">
+        <div className="p-4 bg-white border border-slate-200 rounded-2xl shadow-sm flex items-center justify-between">
+          <div className="min-w-0 mr-2">
+            <span className="text-xs font-semibold text-emerald-600 uppercase tracking-wider block mb-0.5 whitespace-nowrap truncate">
               {t('successfulLogins') || 'Successful'}
             </span>
-            <span className="text-3xl font-extrabold text-emerald-700">{successCount}</span>
+            <span className="text-xl font-bold text-emerald-700">{successCount}</span>
           </div>
-          <div className="w-14 h-14 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
-            <IconCheck size={26} />
+          <div className="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 shrink-0">
+            <IconCheck size={18} />
           </div>
         </div>
 
-        <div className="p-6 bg-white border border-slate-200 rounded-3xl shadow-sm flex items-center justify-between">
-          <div>
-            <span className="text-base font-semibold text-rose-600 uppercase tracking-wider block mb-1">
+        <div className="p-4 bg-white border border-slate-200 rounded-2xl shadow-sm flex items-center justify-between">
+          <div className="min-w-0 mr-2">
+            <span className="text-xs font-semibold text-rose-600 uppercase tracking-wider block mb-0.5 whitespace-nowrap truncate">
               {t('failedAttempts') || 'Failed / Blocked'}
             </span>
-            <span className="text-3xl font-extrabold text-rose-700">{failedCount}</span>
+            <span className="text-xl font-bold text-rose-700">{failedCount}</span>
           </div>
-          <div className="w-14 h-14 rounded-full bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600">
-            <IconShield size={26} />
+          <div className="w-10 h-10 rounded-full bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600 shrink-0">
+            <IconShield size={18} />
           </div>
         </div>
       </div>
 
       {/* Main Container */}
-      <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+      <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
         {/* Search & Filter Toolbar */}
-        <div className="p-6 border-b border-slate-100 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-slate-50/50">
+        <div className="p-4 border-b border-slate-100 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-slate-50/50">
           {/* Search Box */}
           <div className="relative flex-1 max-w-md">
             <input
@@ -132,40 +132,40 @@ export const LoginHistoryView = () => {
               placeholder={t('searchHistory') || 'Search IP, device, location, or details...'}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-6 py-3 rounded-full bg-white border border-slate-200 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-600 text-base transition shadow-2xs"
+              className="w-full pl-10 pr-6 py-2 rounded-full bg-white border border-slate-200 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-600 text-xs transition shadow-2xs"
             />
             <span
-              className="absolute left-4 text-slate-400 pointer-events-none flex items-center justify-center"
+              className="absolute left-3.5 text-slate-400 pointer-events-none flex items-center justify-center"
               style={{ top: '50%', transform: 'translateY(-50%)' }}
             >
-              <IconSearch size={20} />
+              <IconSearch size={16} />
             </span>
             {searchTerm && (
               <button
                 type="button"
                 onClick={() => setSearchTerm('')}
-                className="absolute right-4 text-slate-400 hover:text-slate-600 p-1 rounded-full cursor-pointer"
+                className="absolute right-3 text-slate-400 hover:text-slate-600 p-1 rounded-full cursor-pointer"
                 style={{ top: '50%', transform: 'translateY(-50%)' }}
                 title="Clear search"
               >
-                <IconX size={16} />
+                <IconX size={14} />
               </button>
             )}
           </div>
 
           {/* Filter Pills */}
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-1.5 flex-wrap">
             <button
               type="button"
               onClick={() => setStatusFilter('ALL')}
-              className={`px-5 py-2.5 rounded-full font-bold text-base transition cursor-pointer whitespace-nowrap flex items-center gap-2 ${
+              className={`px-3.5 py-1.5 rounded-full font-semibold text-xs transition cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                 statusFilter === 'ALL'
                   ? 'bg-indigo-600 text-white shadow-sm'
                   : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
               }`}
             >
               <span>{t('all') || 'All'}</span>
-              <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+              <span className={`px-2 py-0.2 rounded-full text-[10px] font-semibold ${
                 statusFilter === 'ALL' ? 'bg-indigo-700 text-white' : 'bg-slate-100 text-slate-600'
               }`}>
                 {totalCount}
@@ -175,14 +175,14 @@ export const LoginHistoryView = () => {
             <button
               type="button"
               onClick={() => setStatusFilter('SUCCESS')}
-              className={`px-5 py-2.5 rounded-full font-bold text-base transition cursor-pointer whitespace-nowrap flex items-center gap-2 ${
+              className={`px-3.5 py-1.5 rounded-full font-semibold text-xs transition cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                 statusFilter === 'SUCCESS'
                   ? 'bg-emerald-600 text-white shadow-sm'
                   : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
               }`}
             >
               <span>{t('success') || 'Success'}</span>
-              <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+              <span className={`px-2 py-0.2 rounded-full text-[10px] font-semibold ${
                 statusFilter === 'SUCCESS' ? 'bg-emerald-700 text-white' : 'bg-slate-100 text-slate-600'
               }`}>
                 {successCount}
@@ -192,14 +192,14 @@ export const LoginHistoryView = () => {
             <button
               type="button"
               onClick={() => setStatusFilter('FAILED')}
-              className={`px-5 py-2.5 rounded-full font-bold text-base transition cursor-pointer whitespace-nowrap flex items-center gap-2 ${
+              className={`px-3.5 py-1.5 rounded-full font-semibold text-xs transition cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                 statusFilter === 'FAILED'
                   ? 'bg-rose-600 text-white shadow-sm'
                   : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-100'
               }`}
             >
               <span>{t('failed') || 'Failed'}</span>
-              <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+              <span className={`px-2 py-0.2 rounded-full text-[10px] font-semibold ${
                 statusFilter === 'FAILED' ? 'bg-rose-700 text-white' : 'bg-slate-100 text-slate-600'
               }`}>
                 {failedCount}
@@ -216,12 +216,12 @@ export const LoginHistoryView = () => {
             return (
               <div
                 key={item.id}
-                className="p-6 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-5 hover:bg-slate-50/70 transition"
+                className="p-4 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-3.5 hover:bg-slate-50/70 transition"
               >
                 {/* Left Section: Icon + Details */}
-                <div className="flex items-start gap-4.5">
+                <div className="flex items-center gap-3.5">
                   <div
-                    className={`w-14 h-14 rounded-full border flex items-center justify-center shrink-0 mt-0.5 shadow-2xs ${getDeviceBg(
+                    className={`w-10 h-10 rounded-full border flex items-center justify-center shrink-0 shadow-2xs ${getDeviceBg(
                       item.device,
                       item.status
                     )}`}
@@ -231,11 +231,11 @@ export const LoginHistoryView = () => {
 
                   <div>
                     {/* Device name & Status badge */}
-                    <div className="flex flex-wrap items-center gap-3">
-                      <h4 className="text-xl font-bold text-slate-900">{item.device}</h4>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <h4 className="text-sm font-bold text-slate-900 whitespace-nowrap">{item.device}</h4>
 
                       <span
-                        className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-sm font-semibold border ${
+                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold border whitespace-nowrap ${
                           isSuccess
                             ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                             : 'bg-rose-50 text-rose-700 border-rose-200'
@@ -243,29 +243,29 @@ export const LoginHistoryView = () => {
                       >
                         {isSuccess ? (
                           <>
-                            <IconCheck size={14} className="text-emerald-600" />
+                            <IconCheck size={12} className="text-emerald-600" />
                             <span>{t('success') || 'Success'}</span>
                           </>
                         ) : (
                           <>
-                            <IconX size={14} className="text-rose-600" />
+                            <IconX size={12} className="text-rose-600" />
                             <span>{t('failed') || 'Failed'}</span>
                           </>
                         )}
                       </span>
 
                       {item.reason && (
-                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200 whitespace-nowrap">
                           {item.reason}
                         </span>
                       )}
                     </div>
 
                     {/* Metadata: Timestamp, IP, Location */}
-                    <div className="mt-2.5 flex flex-wrap items-center gap-x-6 gap-y-1.5 text-base text-slate-600">
-                      <span className="flex items-center gap-1.5">
-                        <strong className="text-slate-800 font-semibold">{t('time') || 'Time'}:</strong>{' '}
-                        <span className="text-slate-600 font-mono">
+                    <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500">
+                      <span className="flex items-center gap-1 whitespace-nowrap">
+                        <strong className="text-slate-700 font-medium">{t('time') || 'Time'}:</strong>{' '}
+                        <span className="text-slate-600 font-mono text-[11px]">
                           {new Date(item.timestamp).toLocaleString(undefined, {
                             dateStyle: 'medium',
                             timeStyle: 'medium'
@@ -273,16 +273,16 @@ export const LoginHistoryView = () => {
                         </span>
                       </span>
 
-                      <span className="flex items-center gap-1.5">
-                        <strong className="text-slate-800 font-semibold">IP:</strong>{' '}
-                        <span className="px-2.5 py-0.5 rounded-full bg-slate-100 font-mono text-indigo-600 font-bold text-sm border border-slate-200">
+                      <span className="flex items-center gap-1 whitespace-nowrap">
+                        <strong className="text-slate-700 font-medium">IP:</strong>{' '}
+                        <span className="px-2 py-0.2 rounded-full bg-slate-100 font-mono text-indigo-700 font-semibold text-[11px] border border-slate-200">
                           {item.ipAddress}
                         </span>
                       </span>
 
-                      <span className="flex items-center gap-1.5">
-                        <strong className="text-slate-800 font-semibold">{t('location') || 'Location'}:</strong>{' '}
-                        <span className="text-slate-700">{item.location}</span>
+                      <span className="flex items-center gap-1 whitespace-nowrap">
+                        <strong className="text-slate-700 font-medium">{t('location') || 'Location'}:</strong>{' '}
+                        <span className="text-slate-600">{item.location}</span>
                       </span>
                     </div>
                   </div>
@@ -291,7 +291,7 @@ export const LoginHistoryView = () => {
                 {/* Right Section: Status Indicator */}
                 <div className="self-end lg:self-center shrink-0">
                   <span
-                    className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-semibold border ${
+                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border whitespace-nowrap ${
                       isSuccess
                         ? 'bg-slate-50 text-slate-700 border-slate-200'
                         : 'bg-rose-50/80 text-rose-700 border-rose-200'
