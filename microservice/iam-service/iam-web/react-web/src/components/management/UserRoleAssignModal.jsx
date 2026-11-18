@@ -64,18 +64,18 @@ export const UserRoleAssignModal = ({ user, isOpen, onClose, onUpdated, onShowTo
       <div className="space-y-6">
         {/* Current Assigned Roles */}
         <div>
-          <span className="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2 block">
+          <span className="text-xs uppercase tracking-wider text-slate-500 font-bold mb-2 block">
             Currently Assigned Roles
           </span>
           <div className="flex flex-wrap gap-2">
             {user.roles?.map((r) => (
-              <div key={r} className="inline-flex items-center gap-2 bg-slate-900 border border-slate-700/80 px-3 py-1.5 rounded-lg text-sm">
-                <IconKey size={14} className="text-indigo-400" />
-                <span className="font-semibold text-white">{r}</span>
+              <div key={r} className="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-200 px-3 py-1.5 rounded-xl text-sm">
+                <IconKey size={14} className="text-indigo-600" />
+                <span className="font-bold text-indigo-950">{r}</span>
                 <button
                   type="button"
                   onClick={() => handleRevoke(r)}
-                  className="text-slate-400 hover:text-rose-400 transition ml-1"
+                  className="text-slate-400 hover:text-rose-600 transition ml-1"
                   title="Revoke role"
                 >
                   <IconTrash size={14} />
@@ -89,8 +89,8 @@ export const UserRoleAssignModal = ({ user, isOpen, onClose, onUpdated, onShowTo
         </div>
 
         {/* Assign New Role Form */}
-        <form onSubmit={handleAssign} className="bg-slate-950/70 p-4 rounded-xl border border-slate-800 space-y-4">
-          <span className="text-xs uppercase tracking-wider text-indigo-400 font-semibold block">
+        <form onSubmit={handleAssign} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-4">
+          <span className="text-xs uppercase tracking-wider text-indigo-700 font-bold block">
             Assign Additional Role
           </span>
 
