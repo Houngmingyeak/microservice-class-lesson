@@ -2,6 +2,7 @@ package kh.edu.istad.iam.web.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -12,7 +13,7 @@ import java.util.Optional;
 public class UserImageRedisService {
 
     private final RedisTemplate<String, byte[]> byteRedisTemplate;
-    private final RedisTemplate<String, String> stringRedisTemplate;
+    private final StringRedisTemplate stringRedisTemplate;
 
     private static final String KEY_PREFIX_DATA = "user:avatar:data:";
     private static final String KEY_PREFIX_MIME = "user:avatar:mime:";
@@ -21,7 +22,7 @@ public class UserImageRedisService {
 
     public UserImageRedisService(
             RedisTemplate<String, byte[]> byteRedisTemplate,
-            RedisTemplate<String, String> stringRedisTemplate
+            StringRedisTemplate stringRedisTemplate
     ) {
         this.byteRedisTemplate = byteRedisTemplate;
         this.stringRedisTemplate = stringRedisTemplate;
