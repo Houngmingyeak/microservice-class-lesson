@@ -28,7 +28,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        var entity = userJpaRepository.findByUsernameOrEmail(username, username)
+        if (username == null || username.isBlank()) {
+            throw new UsernameNotFoundException("Username or email cannot be empty");
+        }
+        String clean = username.trim();
+        var entity = userJpaRepository.findByUsernameOrEmail(clean, clean)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
 
         Set<GrantedAuthority> authorities = new HashSet<>();
@@ -69,7 +73,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         return User.builder()
                 .username(entity.getUsername())
-                .password(entity.getPasswordHash())
+                .password(entity.getPasswordHash() != null ? entity.getPasswordHash() : "")
                 .disabled(!Boolean.TRUE.equals(entity.getEnabled()))
                 .accountExpired(!Boolean.TRUE.equals(entity.getAccountNonExpired()))
                 .accountLocked(!Boolean.TRUE.equals(entity.getAccountNonLocked()))
