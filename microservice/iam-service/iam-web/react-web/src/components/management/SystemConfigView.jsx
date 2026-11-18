@@ -64,9 +64,9 @@ export const SystemConfigView = ({ onShowToast }) => {
       <form onSubmit={handleSave} className="space-y-6">
         {/* Section 1: Authentication & Lockout Policies */}
         <div className="glass-card p-6">
-          <div className="flex items-center gap-2 mb-4 border-b border-slate-800 pb-3">
-            <IconShield size={20} className="text-indigo-400" />
-            <h3 className="text-base font-bold text-white">{t('authPolicy')}</h3>
+          <div className="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
+            <IconShield size={20} className="text-indigo-600" />
+            <h3 className="text-base font-bold text-slate-900">{t('authPolicy')}</h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -95,12 +95,12 @@ export const SystemConfigView = ({ onShowToast }) => {
             </div>
 
             <div className="md:col-span-2 pt-2">
-              <label className="flex items-center gap-3 text-sm text-slate-300 cursor-pointer">
+              <label className="flex items-center gap-3 text-sm text-slate-700 cursor-pointer font-medium">
                 <input
                   type="checkbox"
                   checked={config.require2faForAdmins}
                   onChange={(e) => handleChange('require2faForAdmins', e.target.checked)}
-                  className="rounded border-slate-700 text-indigo-600 focus:ring-0"
+                  className="rounded border-slate-300 text-indigo-600 focus:ring-0"
                 />
                 <span>{t('require2faAdmin')}</span>
               </label>
@@ -110,9 +110,9 @@ export const SystemConfigView = ({ onShowToast }) => {
 
         {/* Section 2: Password Complexity Policies */}
         <div className="glass-card p-6">
-          <div className="flex items-center gap-2 mb-4 border-b border-slate-800 pb-3">
-            <IconLock size={20} className="text-emerald-400" />
-            <h3 className="text-base font-bold text-white">{t('passPolicy')}</h3>
+          <div className="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
+            <IconLock size={20} className="text-emerald-600" />
+            <h3 className="text-base font-bold text-slate-900">{t('passPolicy')}</h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -140,31 +140,31 @@ export const SystemConfigView = ({ onShowToast }) => {
               />
             </div>
 
-            <div className="md:col-span-2 space-y-2 pt-2">
-              <label className="flex items-center gap-3 text-sm text-slate-300 cursor-pointer">
+            <div className="md:col-span-2 space-y-2.5 pt-2">
+              <label className="flex items-center gap-3 text-sm text-slate-700 cursor-pointer font-medium">
                 <input
                   type="checkbox"
                   checked={config.requireUppercase}
                   onChange={(e) => handleChange('requireUppercase', e.target.checked)}
-                  className="rounded border-slate-700 text-indigo-600 focus:ring-0"
+                  className="rounded border-slate-300 text-indigo-600 focus:ring-0"
                 />
                 <span>Must contain at least one uppercase letter (A-Z)</span>
               </label>
-              <label className="flex items-center gap-3 text-sm text-slate-300 cursor-pointer">
+              <label className="flex items-center gap-3 text-sm text-slate-700 cursor-pointer font-medium">
                 <input
                   type="checkbox"
                   checked={config.requireNumbers}
                   onChange={(e) => handleChange('requireNumbers', e.target.checked)}
-                  className="rounded border-slate-700 text-indigo-600 focus:ring-0"
+                  className="rounded border-slate-300 text-indigo-600 focus:ring-0"
                 />
                 <span>Must contain at least one numerical digit (0-9)</span>
               </label>
-              <label className="flex items-center gap-3 text-sm text-slate-300 cursor-pointer">
+              <label className="flex items-center gap-3 text-sm text-slate-700 cursor-pointer font-medium">
                 <input
                   type="checkbox"
                   checked={config.requireSpecialChars}
                   onChange={(e) => handleChange('requireSpecialChars', e.target.checked)}
-                  className="rounded border-slate-700 text-indigo-600 focus:ring-0"
+                  className="rounded border-slate-300 text-indigo-600 focus:ring-0"
                 />
                 <span>Must contain at least one special character (!@#$%^&*)</span>
               </label>
@@ -174,9 +174,9 @@ export const SystemConfigView = ({ onShowToast }) => {
 
         {/* Section 3: Session Expiration & Token Lifetimes */}
         <div className="glass-card p-6">
-          <div className="flex items-center gap-2 mb-4 border-b border-slate-800 pb-3">
-            <IconClock size={20} className="text-purple-400" />
-            <h3 className="text-base font-bold text-white">{t('sessionPolicy')}</h3>
+          <div className="flex items-center gap-2 mb-4 border-b border-slate-100 pb-3">
+            <IconClock size={20} className="text-purple-600" />
+            <h3 className="text-base font-bold text-slate-900">{t('sessionPolicy')}</h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
