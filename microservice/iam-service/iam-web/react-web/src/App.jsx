@@ -21,6 +21,8 @@ import { DeactivationView } from './components/account/DeactivationView';
 // Management Views
 import { AdminOverviewView } from './components/management/AdminOverviewView';
 import { UserManagementView } from './components/management/UserManagementView';
+import { UserRoleAssignView } from './components/management/UserRoleAssignView';
+import { UserPermAssignView } from './components/management/UserPermAssignView';
 import { UserSessionsView } from './components/management/UserSessionsView';
 import { UserLoginHistoryView } from './components/management/UserLoginHistoryView';
 import { RoleManagementView } from './components/management/RoleManagementView';
@@ -97,6 +99,10 @@ function MainApp() {
         return <AdminOverviewView onShowToast={showToast} />;
       case 'users':
         return <UserManagementView onShowToast={showToast} />;
+      case 'userRoles':
+        return <UserRoleAssignView onShowToast={showToast} />;
+      case 'userPermissions':
+        return <UserPermAssignView onShowToast={showToast} />;
       case 'userSessions':
         return <UserSessionsView onShowToast={showToast} />;
       case 'userLoginHistory':
