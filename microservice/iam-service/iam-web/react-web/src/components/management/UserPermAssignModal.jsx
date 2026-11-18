@@ -65,15 +65,15 @@ export const UserPermAssignModal = ({ user, isOpen, onClose, onUpdated, onShowTo
       <div className="space-y-6">
         {/* Current Direct Permissions */}
         <div>
-          <span className="text-xs uppercase tracking-wider text-slate-400 font-semibold mb-2 block">
+          <span className="text-xs uppercase tracking-wider text-slate-500 font-bold mb-2 block">
             Directly Granted Permissions
           </span>
           <div className="space-y-2">
             {user.directPermissions?.map((p) => (
-              <div key={p.name} className="flex items-center justify-between p-2.5 bg-slate-900 border border-slate-800 rounded-lg text-sm">
+              <div key={p.name} className="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">
                 <div className="flex items-center gap-2">
-                  <IconShieldCheck size={16} className="text-emerald-400" />
-                  <span className="font-mono text-xs text-white">{p.name}</span>
+                  <IconShieldCheck size={16} className="text-emerald-600" />
+                  <span className="font-mono text-xs font-bold text-slate-900">{p.name}</span>
                   <Badge variant={p.effect === 'ALLOW' ? 'success' : 'danger'} size="sm">
                     {p.effect}
                   </Badge>
@@ -84,7 +84,7 @@ export const UserPermAssignModal = ({ user, isOpen, onClose, onUpdated, onShowTo
                 <button
                   type="button"
                   onClick={() => handleRevoke(p.name)}
-                  className="text-slate-400 hover:text-rose-400 p-1"
+                  className="text-slate-400 hover:text-rose-600 p-1"
                 >
                   <IconTrash size={14} />
                 </button>
@@ -99,8 +99,8 @@ export const UserPermAssignModal = ({ user, isOpen, onClose, onUpdated, onShowTo
         </div>
 
         {/* Grant New Permission Form */}
-        <form onSubmit={handleGrant} className="bg-slate-950/70 p-4 rounded-xl border border-slate-800 space-y-4">
-          <span className="text-xs uppercase tracking-wider text-emerald-400 font-semibold block">
+        <form onSubmit={handleGrant} className="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-4">
+          <span className="text-xs uppercase tracking-wider text-emerald-700 font-bold block">
             Grant Direct Permission Override
           </span>
 
