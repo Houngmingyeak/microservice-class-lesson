@@ -99,30 +99,30 @@ export const UserSessionsView = ({ onShowToast }) => {
                 <tr key={s.id}>
                   <td>
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-white text-sm">@{s.username}</span>
+                      <span className="font-bold text-slate-900 text-sm">@{s.username}</span>
                       {s.isCurrent && (
                         <Badge variant="success" size="sm">Current</Badge>
                       )}
                     </div>
                   </td>
                   <td>
-                    <div className="flex items-center gap-2 text-slate-200">
+                    <div className="flex items-center gap-2 text-slate-700 font-medium">
                       {s.deviceType === 'Mobile' ? (
-                        <IconSmartphone size={16} className="text-sky-400" />
+                        <IconSmartphone size={16} className="text-sky-600" />
                       ) : (
-                        <IconLaptop size={16} className="text-indigo-400" />
+                        <IconLaptop size={16} className="text-indigo-600" />
                       )}
                       <span>{s.deviceName} ({s.browser})</span>
                     </div>
                   </td>
-                  <td className="font-mono text-xs text-indigo-400">{s.ipAddress}</td>
-                  <td className="text-slate-300">{s.location}</td>
-                  <td className="text-xs text-slate-400">{s.lastActive}</td>
+                  <td className="font-mono text-xs text-indigo-600 font-semibold">{s.ipAddress}</td>
+                  <td className="text-slate-600">{s.location}</td>
+                  <td className="text-xs text-slate-500">{s.lastActive}</td>
                   <td className="text-right">
-                    <div className="flex items-center justify-end gap-1">
+                    <div className="flex items-center justify-end gap-1.5">
                       <button
                         onClick={() => setTerminatingSession(s)}
-                        className="btn btn-secondary text-rose-400 text-xs py-1 px-2.5 flex items-center gap-1"
+                        className="btn btn-secondary text-rose-600 text-xs py-1 px-3 flex items-center gap-1 hover:bg-rose-50 hover:border-rose-300"
                         title={t('terminateSession')}
                       >
                         <IconTrash size={13} />
@@ -130,7 +130,7 @@ export const UserSessionsView = ({ onShowToast }) => {
                       </button>
                       <button
                         onClick={() => setTerminatingUser(s.username)}
-                        className="btn btn-secondary text-amber-400 text-xs py-1 px-2.5 flex items-center gap-1"
+                        className="btn btn-secondary text-amber-600 text-xs py-1 px-3 flex items-center gap-1 hover:bg-amber-50 hover:border-amber-300"
                         title={t('terminateAllUserSessions')}
                       >
                         <IconLogOut size={13} />
@@ -159,7 +159,7 @@ export const UserSessionsView = ({ onShowToast }) => {
         title={t('terminateSession')}
       >
         <div className="space-y-4">
-          <p className="text-sm text-slate-300">
+          <p className="text-sm text-slate-600">
             Forcibly terminate session on <strong>{terminatingSession?.deviceName}</strong> for user <strong>@{terminatingSession?.username}</strong> ({terminatingSession?.ipAddress})?
           </p>
           <div className="flex justify-end gap-2 pt-2">
@@ -180,7 +180,7 @@ export const UserSessionsView = ({ onShowToast }) => {
         title={t('terminateAllUserSessions')}
       >
         <div className="space-y-4">
-          <p className="text-sm text-slate-300">
+          <p className="text-sm text-slate-600">
             Terminate all active concurrent sessions across all devices for user <strong>@{terminatingUser}</strong>?
           </p>
           <div className="flex justify-end gap-2 pt-2">
