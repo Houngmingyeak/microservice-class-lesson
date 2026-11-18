@@ -113,20 +113,20 @@ export const AuditLogsView = ({ onShowToast }) => {
             </thead>
             <tbody>
               {filteredLogs.map((log) => (
-                <tr key={log.id} className="cursor-pointer hover:bg-slate-800/50" onClick={() => setSelectedLog(log)}>
-                  <td className="font-mono text-xs text-slate-300">
+                <tr key={log.id} className="cursor-pointer hover:bg-indigo-50/40 transition" onClick={() => setSelectedLog(log)}>
+                  <td className="font-mono text-xs text-slate-600">
                     {new Date(log.timestamp).toLocaleString()}
                   </td>
                   <td>
-                    <span className="font-semibold text-indigo-300 text-xs">{log.actor}</span>
+                    <span className="font-bold text-indigo-700 text-xs">@{log.actor}</span>
                   </td>
                   <td>
-                    <span className="font-mono text-xs font-bold text-white bg-slate-900 px-2 py-0.5 rounded border border-slate-800">
+                    <span className="font-mono text-xs font-semibold text-slate-800 bg-slate-100 px-2.5 py-1 rounded border border-slate-200">
                       {log.event}
                     </span>
                   </td>
-                  <td className="text-xs text-slate-300">{log.target}</td>
-                  <td className="font-mono text-xs text-slate-400">{log.ipAddress}</td>
+                  <td className="text-xs text-slate-700 font-medium">{log.target}</td>
+                  <td className="font-mono text-xs text-slate-500">{log.ipAddress}</td>
                   <td>
                     <Badge variant={log.status === 'SUCCESS' ? 'success' : 'danger'} size="sm">
                       {log.status}
@@ -135,7 +135,7 @@ export const AuditLogsView = ({ onShowToast }) => {
                   <td className="text-right">
                     <button
                       onClick={(e) => { e.stopPropagation(); setSelectedLog(log); }}
-                      className="text-xs text-indigo-400 hover:underline"
+                      className="text-xs font-semibold text-indigo-600 hover:text-indigo-800 hover:underline"
                     >
                       {t('viewDetails')}
                     </button>
@@ -161,22 +161,22 @@ export const AuditLogsView = ({ onShowToast }) => {
         title="Audit Event Details"
       >
         {selectedLog && (
-          <div className="space-y-3 text-sm">
-            <div className="grid grid-cols-2 gap-2 p-3 bg-slate-950 rounded-lg text-xs font-mono">
-              <div><span className="text-slate-500">ID:</span> {selectedLog.id}</div>
-              <div><span className="text-slate-500">Status:</span> {selectedLog.status}</div>
-              <div><span className="text-slate-500">Event:</span> {selectedLog.event}</div>
-              <div><span className="text-slate-500">Actor:</span> {selectedLog.actor}</div>
-              <div><span className="text-slate-500">Target:</span> {selectedLog.target}</div>
-              <div><span className="text-slate-500">IP:</span> {selectedLog.ipAddress}</div>
-              <div className="col-span-2"><span className="text-slate-500">Timestamp:</span> {selectedLog.timestamp}</div>
+          <div className="space-y-4 text-sm">
+            <div className="grid grid-cols-2 gap-2.5 p-4 bg-slate-50 rounded-xl border border-slate-200 text-xs font-mono text-slate-800">
+              <div><span className="text-slate-500 font-semibold">ID:</span> {selectedLog.id}</div>
+              <div><span className="text-slate-500 font-semibold">Status:</span> {selectedLog.status}</div>
+              <div><span className="text-slate-500 font-semibold">Event:</span> {selectedLog.event}</div>
+              <div><span className="text-slate-500 font-semibold">Actor:</span> {selectedLog.actor}</div>
+              <div><span className="text-slate-500 font-semibold">Target:</span> {selectedLog.target}</div>
+              <div><span className="text-slate-500 font-semibold">IP:</span> {selectedLog.ipAddress}</div>
+              <div className="col-span-2"><span className="text-slate-500 font-semibold">Timestamp:</span> {selectedLog.timestamp}</div>
             </div>
 
             <div>
-              <span className="text-xs uppercase tracking-wider text-slate-400 font-semibold block mb-1">
+              <span className="text-xs uppercase tracking-wider text-slate-500 font-bold block mb-1.5">
                 Payload / Change Description
               </span>
-              <p className="text-slate-200 bg-slate-900 p-3 rounded-lg border border-slate-800">
+              <p className="text-slate-700 bg-slate-50 p-3.5 rounded-xl border border-slate-200 leading-relaxed font-mono text-xs">
                 {selectedLog.details}
               </p>
             </div>
