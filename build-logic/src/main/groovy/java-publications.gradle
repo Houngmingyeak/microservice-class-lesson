@@ -1,0 +1,77 @@
+//plugins {
+//    id 'maven-publish'
+//}
+//
+////group = 'kh.edu.istad'
+////version = '1.0.3'
+//
+//publishing {
+//    repositories {
+//        maven {
+//            name = "GitHubPackages"
+//            url = uri("https://maven.pkg.github.com/Houngmingyeak/microservice-class-lesson")
+//            credentials {
+//                username = providers.gradleProperty("gpr.user").getOrNull() ?: System.getenv("USERNAME")
+//                password = providers.gradleProperty("gpr.key").getOrNull() ?: System.getenv("TOKEN")
+//            }
+//        }
+//    }
+//    publications {
+//        gpr(MavenPublication) {
+//            from(components.java)
+//        }
+//    }
+//}
+
+
+plugins {
+    id 'maven-publish'
+}
+
+//group = 'kh.edu.istad'
+//version = '1.0.3'
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/Houngmingyeak/microservice-class-lesson")
+            credentials {
+                username = providers.gradleProperty("gpr.user").getOrNull() ?: System.getenv("USERNAME")
+                password = providers.gradleProperty("gpr.key").getOrNull() ?: System.getenv("TOKEN")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
+    }
+}
+
+// Nexus repository (added after the module sets its own version)
+afterEvaluate {
+    publishing {
+        repositories {
+            maven {
+                name = "Nexus"
+
+                def nexusBaseUrl = providers.gradleProperty("nexusUrl").getOrElse("http://localhost:8081/repository")
+                def isSnapshot = project.version.toString().endsWith("SNAPSHOT")
+
+                if (isSnapshot) {
+                    url = uri("${nexusBaseUrl}/maven-snapshots/")
+                } else {
+                    url = uri("${nexusBaseUrl}/maven-releases/")
+                }
+
+                allowInsecureProtocol = true
+
+                credentials {
+                    username = providers.gradleProperty("nexusUsername").getOrNull()
+                    password = providers.gradleProperty("nexusPassword").getOrNull()
+                }
+            }
+        }
+    }
+}
