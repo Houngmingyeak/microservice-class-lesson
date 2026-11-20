@@ -1,6 +1,9 @@
 plugins {
     id "springboot-common-conventions"
+    id 'java-publications'
 }
+
+version = '1.0.5'
 
 dependencies {
     implementation libs.springdoc.openapi.starter.webmvc.ui
