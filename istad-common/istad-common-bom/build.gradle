@@ -1,0 +1,40 @@
+plugins {
+    id 'java-platform'
+    id 'maven-publish'
+}
+
+group = 'kh.edu.istad'
+version = '1.0.0'
+
+javaPlatform {
+    allowDependencies()
+}
+
+dependencies {
+    api platform('org.springframework.boot:spring-boot-dependencies:4.1.1')
+
+    constraints {
+        api 'kh.edu.istad:istad-common-domain:1.0.4'
+        api 'kh.edu.istad:istad-common-swagger:1.0.5'
+    }
+}
+
+publishing {
+    publications {
+        bom(MavenPublication) {
+            artifactId = 'istad-bom'
+            from components.javaPlatform
+        }
+    }
+    repositories {
+        maven {
+            name = 'nexus'
+            url = version.toString().endsWith('SNAPSHOT') ? uri("${nexusUrl}/maven-snapshots/") : uri("${nexusUrl}/maven-releases/")
+            allowInsecureProtocol = true
+            credentials {
+                username = nexusUsername
+                password = nexusPassword
+            }
+        }
+    }
+}
